@@ -1,0 +1,407 @@
+import { Response, NextFunction } from "express";
+import { testItemValidations } from "../utils/validations";
+import catchAsync from "../utils/catchAsync";
+import Item from "../models/itemModel";
+import Collection from "../models/collectionModel";
+import { defaultCollectonFields } from "../defaults";
+import AppError from "../utils/appError";
+import {
+  CustomRequest,
+  CustomCollectionRequest,
+} from "../interfaces/customRequestInterface";
+import { ItemModel, ItemFields, ItemField } from "../interfaces/itemInterfaces";
+import {
+  CollectionField,
+  CollectionModel,
+} from "../interfaces/collectionInterfaces";
+import APIFeatures from "../utils/APIFeatures";
+import objectIsEmpty from "../utils/objectIsEmpty";
+
+/**
+ * Adds collection id from route paramater to request body
+ * @param {CustomRequest<ItemModel>} req Custom Express request object
+ * @param {NextFunction} next Express next middleware function
+ */
+export const setCollectionId = (
+  req: CustomRequest<ItemModel>,
+  _: Response,
+  next: NextFunction
+): void => {
+  if (!req.body._cid) req.body._cid = req.params.collection_id;
+  next();
+};
+
+/**
+ * Adds collection to request if collection ID is present and valid, else throws error
+ * @param {CustomCollectionRequest<ItemModel, CollectionModel>} req Custom Express request object
+ * @param {NextFunction} next Express next middleware function
+ */
+export const collectionExists = catchAsync(
+  async (
+    req: CustomCollectionRequest<ItemModel, CollectionModel>,
+    _: Response,
+    next: NextFunction
+  ) => {
+    if (!req.body._cid)
+      return next(
+        new AppError("Collection ID is required but is not present", 400)
+      );
+    const collection = await Collection.findById(req.body._cid);
+    if (!collection)
+      return next(new AppError("There is no collection with this ID", 404));
+    req.collection = collection;
+    next();
+  }
+);
+
+const connectFields = (
+  itemFields: ItemFields,
+  collectionFields: CollectionField[]
+): [[ItemField, CollectionField][], CollectionField[]] => {
+  let itemFieldArray: [ItemField, CollectionField][] = [];
+  collectionFields.forEach((field) => {
+    const itemFieldValue = itemFields[field.slug];
+    // If the value has a matching field in the collection fields
+    if (itemFieldValue !== undefined) {
+      // Delete Item Field Property
+      delete itemFields[field.slug];
+      // Delete collection field
+      collectionFields = collectionFields.filter((f) => f.slug != field.slug);
+      // Push value and field togther into array
+      itemFieldArray.push([itemFieldValue, field]);
+    }
+  });
+  return [itemFieldArray, collectionFields];
+};
+
+const checkInSchema = (itemFields: ItemFields): [boolean, string] => {
+  if (!objectIsEmpty(itemFields)) {
+    const badFields = Object.keys(itemFields).join(", ");
+    const words =
+      Object.keys(itemFields).length == 1 ? ["key", "is"] : ["keys", "are"];
+    // return next(
+    //   new AppError(
+    //     `The ${words[0]} '${badFields}' ${words[1]} not a part of the collection's schema`,
+    //     400
+    //   )
+    // );
+    return [
+      false,
+      `The ${words[0]} '${badFields}' ${words[1]} not a part of the collection's schema`,
+    ];
+  }
+  return [true, "All items fields are in the schema"];
+};
+
+const checkMissingRequiredFields = (
+  leftoverFields: CollectionField[]
+): [boolean, string] => {
+  const missingRequiredFields = leftoverFields.filter((field) => {
+    return field.required === true;
+  });
+  // If the collection has missing required fields
+  if (missingRequiredFields.length > 0) {
+    const missingNames = missingRequiredFields.map((field) => field.slug);
+    const word = Object.keys(missingNames).length == 1 ? "is a" : "are";
+    missingNames.join(", ");
+    return [
+      false,
+      `'${missingNames}' ${word} required field${word == "are" ? "s" : ""}`,
+    ];
+  }
+  return [true, "All required fields have values"];
+};
+
+const instantiateFields = (
+  req: CustomCollectionRequest<ItemModel, CollectionModel>
+): {
+  collectionFields: CollectionField[];
+  itemFields: ItemFields;
+} => {
+  /** The collection ths item will be added to */
+  const collection = req.collection;
+  // Fields
+  let collectionFields = collection.fields;
+  let itemFields: ItemFields = { ...req.body.fields };
+
+  // Delete default fields from body.fields if present
+  defaultCollectonFields.forEach((field) => delete itemFields[field.slug]);
+  // Delete default fields from collection fields
+  collectionFields.splice(collectionFields.length - 4, 4);
+
+  return { collectionFields, itemFields };
+};
+
+/**
+ * Retrives all items in collection based on collection ID route parameter
+ * @param {CustomRequest<ItemModel>} req Custom Express request object
+ * @param {Response} res Express response object
+ */
+export const getAllItemsInCollection = catchAsync(
+  async (req: CustomRequest<ItemModel>, res: Response) => {
+    // const items = await Item.find({ _cid: req.body._cid });
+
+    const features = new APIFeatures(
+      Item.find({ _cid: req.body._cid }),
+      req.query
+    )
+      .filter()
+      .sort()
+      .limitFields()
+      .paginate();
+
+    const items = await features.query;
+
+    res.status(200).json({
+      status: "success",
+      results: items.length,
+      page: features.page,
+      limit: features.limit,
+      _cid: req.body._cid,
+      items,
+    });
+  }
+);
+
+/**
+ * Retrieves collection item based on item ID & collection ID
+ * @param {CustomRequest<ItemModel>} req Custom Express request object
+ * @param {Response} res Express response object
+ * @param {NextFunction} next Express next middleware function
+ */
+export const getItem = catchAsync(
+  async (req: CustomRequest<ItemModel>, res: Response, next: NextFunction) => {
+    const item = await Item.findOne({
+      _id: req.params.item_id,
+      _cid: req.body._cid,
+    });
+
+    if (!item) return next(new AppError("There is no item with this ID", 404));
+
+    res.status(200).json({
+      status: "success",
+      item,
+    });
+  }
+);
+
+/**
+ * Creates new collection item. Item is added to the collection with the same
+ * collection ID as the collection ID passed into the route parameter.
+ * @param {CustomCollectionRequest<ItemModel, CollectionModel>} req Custom Express request object
+ * @param {Response} res Express response object
+ * @param {NextFunction} next Express next middleware function
+ */
+export const createItem = catchAsync(
+  async (
+    req: CustomCollectionRequest<ItemModel, CollectionModel>,
+    res: Response,
+    next: NextFunction
+  ) => {
+    if (!req.body.fields || objectIsEmpty(req.body.fields))
+      return next(
+        new AppError(
+          "No arguments are present. Please enter fields in the 'fields' object",
+          400
+        )
+      );
+
+    let { itemFields, collectionFields } = instantiateFields(req);
+
+    /** An array of arrays that contain item field value and the collection field */
+    let itemFieldArray: [ItemField, CollectionField][];
+    /** Collection fields left with no item fields */
+    let leftoverFields: CollectionField[];
+    [itemFieldArray, leftoverFields] = connectFields(
+      itemFields,
+      collectionFields
+    );
+
+    // Check if the body has fields not in the collection field schema
+    const isInSchema = checkInSchema(itemFields);
+    if (!isInSchema[0]) return next(new AppError(isInSchema[1], 400));
+
+    // Check if any required fields are missing
+    const passRequired = checkMissingRequiredFields(leftoverFields);
+    if (!passRequired[0]) return next(new AppError(passRequired[1], 400));
+
+    // Test Item Validations
+    /** Object of item fields that have passed the validation test */
+    const testedFields: ItemFields = {};
+    for (const [itemField, collectionField] of itemFieldArray) {
+      const [valid, message] = testItemValidations(itemField, collectionField);
+      // If validation failed
+      if (!valid) return next(new AppError(message, 400));
+      testedFields[collectionField.slug] = itemField;
+    }
+    /** Created Item */
+    const item = await Item.create({
+      _cid: req.body._cid,
+      ...testedFields,
+    });
+
+    res.status(201).json({
+      status: "success",
+      item,
+    });
+  }
+);
+
+/**
+ * Deletes collection item based on collection ID & item ID parameters
+ * @param {CustomRequest<ItemModel>} req Custom Express request object
+ * @param {Response} res Express response object
+ * @param {NextFunction} next Express next middleware function
+ */
+export const deleteItem = catchAsync(
+  async (req: CustomRequest<ItemModel>, res: Response, next: NextFunction) => {
+    const item = await Item.findOneAndDelete({
+      _id: req.params.item_id,
+      _cid: req.body._cid,
+    });
+
+    if (!item) {
+      return next(new AppError("There is no item with this ID", 404));
+    }
+
+    res.status(200).json({
+      status: "success",
+      itemsDeleted: 1,
+    });
+  }
+);
+
+export const patchItem = catchAsync(
+  async (
+    req: CustomCollectionRequest<ItemModel, CollectionModel>,
+    res: Response,
+    next: NextFunction
+  ) => {
+    if (!req.body.fields || objectIsEmpty(req.body.fields))
+      return next(
+        new AppError(
+          "No arguments are present. Please enter fields in the 'fields' object",
+          400
+        )
+      );
+    /** The item soon to be updated */
+    let oldItem = await Item.findById({
+      _id: req.params.item_id,
+      _cid: req.body._cid,
+    });
+
+    if (!oldItem) {
+      return next(new AppError("There is no item with this ID", 404));
+    }
+    let { itemFields, collectionFields } = instantiateFields(req);
+
+    const [itemFieldArray] = connectFields(itemFields, collectionFields);
+
+    // Check if the body has fields not in the collection field schema
+    const isInSchema = checkInSchema(itemFields);
+    if (!isInSchema[0]) return next(new AppError(isInSchema[1], 400));
+
+    // Test Item Validations
+    /** Object of item fields that have passed the validation test */
+    const testedFields: ItemFields = {};
+    for (const [itemField, collectionField] of itemFieldArray) {
+      const [valid, message] = testItemValidations(itemField, collectionField);
+      // If validation failed
+      if (!valid) return next(new AppError(message, 400));
+      testedFields[collectionField.slug] = itemField;
+    }
+
+    const item = await Item.findByIdAndUpdate(
+      {
+        _id: req.params.item_id,
+        _cid: req.body._cid,
+      },
+      { ...req.body.fields, "updated-on": new Date() },
+      { new: true }
+    );
+
+    if (!item) {
+      return next(new AppError("There is no item with this ID", 404));
+    }
+
+    res.status(200).json({
+      status: "sucess",
+      item,
+    });
+  }
+);
+
+export const putItem = catchAsync(
+  async (
+    req: CustomCollectionRequest<ItemModel, CollectionModel>,
+    res: Response,
+    next: NextFunction
+  ) => {
+    if (!req.body.fields || objectIsEmpty(req.body.fields))
+      return next(
+        new AppError(
+          "No arguments are present. Please enter fields in the 'fields' object",
+          400
+        )
+      );
+
+    /** The item soon to be updated */
+    let oldItem = await Item.findById({
+      _id: req.params.item_id,
+      _cid: req.body._cid,
+    });
+
+    if (!oldItem) {
+      return next(new AppError("There is no item with this ID", 404));
+    }
+
+    // /** The collection ths item will be added to */
+    let { itemFields, collectionFields } = instantiateFields(req);
+
+    const [itemFieldArray, leftoverFields] = connectFields(
+      itemFields,
+      collectionFields
+    );
+
+    // Check if the body has fields not in the collection field schema
+    const isInSchema = checkInSchema(itemFields);
+    if (!isInSchema[0]) return next(new AppError(isInSchema[1], 400));
+
+    // Check if any required fields are missing
+    const passRequired = checkMissingRequiredFields(leftoverFields);
+    if (!passRequired[0]) return next(new AppError(passRequired[1], 400));
+
+    // Test Item Validations
+    /** Object of item fields that have passed the validation test */
+    const testedFields: ItemFields = {};
+    for (const [itemField, collectionField] of itemFieldArray) {
+      const [valid, message] = testItemValidations(itemField, collectionField);
+      // If validation failed
+      if (!valid) return next(new AppError(message, 400));
+      testedFields[collectionField.slug] = itemField;
+    }
+
+    // If all Validations pass
+
+    const update = {
+      _cid: oldItem._cid,
+      ...testedFields,
+      "updated-on": oldItem["updated-on"],
+      "created-on": Date.now(),
+    };
+
+    const updatedItem = await Item.findOneAndReplace(
+      {
+        _id: req.params.item_id,
+        _cid: req.body._cid,
+      },
+      update,
+      { new: true }
+    );
+
+    res.status(200).json({
+      status: "success",
+      item: updatedItem,
+    });
+  }
+);
