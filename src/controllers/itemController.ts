@@ -54,6 +54,14 @@ export const collectionExists = catchAsync(
   }
 );
 
+/**
+ * Connects each item field to a collection field
+ * @param {ItemFields} itemFields The Item's Fields
+ * @param {CollectionField[]} collectionFields The collection's fields
+ * @returns {[[ItemField, CollectionField][], CollectionField[]]} An array where the
+ *    zeroth index is an array of arrays that connect the item field to the collection
+ *    field and the first index are collection fields with no attached item field
+ */
 const connectFields = (
   itemFields: ItemFields,
   collectionFields: CollectionField[]
@@ -74,6 +82,12 @@ const connectFields = (
   return [itemFieldArray, collectionFields];
 };
 
+/**
+ * Checks if any of the item fields are not in the schema
+ * @param {ItemFields} itemFields The item fields not connected to a collection field
+ * @returns {[boolean, string]} An array that shows whether the object has any
+ *    properties left and and message explaining the result
+ */
 const checkInSchema = (itemFields: ItemFields): [boolean, string] => {
   if (!objectIsEmpty(itemFields)) {
     const badFields = Object.keys(itemFields).join(", ");
@@ -93,6 +107,12 @@ const checkInSchema = (itemFields: ItemFields): [boolean, string] => {
   return [true, "All items fields are in the schema"];
 };
 
+/**
+ * Checks if any collection fields without an item field is a required field
+ * @param {CollectionField[]} leftoverFields Collection fields not connected to an item field
+ * @returns {[boolean, string]} An array that shows whether any of the missing
+ *    collection fields are required and a message explaining the result
+ */
 const checkMissingRequiredFields = (
   leftoverFields: CollectionField[]
 ): [boolean, string] => {
@@ -112,6 +132,12 @@ const checkMissingRequiredFields = (
   return [true, "All required fields have values"];
 };
 
+/**
+ * Instantiates item fields and collection fields to work with in the controller
+ * @param {CustomCollectionRequest<ItemModel, CollectionModel>} req Custom Express request object
+ * @returns {CollectionField[]} An array of collection fields editable to the user
+ * @returns {ItemFields} Item fields from from the request body
+ */
 const instantiateFields = (
   req: CustomCollectionRequest<ItemModel, CollectionModel>
 ): {
@@ -271,6 +297,13 @@ export const deleteItem = catchAsync(
   }
 );
 
+/**
+ * Updates item based on item ID and collection ID. Only replaces fields
+ * that are existent in the body.
+ * @param {CustomCollectionRequest<ItemModel, CollectionModel>} req Custom Express request object
+ * @param {Response} res Express response object
+ * @param {NextFunction} next Express next middleware function
+ */
 export const patchItem = catchAsync(
   async (
     req: CustomCollectionRequest<ItemModel, CollectionModel>,
@@ -331,6 +364,13 @@ export const patchItem = catchAsync(
   }
 );
 
+/**
+ * Updates item based on item ID and collection ID. Replaces the fields of an
+ * existent item with the fields specified in the body.
+ * @param {CustomCollectionRequest<ItemModel, CollectionModel>} req Custom Express request object
+ * @param {Response} res Express response object
+ * @param {NextFunction} next Express next middleware function
+ */
 export const putItem = catchAsync(
   async (
     req: CustomCollectionRequest<ItemModel, CollectionModel>,
