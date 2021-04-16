@@ -4,7 +4,7 @@ import pluralize from "pluralize";
 import slugify from "slugify";
 
 import fieldTypes from "../enums/fieldTypes";
-import { CollectionModel } from "../interfaces/collectionInterfaces"
+import { CollectionModel } from "../interfaces/collectionInterfaces";
 
 /** Collection Schema */
 const collectionSchema = new Schema({
@@ -19,7 +19,7 @@ const collectionSchema = new Schema({
     type: Types.ObjectId,
     required: [true, "A collection must be added to a database"],
     select: false,
-    immutable: true
+    immutable: true,
   },
   createdAt: {
     type: Date,
@@ -84,11 +84,14 @@ const collectionSchema = new Schema({
 
 collectionSchema.pre<CollectionModel>("save", function (next) {
   this.singularName = pluralize.singular(this.name);
-  this.slug = slugify(this.name, { lower: true });
+  if (!this.slug) this.slug = slugify(this.name, { lower: true });
   next();
 });
 
 /** Model for Collection Schema */
-const Collection: Model<CollectionModel> = model<CollectionModel>("Collection", collectionSchema);
+const Collection: Model<CollectionModel> = model<CollectionModel>(
+  "Collection",
+  collectionSchema
+);
 
 export default Collection;

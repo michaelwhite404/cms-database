@@ -1,4 +1,4 @@
-import { Router } from "express"
+import { Router } from "express";
 import * as collectionController from "../controllers/collectionController";
 import itemRouter from "./itemRoutes";
 
@@ -18,23 +18,24 @@ const router = Router({ mergeParams: true });
 router.use("/:collection_id/items", itemRouter);
 
 router
-  .route("/")
-  .get(
-    collectionController.setDatadaseId,
-    collectionController.validDatabase,
-    collectionController.getAllCollectionsInDatabase)
-  .post(
-    collectionController.setDatadaseId,
-    collectionController.validDatabase,
-    collectionController.createCollection);
+	.route("/")
+	.get(
+		collectionController.setDatadaseId,
+		collectionController.validDatabase,
+		collectionController.getAllCollectionsInDatabase
+	)
+	.post(
+		collectionController.setDatadaseId,
+		collectionController.validDatabase,
+		collectionController.createCollection
+	);
 
 router
-  .route("/:collection_id")
-  .get(collectionController.getCollection)
-  .delete(collectionController.deleteCollection);
+	.route("/:collection_id")
+	.get(collectionController.getCollection)
+	.patch(collectionController.updateCollection)
+	.delete(collectionController.deleteCollection);
 
-router
-  .route("/:collection_id/fields")
-  .get(collectionController.getCollectionFields);
+router.route("/:collection_id/fields").get(collectionController.getCollectionFields);
 
 export default router;
