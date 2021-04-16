@@ -94,60 +94,48 @@ export const testItemValidations = (value: any, field: CollectionField): [boolea
 	if (value === undefined) return [false, missingMessage("value")];
 	if (field === undefined) return [false, missingMessage("field")];
 
-	const messageStart = `The value for '${field.slug}' is`;
+	const messageStart = `The value for '${field.slug}'`;
 
 	const validations: { [key: string]: Function } = {
 		/** Email validation test */
 		Email: (): [boolean, string] => {
-			if (typeof value !== "string") return [false, `${messageStart} not a string value`];
+			if (typeof value !== "string") return [false, `${messageStart} is not a string value`];
 			const result = validator.isEmail(value);
-			const message = `${messageStart} ${result ? "" : "not "}a valid email`;
+			const message = `${messageStart} is ${result ? "" : "not "}a valid email`;
 			return [result, message];
 		},
 		/** Phone validation test */
 		Phone: (): [boolean, string] => {
-			if (typeof value !== "string") return [false, `${messageStart} not a string value`];
+			if (typeof value !== "string") return [false, `${messageStart} is not a string value`];
 			const result = validator.isMobilePhone(value);
-			const message = `${messageStart} ${result ? "" : "not "}a valid phone number`;
+			const message = `${messageStart} is ${result ? "" : "not "}a valid phone number`;
 			return [result, message];
 		},
 		/** HEX color test */
 		Color: (): [boolean, string] => {
-			if (typeof value !== "string") return [false, `${messageStart} not a string value`];
+			if (typeof value !== "string") return [false, `${messageStart} is not a string value`];
 			const result = validator.isHexColor(value);
-			const message = `${messageStart} ${result ? "" : "not "}a valid hex color`;
+			const message = `${messageStart} is ${result ? "" : "not "}a valid hex color`;
 			return [result, message];
 		},
 		/** Boolean validation test */
 		Bool: (): [boolean, string] => {
 			const result = typeof value === "boolean";
-			const message = `${messageStart} ${result ? "" : "not "}a boolean value`;
+			const message = `${messageStart} is ${result ? "" : "not "}a boolean value`;
 			return [result, message];
 		},
 		/** PlainText validation test */
 		PlainText: (): [boolean, string] => {
-			if (typeof value !== "string") return [false, `${messageStart} not a string value`];
+			if (typeof value !== "string") return [false, `${messageStart} is not a string value`];
 			if (value.length === 0) return [false, `${messageStart} has no value`];
 			if (field.validations && Object.keys(field.validations).length > 0) {
 				const { maxLength, minLength, pattern } = field.validations;
 				// maxLength Validation
 				if (typeof maxLength === "number" && value.length > maxLength)
-					return [
-						false,
-						`${messageStart.replace(
-							" is",
-							""
-						)} must not exceed the max character count of ${maxLength}`,
-					];
+					return [false, `${messageStart} must not exceed the max character count of ${maxLength}`];
 				// minLength Validation
-				if (typeof minLength === "number" && value.length > minLength)
-					return [
-						false,
-						`${messageStart.replace(
-							" is",
-							""
-						)} must not exceed the min character count of ${minLength}`,
-					];
+				if (typeof minLength === "number" && value.length < minLength)
+					return [false, `${messageStart} must exceed the min character count of ${minLength}`];
 				// pattern Validation
 				if (pattern instanceof RegExp && value.search(pattern) < 0)
 					return [
@@ -155,11 +143,11 @@ export const testItemValidations = (value: any, field: CollectionField): [boolea
 						`${messageStart} must be alphanumerical and not contain any spaces or special characters`,
 					];
 			}
-			return [true, `${messageStart} a valid PlainText input`];
+			return [true, `${messageStart} is a valid PlainText input`];
 		},
 		/** Number validation test */
 		Number: (): [boolean, string] => {
-			if (typeof value !== "number") return [false, `${messageStart} not a number`];
+			if (typeof value !== "number") return [false, `${messageStart} is not a number`];
 			if (field.validations && Object.keys(field.validations).length > 0) {
 				const { allowNegative, maximum, minimum, decimalPlaces, format } = field.validations;
 				// (Allow Negative) If the value is is negative and 'allowNegative' is false
@@ -181,10 +169,7 @@ export const testItemValidations = (value: any, field: CollectionField): [boolea
 				};
 				// (Decimal Places) If the number exceeds the maximum number of decimal places
 				if (typeof decimalPlaces === "number" && countDecimals(value) > decimalPlaces) {
-					return [
-						false,
-						`${messageStart} cannot exceed a more than ${decimalPlaces} decimal places`,
-					];
+					return [false, `${messageStart} cannot exceed more than ${decimalPlaces} decimal places`];
 				}
 				// Number format
 				if (format === "integer" && countDecimals(value) > 0) {
@@ -195,16 +180,16 @@ export const testItemValidations = (value: any, field: CollectionField): [boolea
 		},
 		/** Link validation test */
 		Link: (): [boolean, string] => {
-			if (typeof value !== "string") return [false, `${messageStart} not a string value`];
+			if (typeof value !== "string") return [false, `${messageStart} is not a string value`];
 			const result = validator.isURL(value);
-			const message = `${messageStart} ${result ? "" : "not "}a valid link`;
+			const message = `${messageStart} is ${result ? "" : "not "}a valid link`;
 			return [result, message];
 		},
 		Option: (): [boolean, string] => {
 			const options = field.validations!.options! as CollectionValidationOption[];
 			/** Does the option chosen by the user exists */
 			const result = options.filter((option) => value === option.name).length > 0;
-			const message = `${messageStart} ${result ? "" : "not "}a valid option`;
+			const message = `${messageStart} is ${result ? "" : "not "}a valid option`;
 			return [result, message];
 		},
 		// Date: (): [boolean, string] => {
