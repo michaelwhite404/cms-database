@@ -1,11 +1,13 @@
 import slugify from "slugify";
 import validator from "validator";
+import a from "indefinite";
 
 import {
 	CollectionField,
 	CollectionValidations,
 	CollectionValidationOption,
 } from "../interfaces/collectionInterfaces";
+import fieldTypes from "../enums/fieldTypes";
 
 type CVFailed = [false, string];
 type CVPassed = [true, CollectionField];
@@ -36,7 +38,7 @@ export const notReservedField = (name: string) => {
  * @returns {[boolean, string]} A boolean indicating whether the validations passes, and a
  *    message about the results
  */
-const testAllowedFields = (
+export const testAllowedFields = (
 	type: string,
 	validations: CollectionValidations,
 	acceptedField: string,
@@ -47,7 +49,10 @@ const testAllowedFields = (
 	// Invalid fields
 	const invalidFields = Object.keys(validations).filter((x) => !accept.includes(x));
 	if (invalidFields.length > 0) {
-		const message = `The validations '${invalidFields.join(", ")}' are not a valid for a ${type}`;
+		const words = invalidFields.length > 1 ? ["s", "are"] : ["", "is"];
+		const message = `The validation${words[0]} '${invalidFields.join(", ")}' ${
+			words[1]
+		} not valid for ${a(type)} field`;
 		return [false, message];
 	}
 	return [true, "passed"];
@@ -68,7 +73,7 @@ const typeCheck = (
 ): ReturnedTypeCheck => {
 	if (validationField === undefined) return [true, "undefined"];
 	if (typeof validationField !== type) {
-		return [false, `The validation '${validationName}' for the field '${name}' must be a ${type}}`];
+		return [false, `The validation '${validationName}' for the field '${name}' must be a ${type}`];
 	}
 	return [true, "passed"];
 };
@@ -199,15 +204,18 @@ export const testItemValidations = (value: any, field: CollectionField): [boolea
 	return validations[field.type]();
 };
 
-export const testCollectionValidations = (
-	field: Partial<CollectionField>
-): ReturnedCollectionValidation => {
+export const testCollectionValidations = (field: any): ReturnedCollectionValidation => {
 	if (field === undefined) return [false, "No field was provided"];
-	if (!field.name) return [false, "All fields must have a name"];
+	if (field.name === undefined) return [false, "All fields must have a name"];
 	if (typeof field.name !== "string") return [false, "Name must be a string"];
 	if (!notReservedField(field.name)) return [false, `'${field.name}' is a reserved name.`];
-	if (!field.type) return [false, "All fields must have a type"];
+	if (field.type === undefined) return [false, "All fields must have a type"];
 	if (typeof field.type !== "string") return [false, "Type must be a string"];
+	if (!fieldTypes.includes(field.type))
+		return [
+			false,
+			`'${field.type}' is not a valid type. Valid field types include: ${fieldTypes.join(", ")}`,
+		];
 	if (field.type === "User") return [false, "User cannot set field as type 'User'."];
 	/** Default field if no validations*/
 	const defaultField = { ...field, validations: { singleLine: true } } as CollectionField;
@@ -232,13 +240,13 @@ export const testCollectionValidations = (
 			return validations.Standard("Color");
 		},
 		Bool: (): ReturnedCollectionValidation => {
-			if (field.validations)
+			if (field.validations && Object.keys(field.validations).length > 0)
 				return [false, `The field '${field.name}' needs no validations as it is a boolean type`];
 			const passedField = field as CollectionField;
 			return [true, passedField];
 		},
 		PlainText: (): ReturnedCollectionValidation => {
-			if (field.validations) {
+			if (field.validations && Object.keys(field.validations).length > 0) {
 				const fieldsPassed = testAllowedFields(
 					"PlainText",
 					field.validations,
@@ -255,16 +263,16 @@ export const testCollectionValidations = (
 				if (maxLengthTest[1] === "passed" && lessThanZero(maxLength!))
 					return [
 						false,
-						`The validation 'maxLength' cannot be less than zero for the field '${name}`,
+						`The validation 'maxLength' cannot be less than zero for the field '${name}'`,
 					];
 				// Min Length must be a number
 				const minLengthTest = typeCheck(minLength, "minLength", "number", name);
 				if (!minLengthTest[0]) return minLengthTest;
 				// If minLength exists but is less than zero
-				if (minLengthTest[1] === "passed" && lessThanZero(maxLength!))
+				if (minLengthTest[1] === "passed" && lessThanZero(minLength!))
 					return [
 						false,
-						`The validation 'minLength' cannot be less than zero for the field '${name}`,
+						`The validation 'minLength' cannot be less than zero for the field '${name}'`,
 					];
 				// Max Length must be greater than min length
 				if (minLength && maxLength && minLength > maxLength) {
@@ -276,8 +284,7 @@ export const testCollectionValidations = (
 				// Single Line must be a boolean
 				const singleLineTest = typeCheck(singleLine, "singleLine", "boolean", name);
 				if (!singleLineTest[0]) return singleLineTest;
-				if (singleLineTest[1] === "undefined") field.validations.singleLine === true;
-
+				if (singleLineTest[1] === "undefined") field.validations.singleLine = true;
 				const passedField = field as CollectionField;
 				return [true, passedField];
 			}
@@ -285,16 +292,17 @@ export const testCollectionValidations = (
 			return [true, defaultField];
 		},
 		Number: (): ReturnedCollectionValidation => {
-			if (field.validations) {
+			if (field.validations && Object.keys(field.validations).length > 0) {
 				if (!field.validations.format)
 					return [
 						false,
 						`The field '${field.name}' must have a 'format' validation. The value can either be 'integer' or 'decimal'.`,
 					];
-				let format = <"integer" | "decimal">"";
-				if (field.validations.format === "integer" || field.validations.format === "decimal") {
-					format = field.validations.format;
-				} else return [false, `The validation 'format' can only be 'integer' or 'deciamal`];
+				if (field.validations.format !== "integer" && field.validations.format !== "decimal")
+					return [
+						false,
+						`The validation 'format' value for the field '${field.name}' can only be 'integer' or 'deciamal`,
+					];
 
 				const fieldsPassed = testAllowedFields(
 					"Number",
@@ -307,26 +315,14 @@ export const testCollectionValidations = (
 				);
 				if (!fieldsPassed[0]) return fieldsPassed;
 
-				const { maximum, minimum, allowNegative, decimalPlaces } = field.validations;
+				const { format, maximum, minimum, allowNegative, decimalPlaces } = field.validations;
 
 				// Maximum must be a number
 				const maximumTest = typeCheck(maximum, "maximum", "number", name);
 				if (!maximumTest[0]) return maximumTest;
-				//If maximum exists but is less than zero
-				if (maximumTest[1] === "passed" && lessThanZero(maximum!))
-					return [
-						false,
-						`The validation 'maximum' cannot be less than zero for the field '${name}`,
-					];
 				// Minimum must be a number
 				const minimumTest = typeCheck(minimum, "minimum", "number", name);
 				if (!minimumTest[0]) return minimumTest;
-				//If minimum exists but is less than zero
-				if (minimumTest[1] === "passed" && lessThanZero(minimum!))
-					return [
-						false,
-						`The validation 'minimum' cannot be less than zero for the field '${name}`,
-					];
 				// Maximum must be greater than minimum
 				if (minimum && maximum && minimum > maximum) {
 					return [
@@ -338,7 +334,16 @@ export const testCollectionValidations = (
 				const allowNegativeTest = typeCheck(allowNegative, "allowNegative", "boolean", name);
 				if (!allowNegativeTest[0]) return allowNegativeTest;
 				// If allow negative is not set, make it false
-				if (allowNegativeTest[1] === "undefined") field.validations.allowNegative === false;
+				if (allowNegativeTest[1] === "undefined") field.validations.allowNegative = false;
+				// If allowNegative
+				if (
+					field.validations.allowNegative === false &&
+					((maximum && lessThanZero(maximum)) || (minimum && lessThanZero(minimum)))
+				)
+					return [
+						false,
+						`The validations 'minimum' and 'maximum' can only be negative when 'allowNegative' is to true for the field '${field.name}'`,
+					];
 				// Decimal Places must be a number
 				const decimalPlacesTest = typeCheck(decimalPlaces, "decimalPlaces", "number", name);
 				if (!decimalPlacesTest[0]) return decimalPlacesTest;
@@ -349,15 +354,15 @@ export const testCollectionValidations = (
 					];
 				if (format === "decimal" && decimalPlacesTest[1] === "undefined")
 					field.validations.decimalPlaces = 2;
-				if (decimalPlacesTest[1] === "passed" && decimalPlaces! < 1)
+				if (decimalPlacesTest[1] === "passed" && decimalPlaces < 1)
 					return [
 						false,
-						`The validation 'decimalPlaces' cannot be less than one for the field '${name}`,
+						`The validation 'decimalPlaces' cannot be less than 1 for the field '${name}' when the 'format' is a decimal`,
 					];
-				if (decimalPlacesTest[1] === "passed" && decimalPlaces! > 5)
+				if (decimalPlacesTest[1] === "passed" && decimalPlaces > 5)
 					return [
 						false,
-						`The validation 'decimalPlaces' cannot be greater than 5 for the field '${name}`,
+						`The validation 'decimalPlaces' cannot be greater than 5 for the field '${name}'`,
 					];
 
 				const passedField = field as CollectionField;
@@ -366,7 +371,7 @@ export const testCollectionValidations = (
 			// If no validations
 			const defaultNumberField = {
 				...field,
-				validations: { format: "decimal", decimalPlaces: 2 },
+				validations: { format: "decimal", decimalPlaces: 2, allowNegative: false },
 			} as CollectionField;
 			return [true, defaultNumberField];
 		},
@@ -375,14 +380,16 @@ export const testCollectionValidations = (
 		},
 		Option: (): ReturnedCollectionValidation => {
 			if (field.validations) {
-				const fieldsPassed = testAllowedFields("Number", field.validations, "options");
+				const fieldsPassed = testAllowedFields("Options", field.validations, "options");
 				if (!fieldsPassed[0]) return fieldsPassed;
 				if (!field.validations.options || !Array.isArray(field.validations.options))
 					return [
 						false,
 						`The field '${field.name}' must have an 'options' validation that contains an array of options`,
 					];
-				const requestOptions = field.validations.options as string[];
+				const requestOptions = field.validations.options as any[];
+				if (requestOptions.length === 0)
+					return [false, `The field '${field.name}' has no values in the 'options' array`];
 				if (requestOptions.filter((opt) => typeof opt !== "string").length > 0)
 					return [
 						false,

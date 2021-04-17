@@ -108,6 +108,7 @@ test("Outputs whether the input is a vaild `PlainText` item with validations", (
 	).toBe("The value for 'business-name' must exceed the min character count of 32");
 	expect(
 		testItemValidations(23, {
+			_id: "607475b2bb86c56568688c50",
 			name: "First Name",
 			type: "PlainText",
 			validations: { maxLength: 256 },
@@ -118,6 +119,7 @@ test("Outputs whether the input is a vaild `PlainText` item with validations", (
 	).toBe("The value for 'first-name' is not a string value");
 	expect(
 		testItemValidations(true, {
+			_id: "607475b2bb86c56568688c4f",
 			name: "Last Name",
 			type: "PlainText",
 			validations: { maxLength: 256 },

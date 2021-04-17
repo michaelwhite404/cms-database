@@ -103,9 +103,9 @@ export const getCollection = catchAsync(
 export const createCollection = catchAsync(
 	async (req: CustomRequest<CollectionModel>, res: Response, next: NextFunction) => {
 		/** Array holding finalized collection fields */
-		let fields: CollectionField[] = [];
+		let fields: Omit<CollectionField, "_id">[] = [];
 		/** Object that holds the 'primaryName' property */
-		let pObj = <CollectionField>{};
+		let pObj = <Omit<CollectionField, "_id">>{};
 		// If the body does not have a 'name' property, throw error
 		if (!req.body.name) return next(new AppError("A Collection must have a name", 400));
 		// If a slug was set
