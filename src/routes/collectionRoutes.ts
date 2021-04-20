@@ -1,6 +1,7 @@
 import { Router } from "express";
 import * as collectionController from "../controllers/collectionController";
 import itemRouter from "./itemRoutes";
+import fieldRouter from "./fieldRoutes";
 
 /** Router for collection routes */
 const router = Router({ mergeParams: true });
@@ -16,6 +17,7 @@ const router = Router({ mergeParams: true });
 ); */
 
 router.use("/:collection_id/items", itemRouter);
+router.use("/:collection_id/fields", fieldRouter);
 
 router
 	.route("/")
@@ -36,6 +38,6 @@ router
 	.patch(collectionController.updateCollection)
 	.delete(collectionController.deleteCollection);
 
-router.route("/:collection_id/fields").get(collectionController.getCollectionFields);
+// router.route("/:collection_id/fields").get(collectionController.getCollectionFields);
 
 export default router;

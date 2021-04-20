@@ -205,10 +205,12 @@ export const testItemValidations = (value: any, field: CollectionField): [boolea
 };
 
 export const testCollectionValidations = (field: any): ReturnedCollectionValidation => {
+	// Test Name Property
 	if (field === undefined) return [false, "No field was provided"];
 	if (field.name === undefined) return [false, "All fields must have a name"];
 	if (typeof field.name !== "string") return [false, "Name must be a string"];
 	if (!notReservedField(field.name)) return [false, `'${field.name}' is a reserved name.`];
+	//Test Type Proerty
 	if (field.type === undefined) return [false, "All fields must have a type"];
 	if (typeof field.type !== "string") return [false, "Type must be a string"];
 	if (!fieldTypes.includes(field.type))
@@ -217,6 +219,12 @@ export const testCollectionValidations = (field: any): ReturnedCollectionValidat
 			`'${field.type}' is not a valid type. Valid field types include: ${fieldTypes.join(", ")}`,
 		];
 	if (field.type === "User") return [false, "User cannot set field as type 'User'."];
+	// Test helpTest Property
+	if (field.helpText && typeof field.helpText !== "string")
+		return [false, "'helpText' must be a string"];
+	// Test Required Property
+	if (field.required && typeof field.required !== "boolean")
+		return [false, "'required' must be a boolean"];
 	/** Default field if no validations*/
 	const defaultField = { ...field, validations: { singleLine: true } } as CollectionField;
 	/** The field name */

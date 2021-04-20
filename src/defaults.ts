@@ -38,17 +38,22 @@ export const defaultPrimaryName: Omit<CollectionField, "_id"> = {
 	type: "PlainText",
 	slug: "name",
 	name: "Name",
+	primary: true,
+	validations: {
+		singleLine: true,
+	},
 };
 
 /** Default Primary Slug Object */
 export const defaultSlugName: Omit<CollectionField, "_id"> = {
 	validations: {
 		singleLine: true,
-		pattern: /^[a-z0-9]+(?:-[a-z0-9]+)*$/,
+		// pattern: /^[a-z0-9]+(?:-[a-z0-9]+)*$/,
 	},
 	editable: true,
 	required: true,
 	type: "PlainText",
-	slug: "name",
-	name: "Name",
+	slug: "slug",
+	name: "Slug",
+	primary: true,
 };

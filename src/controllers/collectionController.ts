@@ -4,7 +4,7 @@ import uniqBy from "lodash.uniqby";
 
 import Collection from "../models/collectionModel";
 import catchAsync from "../utils/catchAsync";
-import { defaultCollectonFields, defaultPrimaryName } from "../defaults";
+import { defaultCollectonFields, defaultPrimaryName, defaultSlugName } from "../defaults";
 import AppError from "../utils/appError";
 import { testCollectionValidations } from "../utils/validations";
 import { CustomRequest } from "../interfaces/customRequestInterface";
@@ -12,6 +12,7 @@ import { CollectionField, CollectionModel } from "../interfaces/collectionInterf
 import APIFeatures from "../utils/APIFeatures";
 import Database from "../models/databaseModel";
 import { CustomCollectionField } from "../customCollectionField";
+import primaryChecker from "../utils/primaryChecker";
 
 /**
  * Adds database id from route paramater to request body
@@ -104,8 +105,6 @@ export const createCollection = catchAsync(
 	async (req: CustomRequest<CollectionModel>, res: Response, next: NextFunction) => {
 		/** Array holding finalized collection fields */
 		let fields: Omit<CollectionField, "_id">[] = [];
-		/** Object that holds the 'primaryName' property */
-		let pObj = <Omit<CollectionField, "_id">>{};
 		// If the body does not have a 'name' property, throw error
 		if (!req.body.name) return next(new AppError("A Collection must have a name", 400));
 		// If a slug was set
@@ -120,38 +119,26 @@ export const createCollection = catchAsync(
 		if (req.body.fields && !Array.isArray(req.body.fields))
 			return next(new AppError("'fields' must be a type of array", 400));
 		/** An array copy of the collection fields from the request body */
-		let bodyFields: CollectionField[] = [...req.body.fields];
+		let bodyFields: any[] = [];
+		if (req.body.fields != undefined && req.body.fields.length > 0)
+			bodyFields = [...req.body.fields];
 		// If there are collection fields in the body
-		if (bodyFields) {
+		if (bodyFields.length > 0) {
 			// If there are any duplicates, throw error
 			if (uniqBy(bodyFields, "name").length < bodyFields.length)
 				return next(new AppError("All fields must have diffferent names", 400));
-			/** Holds the indexes of objects that have the property 'primaryName' as true */
-			const pNameIndex: number[] = [];
-			// Store all indexes of objects with the property 'primaryName'
-			bodyFields.forEach((field, index) => {
-				if (field.primaryName === true) pNameIndex.push(index);
-			});
 
-			// If there is more than 1 object that has the property 'primaryName' as true
-			if (pNameIndex.length > 1)
-				return next(new AppError("You cannot have multiple Primary Names", 400));
-			// If there is only 1 object that has the property 'primaryName' as true
-			if (pNameIndex.length === 1) {
-				pObj = bodyFields.splice(pNameIndex[0], 1)[0];
-				// If the 'primaryName' is not of type 'PlainText'
-				if (pObj.type !== "PlainText")
-					return next(new AppError("Primary Name must be of type 'PlainText'", 400));
-				pObj.slug = slugify(pObj.name, { lower: true });
-				pObj.required = true;
-				pObj.editable = true;
-			}
-			// If no primaryName was set, set default primary name
-			else {
-				pObj = defaultPrimaryName;
-			}
-			// Push Primary Name Object into finalized fields array
-			fields.push(pObj);
+			// Test primary Fields
+			// Primary Naame
+			let pNameChecker = primaryChecker(bodyFields, "Name");
+			if (!pNameChecker[0]) return next(new AppError(pNameChecker[1], 400));
+			fields.push(pNameChecker[1]);
+			// Primary Slug
+			let pSlugChecker = primaryChecker(pNameChecker[2], "Slug");
+			if (!pSlugChecker[0]) return next(new AppError(pSlugChecker[1], 400));
+			fields.push(pSlugChecker[1]);
+			// Get remaining body fields
+			bodyFields = pSlugChecker[2];
 
 			// Store Collecion Field
 			for (const testField of bodyFields) {
@@ -171,7 +158,7 @@ export const createCollection = catchAsync(
 		}
 		// Push default primary name field
 		else {
-			fields.push(defaultPrimaryName);
+			fields.push(defaultPrimaryName, defaultSlugName);
 		}
 		// Push default collection fields to the end of the fields array
 		fields.push(...defaultCollectonFields);

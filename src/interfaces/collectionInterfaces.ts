@@ -19,8 +19,8 @@ export interface CollectionField {
 	helpText?: string;
 	/** The order number of the field */
 	order?: number;
-	/** Denotes collection's primary name (only one allowed) */
-	primaryName?: boolean;
+	/** Denotes field is a primary field (only one allowed) */
+	primary?: boolean;
 }
 
 export interface CollectionValidations {

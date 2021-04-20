@@ -13,21 +13,24 @@ export class CustomCollectionField implements CollectionField {
 	slug: string;
 	validations: CollectionValidations | undefined;
 	helpText: string | undefined;
+	primary: boolean;
 
 	/**
 	 *
 	 * @param name The name of the collection field
 	 * @param type The type of collection field
-	 * @param required Unique slug identifier for the field
+	 * @param required Shows whether the field is a required field
 	 * @param validations Validations an item field must adhere to
 	 * @param helpText Human readable text that describes the field
+	 * @param primary True if field is a primary field
 	 */
 	constructor(
 		name: string,
 		type: string,
 		required: boolean = false,
 		validations?: CollectionValidations,
-		helpText?: string
+		helpText?: string,
+		primary?: boolean
 	) {
 		this.name = name;
 		this.type = type;
@@ -36,5 +39,6 @@ export class CustomCollectionField implements CollectionField {
 		this.required = required;
 		this.validations = validations;
 		this.helpText = helpText;
+		if (primary) this.primary = true;
 	}
 }
