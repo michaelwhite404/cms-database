@@ -93,6 +93,9 @@ collectionSchema.pre<CollectionModel>("save", function (next) {
 	next();
 });
 
+collectionSchema.index({ database: 1, name: 1 }, { unique: true });
+collectionSchema.index({ database: 1, slug: 1 }, { unique: true });
+
 /** Model for Collection Schema */
 const Collection: Model<CollectionModel> = model<CollectionModel>("Collection", collectionSchema);
 
