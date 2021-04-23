@@ -1,6 +1,7 @@
 import { Request } from "express";
 import { CollectionModel } from "../interfaces/collectionInterfaces";
 import PathParamsDictionary from "../interfaces/pathParamInterface";
+import { UserModel } from "./userInterfaces";
 
 export interface CustomRequest<T> extends Request {
 	/**
@@ -9,6 +10,7 @@ export interface CustomRequest<T> extends Request {
 	body: Partial<T>;
 	/** An object of parameter variables and their values */
 	params: PathParamsDictionary;
+	user?: T extends UserModel ? UserModel : any;
 }
 
 export interface CustomCollectionRequest<T, U extends CollectionModel> extends CustomRequest<T> {

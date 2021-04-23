@@ -213,8 +213,7 @@ export const deleteCollection = catchAsync(
 			return next(new AppError("There is no collection with this ID", 404));
 		}
 
-		// TODO
-		// DELETE items with collection_id
+		// TODO DELETE items with collection_id
 
 		res.status(200).json({
 			status: "success",

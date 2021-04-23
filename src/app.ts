@@ -7,21 +7,21 @@ import rateLimit from "express-rate-limit";
 
 import AppError from "./utils/appError";
 import collectionRouter from "./routes/collectionRoutes";
-import itemRouter from "./routes/itemRoutes";
-import databaseRouter from "./routes/databaseRoutes"
+import databaseRouter from "./routes/databaseRoutes";
+import userRouter from "./routes/userRoutes";
 import globalErrorHandler from "./controllers/errorController";
 
 const app = express();
 
 if (process.env.NODE_ENV === "development") {
-  app.use(morgan("dev"));
+	app.use(morgan("dev"));
 }
 
-/** Limits requests from same API (Options)*/ 
+/** Limits requests from same API (Options)*/
 const limiter = rateLimit({
-  max: 60,
-  windowMs: 60 * 1000,
-  message: "To many requests from this IP, please try again in an hour",
+	max: 60,
+	windowMs: 60 * 1000,
+	message: "To many requests from this IP, please try again in an hour",
 });
 
 // Body parser, reading data from body into req.body
@@ -37,12 +37,12 @@ app.use(compression());
 
 app.use("/api", limiter);
 app.use("/api/v1/collections", collectionRouter);
-app.use("/api/v1/items", itemRouter);
 app.use("/api/v1/databases", databaseRouter);
+app.use("/api/v1/users", userRouter);
 
 // If url is not found
 app.all("*", (req, _, next) => {
-  next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
+	next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
 });
 
 app.use(globalErrorHandler);
