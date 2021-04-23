@@ -6,58 +6,64 @@ import crypto from "crypto";
 import { UserModel, UserModelDocument } from "../interfaces/userInterfaces";
 
 /** User Schema */
-const userSchema: Schema<UserModelDocument, Model<Document<UserModel>>> = new Schema({
-	firstName: {
-		type: String,
-		required: [true, "A user must have a first name"],
-	},
-	lastName: {
-		type: String,
-		required: [true, "A user must have a last name"],
-	},
-	email: {
-		type: String,
-		required: [true, "A user must have an email address"],
-		unique: true,
-		// validate: {
-		// validator.i
-		// }
-	},
-	password: {
-		type: String,
-		required: [true, "Please provide a password"],
-		minlength: 8,
-		select: false,
-	},
-	passwordConfirm: {
-		type: String,
-		required: [true, "Please confirm your password"],
-		validate: {
-			// This only works on CREATE or SAVE
-			validator: function (val: string): boolean {
-				// @ts-ignore
-				return val === this.password;
+const userSchema: Schema<UserModelDocument, Model<Document<UserModel>>> = new Schema(
+	{
+		firstName: {
+			type: String,
+			required: [true, "A user must have a first name"],
+		},
+		lastName: {
+			type: String,
+			required: [true, "A user must have a last name"],
+		},
+		email: {
+			type: String,
+			required: [true, "A user must have an email address"],
+			unique: true,
+			// validate: {
+			// validator.i
+			// }
+		},
+		password: {
+			type: String,
+			required: [true, "Please provide a password"],
+			minlength: 8,
+			select: false,
+		},
+		passwordConfirm: {
+			type: String,
+			required: [true, "Please confirm your password"],
+			validate: {
+				// This only works on CREATE or SAVE
+				validator: function (val: string): boolean {
+					// @ts-ignore
+					return val === this.password;
+				},
+				message: "Passwords are not the same!",
 			},
-			message: "Passwords are not the same!",
+		},
+		slug: String,
+		passwordChangedAt: Date,
+		passwordResetToken: String,
+		passwordResetExpires: Date,
+		lastLogin: Date,
+		createdAt: {
+			type: Date,
+			default: () => Date.now(),
+			required: true,
+			immutable: true,
+		},
+		active: {
+			type: Boolean,
+			default: true,
+			select: false,
 		},
 	},
-	slug: String,
-	passwordChangedAt: Date,
-	passwordResetToken: String,
-	passwordResetExpires: Date,
-	lastLogin: Date,
-	createdAt: {
-		type: Date,
-		default: () => Date.now(),
-		required: true,
-		immutable: true,
-	},
-	active: {
-		type: Boolean,
-		default: true,
-		select: false,
-	},
-});
+	{
+		toJSON: { virtuals: true },
+		toObject: { virtuals: true },
+	}
+);
 
 userSchema.virtual("fullName").get(function (this: UserModel) {
 	return `${this.firstName} ${this.lastName}`;

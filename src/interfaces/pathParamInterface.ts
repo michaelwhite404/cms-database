@@ -9,4 +9,6 @@ export default interface PathParamsDictionary extends ParamsDictionary {
 	database_id: string;
 	/** The path parameter value for the field id */
 	field_id: string;
+	/** The path parameter value for the user id */
+	user_id: string;
 }
