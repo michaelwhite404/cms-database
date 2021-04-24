@@ -14,6 +14,13 @@ const itemSchema = new Schema(
 			required: [true, "An item must be added to a collection"],
 			immutable: true,
 		},
+		database: {
+			type: Types.ObjectId,
+			ref: "Database",
+			required: [true, "An item must be added to a database"],
+			immutable: true,
+			select: false,
+		},
 		"created-by": {
 			type: String,
 			immutable: true,

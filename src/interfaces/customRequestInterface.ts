@@ -16,4 +16,6 @@ export interface CustomRequest<T> extends Request {
 export interface CustomCollectionRequest<T, U extends CollectionModel> extends CustomRequest<T> {
 	/** Collection retrieved from route parameter */
 	collection: U;
+	/** Database retrieved from route parameter */
+	database: string;
 }

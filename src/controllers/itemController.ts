@@ -38,9 +38,11 @@ export const collectionExists = catchAsync(
 	) => {
 		if (!req.body._cid)
 			return next(new AppError("Collection ID is required but is not present", 400));
-		const collection = await Collection.findById(req.body._cid);
+		const collection = await Collection.findById(req.body._cid).select("+database");
 		if (!collection) return next(new AppError("There is no collection with this ID", 404));
 		req.collection = collection;
+		req.database = collection.database;
+		req.database = (undefined as unknown) as string;
 		next();
 	}
 );
@@ -239,12 +241,16 @@ export const createItem = catchAsync(
 		/** Created Item */
 		const item = await Item.create({
 			_cid: req.body._cid,
+			database: req.collection.database,
 			...testedFields,
 		});
 
+		const displayedItem = JSON.parse(JSON.stringify(item._doc));
+		displayedItem.database = undefined;
+
 		res.status(201).json({
 			status: "success",
-			item,
+			item: displayedItem,
 		});
 	}
 );
@@ -359,7 +365,7 @@ export const putItem = catchAsync(
 		let oldItem = await Item.findById({
 			_id: req.params.item_id,
 			_cid: req.body._cid,
-		});
+		}).select("+database");
 
 		if (!oldItem) {
 			return next(new AppError("There is no item with this ID", 404));
@@ -392,6 +398,7 @@ export const putItem = catchAsync(
 
 		const update = {
 			_cid: oldItem._cid,
+			database: oldItem.database,
 			...testedFields,
 			"updated-on": oldItem["updated-on"],
 			"created-on": Date.now(),
@@ -405,6 +412,8 @@ export const putItem = catchAsync(
 			update,
 			{ new: true }
 		);
+		// Take database out of output
+		updatedItem!.database = (undefined as unknown) as string;
 
 		res.status(200).json({
 			status: "success",
