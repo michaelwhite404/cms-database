@@ -12,5 +12,5 @@ export default interface DatabaseModel extends Document {
 	/** The timezone of the client of the database creator */
 	timezone: string;
 	/** The date the database was created */
-	createdAt: string;
+	createdAt: Date;
 }

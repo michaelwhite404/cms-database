@@ -34,6 +34,7 @@ const databaseSchema = new Schema({
 
 databaseSchema.pre<DatabaseModel>("save", function (next) {
 	if (this.isNew) {
+		this.createdAt = new Date(Date.now());
 		this.slug = slugify(this.name, { lower: true }) + "_" + nanoid(12);
 	} else {
 		const shortId = this.slug.split("_")[1];

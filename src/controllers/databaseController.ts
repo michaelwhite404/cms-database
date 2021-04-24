@@ -17,17 +17,22 @@ import catchAsync from "../utils/catchAsync";
  * @param {NextFunction} next Express next middleware function
  */
 export const getDatabase = catchAsync(
-	async (req: CustomRequest<DatabaseModel>, res: Response, next: NextFunction) => {
-		/** Database returned */
-		const database = await Database.findById(req.params.database_id).select("-__v");
-		// If no database was found
-		if (!database) {
+	async (req: CustomRequest<DatabaseRoleModel>, res: Response, next: NextFunction) => {
+		const databaseRole = await DatabaseRole.findOne({
+			database: req.params.database_id,
+			user: req.user!._id,
+		}).populate({
+			path: "database",
+			select: "-__v",
+		});
+
+		if (!databaseRole) {
 			return next(new AppError("There is no database with this ID", 404));
 		}
 
 		res.status(200).json({
 			status: "success",
-			database,
+			database: databaseRole.database,
 		});
 	}
 );
@@ -38,12 +43,12 @@ export const getDatabase = catchAsync(
  * @param {Response} res Express response object
  */
 export const getAllDatabases = catchAsync(
-	async (req: CustomRequest<DatabaseRoleModel>, res: Response) => {
-		const features = new APIFeatures<DatabaseRoleModel>(
-			DatabaseRole.find({ user: req.user!._id }).populate({
-				path: "database",
-				select: "-__v",
-			}),
+	async (req: CustomRequest<DatabaseModel>, res: Response) => {
+		const myDatabases = await DatabaseRole.find({ user: req.user!._id });
+		const myDatabaseIds = myDatabases.map((d) => d.database) as string[];
+		console.log(myDatabaseIds);
+		const features = new APIFeatures<DatabaseModel>(
+			Database.find({ _id: { $in: myDatabaseIds } }),
 			req.query
 		)
 			.filter()
@@ -51,12 +56,7 @@ export const getAllDatabases = catchAsync(
 			.limitFields()
 			.paginate();
 
-		const accessableDatabases = await features.query;
-
-		const databases = accessableDatabases.map(
-			(d) => d.database
-			// Object.assign({ role: d.role }, d.database._doc)
-		);
+		const databases = await features.query;
 
 		res.status(200).json({
 			status: "success",
@@ -138,6 +138,12 @@ export const deleteDatabase = catchAsync(
 	}
 );
 
+/**
+ * Allows database to be shared based on database ID route parameter
+ * @param {CustomRequest<UserModel & DatabaseRoleModel>} req Custom Express request object
+ * @param {Response} res Express response object
+ * @param {NextFunction} next Express next middleware function
+ */
 export const shareDatabase = catchAsync(
 	async (req: CustomRequest<UserModel & DatabaseRoleModel>, res: Response, next: NextFunction) => {
 		const email = req.body.email;
