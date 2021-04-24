@@ -2,8 +2,10 @@ import { NextFunction, Response } from "express";
 import { CustomRequest } from "../interfaces/customRequestInterface";
 import DatabaseModel from "../interfaces/databaseInterface";
 import DatabaseRoleModel from "../interfaces/databaseRoleInterface";
+import { UserModel } from "../interfaces/userInterfaces";
 import Database from "../models/databaseModel";
 import DatabaseRole from "../models/databaseRoleModel";
+import User from "../models/userModel";
 import APIFeatures from "../utils/APIFeatures";
 import AppError from "../utils/appError";
 import catchAsync from "../utils/catchAsync";
@@ -32,7 +34,7 @@ export const getDatabase = catchAsync(
 
 /**
  * Retrieves all databases the user has access to
- * @param {CustomRequest<DatabaseModel>} req Custom Express request object
+ * @param {CustomRequest<DatabaseRoleModel>} req Custom Express request object
  * @param {Response} res Express response object
  */
 export const getAllDatabases = catchAsync(
@@ -132,6 +134,44 @@ export const deleteDatabase = catchAsync(
 			databasesDeleted: 1,
 			// collectionsDeleted: number,
 			// itemsDeleted: number
+		});
+	}
+);
+
+export const shareDatabase = catchAsync(
+	async (req: CustomRequest<UserModel & DatabaseRoleModel>, res: Response, next: NextFunction) => {
+		const email = req.body.email;
+		const role = req.body.role;
+		// If the user puts in their own email
+		if (email === req.user!.email)
+			return next(new AppError("You cannot share this database with yourself", 400));
+		// If they set someone else as a user
+		if (role === "owner") return next(new AppError("You cannot make someone else an owner", 400));
+		// Get user and current user's database role
+		const [user, databaseRole] = await Promise.all([
+			User.findOne({ email }),
+			DatabaseRole.findOne({ database: req.params.database_id, user: req.user!._id }),
+			// Data
+		]);
+		// If the user doesn't exist
+		if (!user) return next(new AppError("There is no user with this email", 404));
+		// If the current user has no access to the database
+		if (!databaseRole) return next(new AppError("There is no database with this ID", 404));
+		// If the current user is only a viewer
+		if (databaseRole.role === "viewer")
+			return next(new AppError("You are not authorized to perform this action", 403));
+		// If the user already has access to the database
+		if (await DatabaseRole.findOne({ database: req.params.database_id, user: user._id }))
+			return next(new AppError(`${user.fullName} already has access to this database`, 400));
+		await DatabaseRole.create({
+			user: user._id,
+			database: req.params.database_id,
+			role,
+		});
+
+		res.status(200).json({
+			status: "success",
+			message: `${user.fullName} is now a ${role} of this database`,
 		});
 	}
 );

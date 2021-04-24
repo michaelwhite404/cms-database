@@ -7,6 +7,8 @@ export interface UserModel extends Document {
 	firstName: string;
 	/** User's last name */
 	lastName: string;
+	/** The user's first and last name (Virtual Property) */
+	fullName: string;
 	/** User's email address */
 	email: string;
 	/** Unique user slug identifier */
