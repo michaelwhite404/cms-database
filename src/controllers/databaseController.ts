@@ -124,16 +124,23 @@ export const updateDatabase = catchAsync(
  */
 export const deleteDatabase = catchAsync(
 	async (req: CustomRequest<DatabaseModel>, res: Response, next: NextFunction) => {
-		const [database, collections, items] = await Promise.all([
-			Database.findByIdAndDelete(req.params.database_id),
-			Collection.deleteMany({ database: req.params.database_id }),
-			Item.deleteMany({ database: req.params.database_id }),
-		]);
-
-		// If no database is returned, throw error
-		if (!database) {
+		const databaseId = req.params.database_id;
+		const databaseRole = await DatabaseRole.findOne({ database: databaseId, user: req.user!._id });
+		// If the user has no access
+		if (!databaseRole) {
 			return next(new AppError("There is no database with this ID", 404));
 		}
+		// If they have access but aren't an owner
+		if (databaseRole && databaseRole.role != "owner") {
+			return next(new AppError("You are not authorized to perform this action", 403));
+		}
+
+		const [collections, items] = await Promise.all([
+			Collection.deleteMany({ database: databaseId }),
+			Item.deleteMany({ database: databaseId }),
+			Database.findByIdAndDelete(databaseId),
+		]);
+
 		// Send response
 		res.status(200).json({
 			status: "success",
