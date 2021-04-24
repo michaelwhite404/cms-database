@@ -2,6 +2,7 @@ import { NextFunction, Response } from "express";
 import { CustomRequest } from "../interfaces/customRequestInterface";
 import DatabaseModel from "../interfaces/databaseInterface";
 import Database from "../models/databaseModel";
+import DatabaseRole from "../models/databaseRoleModel";
 import APIFeatures from "../utils/APIFeatures";
 import AppError from "../utils/appError";
 import catchAsync from "../utils/catchAsync";
@@ -62,7 +63,12 @@ export const getAllDatabases = catchAsync(
 export const createDatabase = catchAsync(
 	async (req: CustomRequest<DatabaseModel>, res: Response) => {
 		/** Database created */
-		const database = await Database.create({ name: req.body.name });
+		const database = await Database.create({ name: req.body.name, createdBy: req.user!._id });
+		await DatabaseRole.create({
+			user: req.user!._id,
+			database: database._id,
+			role: "owner",
+		});
 
 		res.status(201).json({
 			status: "success",

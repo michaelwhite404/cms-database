@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
+import { CookieOptions } from "express-serve-static-core";
 import jwt from "jsonwebtoken";
-// import { promisify } from "util";
+import { promisify } from "util";
 import crypto from "crypto";
 
 import { CustomRequest } from "../interfaces/customRequestInterface";
@@ -18,11 +19,11 @@ const signToken = (id: UserModel["_id"]): string => {
 
 const createSendToken = (user: UserModel, statusCode: number, res: Response) => {
 	const token = signToken(user._id);
-	const cookieOptions = {
+	const cookieOptions: CookieOptions = {
 		expires: new Date(Date.now() + +process.env.JWT_COOKIE_EXPIRES_IN! * 24 * 60 * 60 * 1000),
 		httpOnly: true,
 	};
-	// if (process.env.NODE_ENV === "production") cookieOptions.secure = true;
+	if (process.env.NODE_ENV === "production") cookieOptions.secure = true;
 
 	res.cookie("jwt", token, cookieOptions);
 
@@ -88,7 +89,7 @@ export const logout = (_: Request, res: Response) => {
 	res.status(200).json({ status: "success" });
 };
 
-/* export const protect = catchAsync(
+export const protect = catchAsync(
 	async (req: CustomRequest<UserModel>, res: Response, next: NextFunction) => {
 		// 1) Getting token and check if it's there
 		let token;
@@ -120,8 +121,8 @@ export const logout = (_: Request, res: Response) => {
 		// GRANT ACCESS TO PROTECTED ROUTE
 		next();
 	}
-); 
-
+);
+/*
 export const restrictTo = (...roles: string[]) => {
 	return (req: CustomRequest<UserModel>, _: Response, next: NextFunction) => {
 		// roles ['admin','lead-guide]

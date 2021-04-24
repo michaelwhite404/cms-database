@@ -12,7 +12,7 @@ const databaseSchema = new Schema({
 	createdBy: {
 		type: Types.ObjectId,
 		ref: "User",
-		// required: true,
+		required: true,
 	},
 	createdAt: {
 		type: Date,

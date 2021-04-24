@@ -17,6 +17,7 @@ const collectionSchema = new Schema({
 	},
 	database: {
 		type: Types.ObjectId,
+		ref: "Database",
 		required: [true, "A collection must be added to a database"],
 		select: false,
 		immutable: true,

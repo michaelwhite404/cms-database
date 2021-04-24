@@ -1,7 +1,7 @@
 import { Document, Schema, Model, model } from "mongoose";
-import slugify from "slugify";
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
+import validator from "validator";
 
 import { UserModel, UserModelDocument } from "../interfaces/userInterfaces";
 
@@ -20,9 +20,7 @@ const userSchema: Schema<UserModelDocument, Model<Document<UserModel>>> = new Sc
 			type: String,
 			required: [true, "A user must have an email address"],
 			unique: true,
-			// validate: {
-			// validator.i
-			// }
+			validate: [validator.isEmail, " Please provide a valid email"],
 		},
 		password: {
 			type: String,
@@ -42,7 +40,6 @@ const userSchema: Schema<UserModelDocument, Model<Document<UserModel>>> = new Sc
 				message: "Passwords are not the same!",
 			},
 		},
-		slug: String,
 		passwordChangedAt: Date,
 		passwordResetToken: String,
 		passwordResetExpires: Date,
@@ -69,10 +66,10 @@ userSchema.virtual("fullName").get(function (this: UserModel) {
 	return `${this.firstName} ${this.lastName}`;
 });
 
-userSchema.pre<UserModel>("save", function (next) {
-	this.slug = slugify(`${this.firstName} ${this.lastName}`, { lower: true });
-	next();
-});
+// userSchema.pre<UserModel>("save", function (next) {
+// 	this.slug = slugify(`${this.firstName} ${this.lastName}`, { lower: true });
+// 	next();
+// });
 
 userSchema.pre<UserModel>("save", async function (next) {
 	// Only run if password is modified
@@ -84,7 +81,7 @@ userSchema.pre<UserModel>("save", async function (next) {
 	next();
 });
 
-userSchema.methods.correctPassword = async function (candidatePassword, userPassword) {
+userSchema.methods.correctPassword = async function (candidatePassword: any, userPassword: string) {
 	return await bcrypt.compare(candidatePassword, userPassword);
 };
 

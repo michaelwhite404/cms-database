@@ -55,7 +55,7 @@ export const getUser = catchAsync(
  */
 export const updateUser = catchAsync(
 	async (req: CustomRequest<UserModel>, res: Response, next: NextFunction) => {
-		const user = await User.findByIdAndUpdate(req.params.id, req.body, {
+		const user = await User.findByIdAndUpdate(req.params.user_id, req.body, {
 			new: true,
 			runValidators: true,
 		});
