@@ -11,7 +11,6 @@ router.use("/:database_id/collections", collectionRouter);
 router.use(authController.protect);
 
 router.route("/").get(databaseController.getAllDatabases).post(databaseController.createDatabase);
-
 router
 	.route("/:database_id")
 	.get(databaseController.getDatabase)

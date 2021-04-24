@@ -1,6 +1,7 @@
 import { NextFunction, Response } from "express";
 import { CustomRequest } from "../interfaces/customRequestInterface";
 import DatabaseModel from "../interfaces/databaseInterface";
+import DatabaseRoleModel from "../interfaces/databaseRoleInterface";
 import Database from "../models/databaseModel";
 import DatabaseRole from "../models/databaseRoleModel";
 import APIFeatures from "../utils/APIFeatures";
@@ -30,23 +31,33 @@ export const getDatabase = catchAsync(
 );
 
 /**
- * Retrieves all databases
+ * Retrieves all databases the user has access to
  * @param {CustomRequest<DatabaseModel>} req Custom Express request object
  * @param {Response} res Express response object
  */
 export const getAllDatabases = catchAsync(
-	async (req: CustomRequest<DatabaseModel>, res: Response) => {
-		const features = new APIFeatures<DatabaseModel>(Database.find(), req.query)
+	async (req: CustomRequest<DatabaseRoleModel>, res: Response) => {
+		const features = new APIFeatures<DatabaseRoleModel>(
+			DatabaseRole.find({ user: req.user!._id }).populate({
+				path: "database",
+				select: "-__v",
+			}),
+			req.query
+		)
 			.filter()
 			.sort()
 			.limitFields()
 			.paginate();
 
-		const databases = await features.query;
+		const accessableDatabases = await features.query;
+
+		const databases = accessableDatabases.map(
+			(d) => d.database
+			// Object.assign({ role: d.role }, d.database._doc)
+		);
 
 		res.status(200).json({
 			status: "success",
-			/** The number of results that satisfy the query */
 			results: databases.length,
 			page: features.page,
 			limit: features.limit,
