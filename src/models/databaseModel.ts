@@ -13,6 +13,7 @@ const databaseSchema = new Schema({
 		type: Types.ObjectId,
 		ref: "User",
 		required: true,
+		immutable: true,
 	},
 	createdAt: {
 		type: Date,

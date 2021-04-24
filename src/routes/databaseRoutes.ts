@@ -18,6 +18,4 @@ router
 	.patch(databaseController.updateDatabase)
 	.delete(databaseController.deleteDatabase);
 
-router.route("/:database_id/share");
-
 export default router;

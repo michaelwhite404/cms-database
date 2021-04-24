@@ -4,11 +4,13 @@ import DatabaseModel from "../interfaces/databaseInterface";
 import DatabaseRoleModel from "../interfaces/databaseRoleInterface";
 import { UserModel } from "../interfaces/userInterfaces";
 import Database from "../models/databaseModel";
+import Collection from "../models/collectionModel";
 import DatabaseRole from "../models/databaseRoleModel";
 import User from "../models/userModel";
 import APIFeatures from "../utils/APIFeatures";
 import AppError from "../utils/appError";
 import catchAsync from "../utils/catchAsync";
+import Item from "../models/itemModel";
 
 /**
  * Retrieves database based on database ID route parameter
@@ -46,7 +48,7 @@ export const getAllDatabases = catchAsync(
 	async (req: CustomRequest<DatabaseModel>, res: Response) => {
 		const myDatabases = await DatabaseRole.find({ user: req.user!._id });
 		const myDatabaseIds = myDatabases.map((d) => d.database) as string[];
-		console.log(myDatabaseIds);
+
 		const features = new APIFeatures<DatabaseModel>(
 			Database.find({ _id: { $in: myDatabaseIds } }),
 			req.query
@@ -122,8 +124,12 @@ export const updateDatabase = catchAsync(
  */
 export const deleteDatabase = catchAsync(
 	async (req: CustomRequest<DatabaseModel>, res: Response, next: NextFunction) => {
-		/** The deleted database, if found */
-		const database = await Database.findByIdAndDelete(req.params.database_id);
+		const [database, collections, items] = await Promise.all([
+			Database.findByIdAndDelete(req.params.database_id),
+			Collection.deleteMany({ database: req.params.database_id }),
+			Item.deleteMany({ database: req.params.database_id }),
+		]);
+
 		// If no database is returned, throw error
 		if (!database) {
 			return next(new AppError("There is no database with this ID", 404));
@@ -132,8 +138,8 @@ export const deleteDatabase = catchAsync(
 		res.status(200).json({
 			status: "success",
 			databasesDeleted: 1,
-			// collectionsDeleted: number,
-			// itemsDeleted: number
+			collectionsDeleted: collections.deletedCount,
+			itemsDeleted: items.deletedCount,
 		});
 	}
 );
