@@ -56,7 +56,7 @@ export interface CollectionModel extends Document {
 	/** The name of the collection in singular form (e.g. "Blog Posts" -> "Blog Post") */
 	singularName: string;
 	/** The database the collection is added to */
-	database: string;
+	database: string | ObjectId;
 	/** The date the collection was created (Immutable) */
 	createdAt: Date;
 	/** The date the collection was last created (Not editable by user) */
@@ -67,6 +67,8 @@ export interface CollectionModel extends Document {
 	shortId: string;
 	/** The user who created the collection */
 	createdBy: string;
+	/** The user who last updated collection */
+	updatedBy: string;
 	/** An array of a collection's fields */
 	fields: CollectionField[];
 }

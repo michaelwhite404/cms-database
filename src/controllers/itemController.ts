@@ -41,7 +41,7 @@ export const collectionExists = catchAsync(
 		const collection = await Collection.findById(req.body._cid).select("+database");
 		if (!collection) return next(new AppError("There is no collection with this ID", 404));
 		req.collection = collection;
-		req.database = collection.database;
+		// req.database = collection.database;
 		req.database = (undefined as unknown) as string;
 		next();
 	}

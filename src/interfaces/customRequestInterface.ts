@@ -13,6 +13,8 @@ export interface CustomRequest<T> extends Request {
 	params: PathParamsDictionary;
 	user?: UserModel;
 	databaseRole?: DatabaseRoleModel;
+	/** Collection retrieved from route parameter */
+	collection?: CollectionModel;
 }
 
 export interface CustomCollectionRequest<T, U extends CollectionModel> extends CustomRequest<T> {

@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from "express";
+import { NextFunction, Response } from "express";
 import slugify from "slugify";
 import uniqBy from "lodash.uniqby";
 
@@ -14,13 +14,16 @@ import Database from "../models/databaseModel";
 import { CustomCollectionField } from "../customCollectionField";
 import primaryChecker from "../utils/primaryChecker";
 import DatabaseRole from "../models/databaseRoleModel";
+import DatabaseRoleModel from "../interfaces/databaseRoleInterface";
+import pluralize from "pluralize";
+import Item from "../models/itemModel";
 
 /**
  * Adds database id from route paramater to request body
  * @param {CustomRequest<CollectionModel>} req Custom Express request object
  * @param {NextFunction} next Express next middleware function
  */
-export const setDatadaseId = (
+export const setDatabaseId = (
 	req: CustomRequest<CollectionModel>,
 	_: Response,
 	next: NextFunction
@@ -36,15 +39,31 @@ export const setDatadaseId = (
  * @param {NextFunction} next Express next middleware function
  */
 export const hasDatabaseAccess = catchAsync(
-	async (req: CustomRequest<CollectionModel>, _: Response, next: NextFunction) => {
+	async (req: CustomRequest<DatabaseRoleModel>, _: Response, next: NextFunction) => {
 		if (!req.body.database)
 			return next(new AppError("Database ID is required but is not present", 400));
 		const databaseRole = await DatabaseRole.findOne({
 			database: req.body.database,
 			user: req.user!._id,
 		});
+		if (req.collection && !databaseRole)
+			return next(new AppError("There is no collection with this ID", 404));
 		if (!databaseRole) return next(new AppError("There is no database with this ID", 404));
 		req.databaseRole = databaseRole;
+		next();
+	}
+);
+
+export const getCollectionDatabase = catchAsync(
+	async (req: CustomRequest<CollectionModel>, _: Response, next: NextFunction) => {
+		if (!req.params.collection_id)
+			return next(new AppError("Collection ID is required but is not present", 400));
+		const collection = await Collection.findById(req.params.collection_id).select("+database");
+		if (!collection) {
+			return next(new AppError("There is no collection with this ID", 404));
+		}
+		req.collection = collection;
+		req.body.database = collection.database;
 		next();
 	}
 );
@@ -176,6 +195,10 @@ export const createCollection = catchAsync(
 			database: database._id,
 			fields,
 			slug: req.body.slug,
+			createdBy: req.user!._id,
+			createdAt: new Date(Date.now()),
+			updatedBy: req.user!._id,
+			lastUpdated: new Date(Date.now()),
 		});
 		// Send Response
 		res.status(201).json({
@@ -187,18 +210,16 @@ export const createCollection = catchAsync(
 
 export const updateCollection = catchAsync(
 	async (req: CustomRequest<CollectionModel>, res: Response, next: NextFunction) => {
-		if (!req.body.name) {
-			return next(new AppError("Use the 'name' field to change the name of the collection", 400));
-		}
-		const collection = await Collection.findByIdAndUpdate(
-			req.params.collection_id,
-			{ name: req.body.name },
-			{ new: true }
-		);
-
-		if (!collection) {
-			return next(new AppError("There is no collection with this ID", 404));
-		}
+		if (req.databaseRole!.role === "viewer")
+			return next(new AppError("You are not authorized to perform this action", 403));
+		if (req.body.name) req.body.singularName = pluralize.singular(req.body.name);
+		else delete req.body.singularName;
+		req.body.updatedBy = req.user!._id as string;
+		req.body.lastUpdated = new Date(Date.now());
+		delete req.body.fields;
+		const collection = await Collection.findByIdAndUpdate(req.params.collection_id, req.body, {
+			new: true,
+		});
 
 		res.status(200).json({
 			status: "success",
@@ -215,39 +236,18 @@ export const updateCollection = catchAsync(
  */
 export const deleteCollection = catchAsync(
 	async (req: CustomRequest<CollectionModel>, res: Response, next: NextFunction) => {
-		const collection = await Collection.findByIdAndDelete(req.params.collection_id);
+		if (req.databaseRole!.role === "viewer")
+			return next(new AppError("You are not authorized to perform this action", 403));
 
-		if (!collection) {
-			return next(new AppError("There is no collection with this ID", 404));
-		}
-
-		// TODO DELETE items with collection_id
+		const [item] = await Promise.all([
+			Item.deleteMany({ _cid: req.params.collection_id }),
+			Collection.findByIdAndDelete(req.params.collection_id),
+		]);
 
 		res.status(200).json({
 			status: "success",
 			collectionsDeleted: 1,
-			//itemsDeleted: number
-		});
-	}
-);
-
-/**
- * Retrieves a collection's fields
- * @param {Request} req Express request object
- * @param {Response} res Express response object
- * @param {NextFunction} next Express next middleware function
- */
-export const getCollectionFields = catchAsync(
-	async (req: Request, res: Response, next: NextFunction) => {
-		const collection = await Collection.findById(req.params.collection_id);
-
-		if (!collection) {
-			return next(new AppError("There is no collection with this ID", 404));
-		}
-
-		res.status(200).json({
-			status: "success",
-			fields: collection.fields,
+			itemsDeleted: item.deletedCount,
 		});
 	}
 );

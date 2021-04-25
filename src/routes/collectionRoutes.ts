@@ -7,20 +7,16 @@ import fieldRouter from "./fieldRoutes";
 /** Router for collection routes */
 const router = Router({ mergeParams: true });
 
-/*router.param(
-  "collection_id",
-  catchAsync(async (req, res, next, id) => {
-    const collection = await Collection.findById(req.params.collection_id);
-    if (!collection)
-      return next(new AppError("There is no collection with this ID", 404));
-    next();
-  })
-); */
+router.use(authController.protect);
+
+router.use(
+	"/:collection_id",
+	collectionController.getCollectionDatabase,
+	collectionController.hasDatabaseAccess
+);
 
 router.use("/:collection_id/items", itemRouter);
 router.use("/:collection_id/fields", fieldRouter);
-
-router.use(authController.protect);
 
 router
 	.route("/:collection_id")
@@ -28,7 +24,7 @@ router
 	.patch(collectionController.updateCollection)
 	.delete(collectionController.deleteCollection);
 
-router.use(collectionController.setDatadaseId, collectionController.hasDatabaseAccess);
+router.use(collectionController.setDatabaseId, collectionController.hasDatabaseAccess);
 
 router
 	.route("/")

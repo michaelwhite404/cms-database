@@ -22,17 +22,6 @@ const collectionSchema = new Schema({
 		select: false,
 		immutable: true,
 	},
-	createdAt: {
-		type: Date,
-		required: true,
-		default: () => Date.now(),
-		immutable: true,
-	},
-	lastUpdated: {
-		type: Date,
-		required: true,
-		default: () => Date.now(),
-	},
 	slug: {
 		type: String,
 	},
@@ -42,7 +31,26 @@ const collectionSchema = new Schema({
 		default: () => nanoid(12),
 		immutable: true,
 	},
-	createdBy: String,
+	createdAt: {
+		type: Date,
+		required: true,
+		immutable: true,
+	},
+	createdBy: {
+		type: Types.ObjectId,
+		ref: "User",
+		required: true,
+		immutable: true,
+	},
+	lastUpdated: {
+		type: Date,
+		required: true,
+	},
+	updatedBy: {
+		type: Types.ObjectId,
+		ref: "User",
+		required: true,
+	},
 	fields: [
 		{
 			name: String,
