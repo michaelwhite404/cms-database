@@ -91,3 +91,19 @@ export const deleteUser = catchAsync(
 		});
 	}
 );
+
+/**
+ * Adds current user ID as a path parameter to later retrieve the user's info
+ * @param {CustomRequest<UserModel>} req Custom Express request object
+ * @param {Response} res Express response object
+ * @param {NextFunction} next Express next middleware function
+ */
+export const getMe = (req: CustomRequest<UserModel>, res: Response) => {
+	const user = (({ _id, email, firstName, lastName }) => ({ _id, email, firstName, lastName }))(
+		req.user!
+	);
+	res.status(200).json({
+		status: "success",
+		user,
+	});
+};
