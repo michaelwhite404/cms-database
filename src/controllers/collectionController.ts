@@ -13,6 +13,7 @@ import APIFeatures from "../utils/APIFeatures";
 import Database from "../models/databaseModel";
 import { CustomCollectionField } from "../customCollectionField";
 import primaryChecker from "../utils/primaryChecker";
+import DatabaseRole from "../models/databaseRoleModel";
 
 /**
  * Adds database id from route paramater to request body
@@ -29,16 +30,21 @@ export const setDatadaseId = (
 };
 
 /**
- * Throws error if Database ID is neither present nor valid
+ * Throws error if Database ID is not present or the user doesn't have access to the
+ * database
  * @param {CustomCollectionRequest<ItemModel, CollectionModel>} req Custom Express request object
  * @param {NextFunction} next Express next middleware function
  */
-export const validDatabase = catchAsync(
+export const hasDatabaseAccess = catchAsync(
 	async (req: CustomRequest<CollectionModel>, _: Response, next: NextFunction) => {
 		if (!req.body.database)
 			return next(new AppError("Database ID is required but is not present", 400));
-		const database = await Database.findById(req.body.database);
-		if (!database) return next(new AppError("There is no database with this ID", 404));
+		const databaseRole = await DatabaseRole.findOne({
+			database: req.body.database,
+			user: req.user!._id,
+		});
+		if (!databaseRole) return next(new AppError("There is no database with this ID", 404));
+		req.databaseRole = databaseRole;
 		next();
 	}
 );
@@ -103,6 +109,8 @@ export const getCollection = catchAsync(
  */
 export const createCollection = catchAsync(
 	async (req: CustomRequest<CollectionModel>, res: Response, next: NextFunction) => {
+		if (req.databaseRole!.role === "viewer")
+			return next(new AppError("You are not authorized to perform this action", 403));
 		/** Array holding finalized collection fields */
 		let fields: Omit<CollectionField, "_id">[] = [];
 		// If the body does not have a 'name' property, throw error
