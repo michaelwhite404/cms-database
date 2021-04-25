@@ -209,9 +209,7 @@ export const createCollection = catchAsync(
 );
 
 export const updateCollection = catchAsync(
-	async (req: CustomRequest<CollectionModel>, res: Response, next: NextFunction) => {
-		if (req.databaseRole!.role === "viewer")
-			return next(new AppError("You are not authorized to perform this action", 403));
+	async (req: CustomRequest<CollectionModel>, res: Response) => {
 		if (req.body.name) req.body.singularName = pluralize.singular(req.body.name);
 		else delete req.body.singularName;
 		req.body.updatedBy = req.user!._id as string;
@@ -235,10 +233,7 @@ export const updateCollection = catchAsync(
  * @param {NextFunction} next Express next middleware function
  */
 export const deleteCollection = catchAsync(
-	async (req: CustomRequest<CollectionModel>, res: Response, next: NextFunction) => {
-		if (req.databaseRole!.role === "viewer")
-			return next(new AppError("You are not authorized to perform this action", 403));
-
+	async (req: CustomRequest<CollectionModel>, res: Response) => {
 		const [item] = await Promise.all([
 			Item.deleteMany({ _cid: req.params.collection_id }),
 			Collection.findByIdAndDelete(req.params.collection_id),

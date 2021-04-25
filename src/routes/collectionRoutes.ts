@@ -17,18 +17,18 @@ router.use(
 
 router.use("/:collection_id/items", itemRouter);
 router.use("/:collection_id/fields", fieldRouter);
-
+// authController.restrictTo("owner", "editor"),
 router
 	.route("/:collection_id")
 	.get(collectionController.getCollection)
-	.patch(collectionController.updateCollection)
-	.delete(collectionController.deleteCollection);
+	.patch(authController.restrictTo("owner", "editor"), collectionController.updateCollection)
+	.delete(authController.restrictTo("owner", "editor"), collectionController.deleteCollection);
 
 router.use(collectionController.setDatabaseId, collectionController.hasDatabaseAccess);
 
 router
 	.route("/")
 	.get(collectionController.getAllCollectionsInDatabase)
-	.post(collectionController.createCollection);
+	.post(authController.restrictTo("owner", "editor"), collectionController.createCollection);
 
 export default router;

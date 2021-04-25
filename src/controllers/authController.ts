@@ -122,18 +122,20 @@ export const protect = catchAsync(
 		next();
 	}
 );
-/*
+
+/**
+ * Throws error if the user's database role is not a permitted role
+ * @param roles An array of roles that the current user must have to enter the next handler
+ */
 export const restrictTo = (...roles: string[]) => {
 	return (req: CustomRequest<UserModel>, _: Response, next: NextFunction) => {
-		// roles ['admin','lead-guide]
-		if (!roles.includes(req.user.role)) {
+		// roles ['editor','viewer']
+		if (!roles.includes(req.databaseRole!.role)) {
 			return next(new AppError("You do not have permission to perform this action", 403));
 		}
-
 		next();
 	};
 };
-*/
 
 /**
  * Creates reset token for forgetten password
