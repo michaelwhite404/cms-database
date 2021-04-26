@@ -1,7 +1,7 @@
 import { Document, ObjectId } from "mongoose";
 import DatabaseModel from "./databaseInterface";
 import { UserModel } from "./userInterfaces";
-type DatabaseRoles = "owner" | "editor" | "viewer";
+export type DatabaseRoles = "owner" | "editor" | "viewer";
 
 export default interface DatabaseRoleModel extends Document {
 	/** Auto-generated ObjectId */

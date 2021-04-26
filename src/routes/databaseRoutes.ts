@@ -11,11 +11,18 @@ router.use("/:database_id/collections", collectionRouter);
 router.use(authController.protect);
 
 router.route("/").get(databaseController.getAllDatabases).post(databaseController.createDatabase);
-router.post("/:database_id/share", databaseController.shareDatabase);
+
+router.use("/:database_id", databaseController.hasAccess);
+
+router.post(
+	"/:database_id/share",
+	authController.restrictTo("owner", "editor"),
+	databaseController.shareDatabase
+);
 router
 	.route("/:database_id")
 	.get(databaseController.getDatabase)
-	.patch(databaseController.updateDatabase)
-	.delete(databaseController.deleteDatabase);
+	.patch(authController.restrictTo("owner", "editor"), databaseController.updateDatabase)
+	.delete(authController.restrictTo("owner"), databaseController.deleteDatabase);
 
 export default router;

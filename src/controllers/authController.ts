@@ -9,6 +9,7 @@ import { UserModel } from "../interfaces/userInterfaces";
 import User from "../models/userModel";
 import AppError from "../utils/appError";
 import catchAsync from "../utils/catchAsync";
+import { DatabaseRoles } from "../interfaces/databaseRoleInterface";
 // import DecodedPayload from "../interfaces/decodedPayloadInterface";
 
 const signToken = (id: UserModel["_id"]): string => {
@@ -127,7 +128,7 @@ export const protect = catchAsync(
  * Throws error if the user's database role is not a permitted role
  * @param roles An array of roles that the current user must have to enter the next handler
  */
-export const restrictTo = (...roles: string[]) => {
+export const restrictTo = (...roles: DatabaseRoles[]) => {
 	return (req: CustomRequest<UserModel>, _: Response, next: NextFunction) => {
 		// roles ['editor','viewer']
 		if (!roles.includes(req.databaseRole!.role)) {
