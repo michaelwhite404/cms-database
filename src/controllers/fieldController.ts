@@ -10,39 +10,30 @@ import { CustomCollectionField } from "../customCollectionField";
 
 /**
  * Retrieves fields in collection based on collection ID route parameter
- * @param {CustomRequest<DatabaseModel>} req Custom Express request object
+ * @param {CustomRequest<CollectionModel>} req Custom Express request object
  * @param {Response} res Express response object
  * @param {NextFunction} next Express next middleware function
  */
 export const getAllCollectionFields = catchAsync(
-	async (req: CustomRequest<CollectionModel>, res: Response, next: NextFunction) => {
-		const collection = await Collection.findById(req.params.collection_id);
-
-		if (!collection) {
-			return next(new AppError("There is no collection with this ID", 404));
-		}
+	async (req: CustomRequest<CollectionModel>, res: Response) => {
 		res.status(200).json({
 			status: "success",
-			fields: collection.fields,
+			fields: req.collection!.fields,
 		});
 	}
 );
 
 /**
  * Retrieves collection field based on collection ID and field ID route parameters
- * @param {CustomRequest<DatabaseModel>} req Custom Express request object
+ * @param {CustomRequest<CollectionModel>} req Custom Express request object
  * @param {Response} res Express response object
  * @param {NextFunction} next Express next middleware function
  */
 export const getCollectionField = catchAsync(
 	async (req: CustomRequest<CollectionField>, res: Response, next: NextFunction) => {
-		const collection = await Collection.findById(req.params.collection_id);
-
-		if (!collection) {
-			return next(new AppError("There is no collection with this ID", 404));
-		}
-
-		const field = collection.fields.find((field) => field._id.toString() === req.params.field_id);
+		const field = req.collection!.fields.find(
+			(field) => field._id.toString() === req.params.field_id
+		);
 
 		if (!field) {
 			return next(new AppError("There is no field with this ID", 404));
@@ -63,12 +54,7 @@ export const getCollectionField = catchAsync(
  */
 export const createCollectionField = catchAsync(
 	async (req: CustomRequest<CollectionField>, res: Response, next: NextFunction) => {
-		const collection = await Collection.findById(req.params.collection_id);
-		if (!collection) {
-			return next(new AppError("There is no field with this ID", 404));
-		}
-
-		const pushIndex = collection.fields.length - 4;
+		const pushIndex = req.collection!.fields.length - 4;
 
 		const testResult = testCollectionValidations(req.body as any);
 		if (!testResult[0]) return next(new AppError(testResult[1], 400));
@@ -139,15 +125,11 @@ export const deleteCollectionField = catchAsync(
 
 export const updateCollectionField = catchAsync(
 	async (req: CustomRequest<CollectionField>, res: Response, next: NextFunction) => {
-		const collection = await Collection.findById(req.params.collection_id);
-		if (!collection) {
-			return next(new AppError("There is no collection with this ID", 404));
-		}
-		const fieldIndex = collection.fields.findIndex(
+		const fieldIndex = req.collection!.fields.findIndex(
 			(field) => field._id.toString() === req.params.field_id
 		);
 
-		const field = collection.fields[fieldIndex];
+		const field = req.collection!.fields[fieldIndex];
 		if (!field) {
 			return next(new AppError("There is no field with this ID", 404));
 		}
