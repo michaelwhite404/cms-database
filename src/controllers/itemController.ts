@@ -2,7 +2,6 @@ import { Response, NextFunction } from "express";
 import { testItemValidations } from "../utils/validations";
 import catchAsync from "../utils/catchAsync";
 import Item from "../models/itemModel";
-import Collection from "../models/collectionModel";
 import { defaultCollectonFields } from "../defaults";
 import AppError from "../utils/appError";
 import { CustomRequest, CustomCollectionRequest } from "../interfaces/customRequestInterface";
@@ -10,42 +9,6 @@ import { ItemModel, ItemFields, ItemField } from "../interfaces/itemInterfaces";
 import { CollectionField, CollectionModel } from "../interfaces/collectionInterfaces";
 import APIFeatures from "../utils/APIFeatures";
 import objectIsEmpty from "../utils/objectIsEmpty";
-
-/**
- * Adds collection id from route paramater to request body
- * @param {CustomRequest<ItemModel>} req Custom Express request object
- * @param {NextFunction} next Express next middleware function
- */
-export const setCollectionId = (
-	req: CustomRequest<ItemModel>,
-	_: Response,
-	next: NextFunction
-): void => {
-	if (!req.body._cid) req.body._cid = req.params.collection_id;
-	next();
-};
-
-/**
- * Adds collection to request if collection ID is present and valid, else throws error
- * @param {CustomCollectionRequest<ItemModel, CollectionModel>} req Custom Express request object
- * @param {NextFunction} next Express next middleware function
- */
-export const collectionExists = catchAsync(
-	async (
-		req: CustomCollectionRequest<ItemModel, CollectionModel>,
-		_: Response,
-		next: NextFunction
-	) => {
-		if (!req.body._cid)
-			return next(new AppError("Collection ID is required but is not present", 400));
-		const collection = await Collection.findById(req.body._cid).select("+database");
-		if (!collection) return next(new AppError("There is no collection with this ID", 404));
-		req.collection = collection;
-		// req.database = collection.database;
-		req.database = (undefined as unknown) as string;
-		next();
-	}
-);
 
 /**
  * Connects each item field to a collection field
@@ -152,9 +115,10 @@ const instantiateFields = (
  */
 export const getAllItemsInCollection = catchAsync(
 	async (req: CustomRequest<ItemModel>, res: Response) => {
-		// const items = await Item.find({ _cid: req.body._cid });
-
-		const features = new APIFeatures(Item.find({ _cid: req.body._cid }).select("-_cid"), req.query)
+		const features = new APIFeatures(
+			Item.find({ _cid: req.params.collection_id }).select("-_cid"),
+			req.query
+		)
 			.filter()
 			.sort()
 			.limitFields()
@@ -167,7 +131,7 @@ export const getAllItemsInCollection = catchAsync(
 			results: items.length,
 			page: features.page,
 			limit: features.limit,
-			_cid: req.body._cid,
+			_cid: req.params.collection_id,
 			items,
 		});
 	}
@@ -183,7 +147,7 @@ export const getItem = catchAsync(
 	async (req: CustomRequest<ItemModel>, res: Response, next: NextFunction) => {
 		const item = await Item.findOne({
 			_id: req.params.item_id,
-			_cid: req.body._cid,
+			_cid: req.params.collection_id,
 		});
 
 		if (!item) return next(new AppError("There is no item with this ID", 404));
@@ -240,7 +204,7 @@ export const createItem = catchAsync(
 		}
 		/** Created Item */
 		const item = await Item.create({
-			_cid: req.body._cid,
+			_cid: req.params.collection_id,
 			database: req.collection.database,
 			...testedFields,
 		});
@@ -265,7 +229,7 @@ export const deleteItem = catchAsync(
 	async (req: CustomRequest<ItemModel>, res: Response, next: NextFunction) => {
 		const item = await Item.findOneAndDelete({
 			_id: req.params.item_id,
-			_cid: req.body._cid,
+			_cid: req.params.collection_id,
 		});
 
 		if (!item) {
@@ -299,7 +263,7 @@ export const patchItem = catchAsync(
 		/** The item soon to be updated */
 		let oldItem = await Item.findById({
 			_id: req.params.item_id,
-			_cid: req.body._cid,
+			_cid: req.params.collection_id,
 		});
 
 		if (!oldItem) {
@@ -326,7 +290,7 @@ export const patchItem = catchAsync(
 		const item = await Item.findByIdAndUpdate(
 			{
 				_id: req.params.item_id,
-				_cid: req.body._cid,
+				_cid: req.params.collection_id,
 			},
 			{ ...req.body.fields, "updated-on": new Date() },
 			{ new: true }
@@ -364,7 +328,7 @@ export const putItem = catchAsync(
 		/** The item soon to be updated */
 		let oldItem = await Item.findById({
 			_id: req.params.item_id,
-			_cid: req.body._cid,
+			_cid: req.params.collection_id,
 		}).select("+database");
 
 		if (!oldItem) {
@@ -407,7 +371,7 @@ export const putItem = catchAsync(
 		const updatedItem = await Item.findOneAndReplace(
 			{
 				_id: req.params.item_id,
-				_cid: req.body._cid,
+				_cid: req.params.collection_id,
 			},
 			update,
 			{ new: true }
