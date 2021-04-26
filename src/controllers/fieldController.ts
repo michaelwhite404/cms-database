@@ -7,6 +7,7 @@ import AppError from "../utils/appError";
 import slugify from "slugify";
 import { testCollectionValidations } from "../utils/validations";
 import { CustomCollectionField } from "../customCollectionField";
+import Item from "../models/itemModel";
 
 /**
  * Retrieves fields in collection based on collection ID route parameter
@@ -25,7 +26,7 @@ export const getAllCollectionFields = catchAsync(
 
 /**
  * Retrieves collection field based on collection ID and field ID route parameters
- * @param {CustomRequest<CollectionModel>} req Custom Express request object
+ * @param {CustomRequest<CollectionField>} req Custom Express request object
  * @param {Response} res Express response object
  * @param {NextFunction} next Express next middleware function
  */
@@ -48,7 +49,7 @@ export const getCollectionField = catchAsync(
 
 /**
  * Creates a new collection field based on collection ID route parameter
- * @param {CustomRequest<DatabaseModel>} req Custom Express request object
+ * @param {CustomRequest<CollectionField>} req Custom Express request object
  * @param {Response} res Express response object
  * @param {NextFunction} next Express next middleware function
  */
@@ -81,7 +82,7 @@ export const createCollectionField = catchAsync(
 
 /**
  * Deletes a collection field based on collection ID and field ID route parameters
- * @param {CustomRequest<DatabaseModel>} req Custom Express request object
+ * @param {CustomRequest<CollectionModel>} req Custom Express request object
  * @param {Response} res Express response object
  * @param {NextFunction} next Express next middleware function
  */
@@ -123,6 +124,13 @@ export const deleteCollectionField = catchAsync(
 	}
 );
 
+/**
+ * Updates collection field properties. Also updates item fields keys if the collection
+ * field name/slug is changed
+ * @param {CustomRequest<CollectionField>} req Custom Express request object
+ * @param {Response} res Express response object
+ * @param {NextFunction} next Express next middleware function
+ */
 export const updateCollectionField = catchAsync(
 	async (req: CustomRequest<CollectionField>, res: Response, next: NextFunction) => {
 		const fieldIndex = req.collection!.fields.findIndex(
@@ -132,6 +140,18 @@ export const updateCollectionField = catchAsync(
 		const field = req.collection!.fields[fieldIndex];
 		if (!field) {
 			return next(new AppError("There is no field with this ID", 404));
+		}
+		if (!field.editable) {
+			return next(new AppError("This field cannot be edited", 400));
+		}
+		if (
+			req.body.name &&
+			req
+				.collection!.fields.filter((field) => field._id.toString() !== req.params.field_id)
+				.map((field) => field.name)
+				.includes(req.body.name)
+		) {
+			return next(new AppError("All fields must have diffferent names", 400));
 		}
 		const name = (req.body.name as any) ?? field.name;
 		const slug = slugify(name, { lower: true });
@@ -163,6 +183,16 @@ export const updateCollectionField = catchAsync(
 			{ $set: { [`fields.${fieldIndex}`]: finalField } },
 			{ new: true }
 		);
+
+		if (field.slug !== finalField.slug) {
+			await Item.updateMany(
+				{
+					_cid: req.params.collection_id,
+					[field.slug]: { $exists: true },
+				},
+				{ $rename: { [field.slug]: finalField.slug } }
+			);
+		}
 
 		res.status(200).json({
 			status: "success",
