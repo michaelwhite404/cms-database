@@ -1,10 +1,10 @@
 import { NextFunction, Response } from "express";
+import slugify from "slugify";
 import Collection from "../models/collectionModel";
 import { CollectionField, CollectionModel } from "../interfaces/collectionInterfaces";
 import { CustomRequest } from "../interfaces/customRequestInterface";
 import catchAsync from "../utils/catchAsync";
 import AppError from "../utils/appError";
-import slugify from "slugify";
 import { testCollectionValidations } from "../utils/validations";
 import { CustomCollectionField } from "../customCollectionField";
 import Item from "../models/itemModel";
@@ -55,9 +55,17 @@ export const getCollectionField = catchAsync(
  */
 export const createCollectionField = catchAsync(
 	async (req: CustomRequest<CollectionField>, res: Response, next: NextFunction) => {
+		if (
+			req.body.name &&
+			req
+				.collection!.fields.map((field) => field.slug)
+				.includes(slugify(req.body.name, { lower: true }))
+		) {
+			return next(new AppError("All fields must have diffferent names", 400));
+		}
 		const pushIndex = req.collection!.fields.length - 4;
 
-		const testResult = testCollectionValidations(req.body as any);
+		const testResult = testCollectionValidations(req.body);
 		if (!testResult[0]) return next(new AppError(testResult[1], 400));
 		const finalField = new CustomCollectionField(
 			testResult[1].name,
@@ -100,7 +108,7 @@ export const deleteCollectionField = catchAsync(
 				},
 			},
 			{ new: false },
-			(_, collection) => {
+			async (_, collection) => {
 				if (!collection) {
 					return next(new AppError("There is no collection with this ID", 404));
 				}
@@ -115,6 +123,15 @@ export const deleteCollectionField = catchAsync(
 				if (fieldIndex < 2 || field.editable === false) {
 					return next(new AppError("This field cannot be deleted", 400));
 				}
+
+				await Item.updateMany(
+					{
+						_cid: req.params.collection_id,
+						[field.slug]: { $exists: true },
+					},
+					{ $unset: { [field.slug]: 1 } }
+				);
+
 				res.status(200).json({
 					status: "success",
 					fieldDeleted: true,
@@ -148,8 +165,8 @@ export const updateCollectionField = catchAsync(
 			req.body.name &&
 			req
 				.collection!.fields.filter((field) => field._id.toString() !== req.params.field_id)
-				.map((field) => field.name)
-				.includes(req.body.name)
+				.map((field) => field.slug)
+				.includes(slugify(req.body.name, { lower: true }))
 		) {
 			return next(new AppError("All fields must have diffferent names", 400));
 		}
