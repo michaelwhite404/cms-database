@@ -71,6 +71,7 @@
   },
   "exclude": [
     "node_modules",
-    "src/utils/validations.ts"
+    "src/utils/validations.ts",
+    "client"
   ]
 }
