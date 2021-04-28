@@ -16,6 +16,11 @@ import Item from "../models/itemModel";
 
 export const hasAccess = catchAsync(
 	async (req: CustomRequest<DatabaseModel>, _: Response, next: NextFunction) => {
+		if (req.query.slug) {
+			const database = await Database.findOne({ slug: req.params.database_id });
+			if (!database) return next(new AppError("There is no database with this ID", 404));
+			req.params.database_id = database._id;
+		}
 		const databaseRole = await DatabaseRole.findOne({
 			database: req.params.database_id,
 			user: req.user!._id,
@@ -34,7 +39,7 @@ export const hasAccess = catchAsync(
  */
 export const getDatabase = catchAsync(
 	async (req: CustomRequest<DatabaseRoleModel>, res: Response) => {
-		const database = await Database.findById(req.params.database_id).select("-__v");
+		const database = await Database.findById(req.databaseRole!.database).select("-__v");
 
 		res.status(200).json({
 			status: "success",
@@ -70,7 +75,7 @@ export const getAllDatabases = catchAsync(
 
 		res.status(200).json({
 			status: "success",
-			// results: databases.length,
+			results: databases.length,
 			page: features.page,
 			limit: features.limit,
 			databases,

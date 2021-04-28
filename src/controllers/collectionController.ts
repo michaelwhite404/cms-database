@@ -42,6 +42,12 @@ export const hasDatabaseAccess = catchAsync(
 	async (req: CustomRequest<DatabaseRoleModel>, _: Response, next: NextFunction) => {
 		if (!req.body.database)
 			return next(new AppError("Database ID is required but is not present", 400));
+		if (req.query.slug) {
+			const database = await Database.findOne({ slug: req.params.database_id });
+			console.log(database);
+			if (!database) return next(new AppError("There is no database with this ID", 404));
+			req.body.database = database._id;
+		}
 		const databaseRole = await DatabaseRole.findOne({
 			database: req.body.database,
 			user: req.user!._id,
@@ -50,6 +56,7 @@ export const hasDatabaseAccess = catchAsync(
 			return next(new AppError("There is no collection with this ID", 404));
 		if (!databaseRole) return next(new AppError("There is no database with this ID", 404));
 		req.databaseRole = databaseRole;
+		delete req.query.slug;
 		next();
 	}
 );
@@ -76,7 +83,7 @@ export const getCollectionDatabase = catchAsync(
 export const getAllCollectionsInDatabase = catchAsync(
 	async (req: CustomRequest<CollectionModel>, res: Response) => {
 		const features = new APIFeatures<CollectionModel>(
-			Collection.find({ database: req.body.database }),
+			Collection.find({ database: req.databaseRole!.database as string }),
 			req.query
 		)
 			.filter()

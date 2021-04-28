@@ -1,4 +1,5 @@
 import { Document, ObjectId } from "mongoose";
+import { DatabaseRoles } from "./databaseRoleInterface";
 
 export default interface DatabaseModel extends Document {
 	/** The database _id */
@@ -13,4 +14,6 @@ export default interface DatabaseModel extends Document {
 	timezone: string;
 	/** The date the database was created */
 	createdAt: Date;
+	/** Role a user has in the database */
+	role?: DatabaseRoles;
 }
