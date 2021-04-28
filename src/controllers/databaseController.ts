@@ -44,17 +44,15 @@ export const getDatabase = catchAsync(
 );
 
 /**
- * Retrieves all databases the user has access to
+ * Retrieves all databases the user has access to. Path ending in "/roles" alos adds
+ * the roles the user has in each database
  * @param {CustomRequest<DatabaseRoleModel>} req Custom Express request object
  * @param {Response} res Express response object
  */
 export const getAllDatabases = catchAsync(
 	async (req: CustomRequest<DatabaseModel>, res: Response) => {
-		const myDatabases = await DatabaseRole.find({ user: req.user!._id });
-		const myDatabaseIds = myDatabases.map((d) => d.database) as string[];
-
-		const features = new APIFeatures<DatabaseModel>(
-			Database.find({ _id: { $in: myDatabaseIds } }),
+		const features = new APIFeatures<DatabaseRoleModel>(
+			DatabaseRole.find({ user: req.user!._id }).populate("database", "-__v"),
 			req.query
 		)
 			.filter()
@@ -62,11 +60,17 @@ export const getAllDatabases = catchAsync(
 			.limitFields()
 			.paginate();
 
-		const databases = await features.query;
+		const resDatabases = await features.query;
+
+		const parseDatabases: DatabaseRoleModel[] = JSON.parse(JSON.stringify(resDatabases));
+		const databases = parseDatabases.map((d) => ({
+			...(d.database as DatabaseModel),
+			role: req.path === "/roles" ? d.role : undefined,
+		}));
 
 		res.status(200).json({
 			status: "success",
-			results: databases.length,
+			// results: databases.length,
 			page: features.page,
 			limit: features.limit,
 			databases,

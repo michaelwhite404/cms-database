@@ -10,7 +10,8 @@ router.use("/:database_id/collections", collectionRouter);
 
 router.use(authController.protect);
 
-router.route("/").get(databaseController.getAllDatabases).post(databaseController.createDatabase);
+router.get(["/", "/roles"], databaseController.getAllDatabases);
+router.post("/", databaseController.createDatabase);
 
 router.use("/:database_id", databaseController.hasAccess);
 
