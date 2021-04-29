@@ -76,11 +76,13 @@ function Dashboard() {
 			<ul>
 				{databases.map((database) => (
 					<li key={database._id}>
-						<div>{database.name}</div>
-						<div>{database.createdAt}</div>
-						<div>{database.slug}</div>
-						<div>{database.role}</div>
-						<div>{database._id}</div>
+						<Link to={`/databases/${database.slug}`}>
+							<div>{database.name}</div>
+							<div>{database.createdAt}</div>
+							<div>{database.slug}</div>
+							<div>{database.role}</div>
+							<div>{database._id}</div>
+						</Link>
 					</li>
 				))}
 			</ul>

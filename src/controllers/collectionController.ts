@@ -44,7 +44,7 @@ export const hasDatabaseAccess = catchAsync(
 			return next(new AppError("Database ID is required but is not present", 400));
 		if (req.query.slug) {
 			const database = await Database.findOne({ slug: req.params.database_id });
-			console.log(database);
+
 			if (!database) return next(new AppError("There is no database with this ID", 404));
 			req.body.database = database._id;
 		}
