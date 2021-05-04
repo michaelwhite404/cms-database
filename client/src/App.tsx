@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios /*,  { AxiosError  }*/ from "axios";
 import React, { useEffect, useState } from "react";
 import {
 	BrowserRouter as Router,
@@ -12,6 +12,8 @@ import "./App.css";
 import DatabaseModel from "../../src/interfaces/databaseInterface";
 import { CollectionModel } from "../../src/interfaces/collectionInterfaces";
 import { ItemModel } from "../../src/interfaces/itemInterfaces";
+// import { APICollectionResponse } from "./interfaces/APIResponse";
+// import AppError from "../../src/utils/appError";
 
 function App() {
 	return (
@@ -50,7 +52,7 @@ function App() {
 }
 
 function Home() {
-	return <h2>Home</h2>;
+	return <h1 className="text-3xl font-bold">Home</h1>;
 }
 
 function Dashboard() {
@@ -72,7 +74,7 @@ function Dashboard() {
 
 	return (
 		<>
-			<h2>Dashboard</h2>
+			<h1 className="text-3xl font-bold">Dashboard</h1>
 			<ul>
 				{databases.map((database) => (
 					<li key={database._id}>
@@ -112,10 +114,10 @@ function Login() {
 			<h2>Login</h2>
 			<form onSubmit={handleSubmit}>
 				<label htmlFor="email-address">Email</label>
-				<input type="text" name="email" id="email-address" onChange={handleChange} />
+				<input type="text" name="email" id="email-address" onChange={handleChange} required />
 				<label htmlFor="password">Password</label>
-				<input type="password" name="password" id="password" onChange={handleChange} />
-				<button>Login</button>
+				<input type="password" name="password" id="password" onChange={handleChange} required />
+				<button type="submit">Login</button>
 			</form>
 		</>
 	);
@@ -128,7 +130,9 @@ function Database(/* props */) {
 	// console.log(props.match.params.database);
 	const fetchData = async () => {
 		try {
-			const res = await axios.get(`/api/v1/databases/${params.database}/collections?slug=true`);
+			const res = await axios.get(
+				/* <APICollectionResponse> */ `/api/v1/databases/${params.database}/collections?slug=true`
+			);
 			setCollections(res.data.collections);
 		} catch (err) {
 			console.log(err.response.data);
@@ -142,7 +146,7 @@ function Database(/* props */) {
 
 	return (
 		<>
-			<h2>Collections</h2>
+			<h2 className="text-3xl font-bold">Collections</h2>
 			{collections.map((collection) => (
 				<li key={collection._id}>
 					<div>{collection.name}</div>
@@ -177,7 +181,7 @@ function Collection() {
 
 	return (
 		<>
-			<h2>Collection</h2>
+			<h2 className="text-3xl font-bold">Collection</h2>
 			{items.map((item) => (
 				<li key={item._id as string}>
 					<div>{item.slug}</div>
