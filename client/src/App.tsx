@@ -1,4 +1,4 @@
-import axios /*,  { AxiosError  }*/ from "axios";
+import axios, { AxiosError } from "axios";
 import React, { useEffect, useState } from "react";
 import {
 	BrowserRouter as Router,
@@ -12,8 +12,12 @@ import "./App.css";
 import DatabaseModel from "../../src/interfaces/databaseInterface";
 import { CollectionModel } from "../../src/interfaces/collectionInterfaces";
 import { ItemModel } from "../../src/interfaces/itemInterfaces";
-// import { APICollectionResponse } from "./interfaces/APIResponse";
-// import AppError from "../../src/utils/appError";
+import {
+	APICollectionResponse,
+	APIDatabaseRepsonse,
+	APIItemResponse,
+} from "./interfaces/APIResponse";
+import AppError from "../../src/utils/appError";
 
 function App() {
 	return (
@@ -60,11 +64,11 @@ function Dashboard() {
 
 	async function fetchData() {
 		try {
-			const res = await axios.get("/api/v1/databases/roles");
+			const res = await axios.get<APIDatabaseRepsonse>("/api/v1/databases/roles");
 			setDatabases(res.data.databases);
 			console.log(res.data);
 		} catch (err) {
-			console.log(err.response.data);
+			console.log((err as AxiosError<AppError>).response!.data);
 		}
 	}
 
@@ -102,7 +106,7 @@ function Login() {
 			console.log(res.data);
 			history.push("/dashboard");
 		} catch (err) {
-			console.log(err.response.data);
+			console.log((err as AxiosError<AppError>).response!.data);
 		}
 	};
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -111,7 +115,7 @@ function Login() {
 
 	return (
 		<>
-			<h2>Login</h2>
+			<h2 className="text-3xl font-bold">Login</h2>
 			<form onSubmit={handleSubmit}>
 				<label htmlFor="email-address">Email</label>
 				<input type="text" name="email" id="email-address" onChange={handleChange} required />
@@ -130,12 +134,12 @@ function Database(/* props */) {
 	// console.log(props.match.params.database);
 	const fetchData = async () => {
 		try {
-			const res = await axios.get(
-				/* <APICollectionResponse> */ `/api/v1/databases/${params.database}/collections?slug=true`
+			const res = await axios.get<APICollectionResponse>(
+				`/api/v1/databases/${params.database}/collections?slug=true`
 			);
 			setCollections(res.data.collections);
 		} catch (err) {
-			console.log(err.response.data);
+			console.log((err as AxiosError<AppError>).response!.data);
 		}
 	};
 
@@ -166,11 +170,13 @@ function Collection() {
 
 	const fetchData = async () => {
 		try {
-			const res = await axios.get(`/api/v1/collections/${params.collection}/items`);
+			const res = await axios.get<APIItemResponse>(
+				`/api/v1/collections/${params.collection}/items`
+			);
 			setItems(res.data.items);
 			console.log(res.data);
 		} catch (err) {
-			console.log(err.response.data);
+			console.log((err as AxiosError<AppError>).response!.data);
 		}
 	};
 
