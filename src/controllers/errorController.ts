@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import mongoose, { CastError } from "mongoose";
 import { MongoError } from "mongodb";
 import AppError from "../utils/appError";
+import { arrayCompare } from "../utils/compareArray";
 
 type ValidationError = mongoose.Error.ValidationError;
 
@@ -11,7 +12,14 @@ const handleCastErrorDB = (err: CastError): AppError => {
 };
 
 const handleDuplicateFieldsDB = (err: MongoError): AppError => {
-	const value = err.errmsg!.match(/(["'])(\\?.)*?\1/)![0];
+	let value: string;
+	// @ts-ignore
+	if (arrayCompare(Object.keys(err.keyValue), ["database", "slug"])) value = err.keyValue.slug;
+	// @ts-ignore
+	if (arrayCompare(Object.keys(err.keyValue), ["database", "name"])) value = err.keyValue.name;
+	else {
+		value = err.errmsg!.match(/(["'])(\\?.)*?\1/)![0];
+	}
 
 	const message = `Duplicate field value: ${value}. Please use another value!`;
 	return new AppError(message, 400);
