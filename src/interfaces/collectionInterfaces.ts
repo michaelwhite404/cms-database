@@ -1,4 +1,4 @@
-import { Document, ObjectId } from "mongoose";
+import { Document, ObjectId, Types } from "mongoose";
 
 export interface CollectionField {
 	/** Auto-generated ObjectId */
@@ -75,7 +75,7 @@ export interface CollectionModel extends Document {
 
 export interface CollectionValidationOption {
 	/** ID of the option */
-	_id: string;
+	_id: string | Types.ObjectId;
 	/** Name of the option */
 	name: string;
 }

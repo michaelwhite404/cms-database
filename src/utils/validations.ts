@@ -1,6 +1,7 @@
 import slugify from "slugify";
 import validator from "validator";
 import a from "indefinite";
+import { Types } from "mongoose";
 
 import {
 	CollectionField,
@@ -409,6 +410,7 @@ export const testCollectionValidations = (field: any): ReturnedCollectionValidat
 						`The field '${field.name}' must only have options that are a maximum of 64 characters`,
 					];
 				const returnOptions = requestOptions.map((opt) => ({
+					_id: new Types.ObjectId(),
 					name: opt,
 				})) as CollectionValidationOption[];
 				field.validations.options = returnOptions;
