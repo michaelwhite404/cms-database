@@ -57,6 +57,7 @@ export const hasDatabaseAccess = catchAsync(
 		if (!databaseRole) return next(new AppError("There is no database with this ID", 404));
 		req.databaseRole = databaseRole;
 		delete req.query.slug;
+		delete req.body.database;
 		next();
 	}
 );

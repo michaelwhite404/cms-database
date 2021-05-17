@@ -17,6 +17,8 @@ const handleDuplicateFieldsDB = (err: MongoError): AppError => {
 	if (arrayCompare(Object.keys(err.keyValue), ["database", "slug"])) value = err.keyValue.slug;
 	// @ts-ignore
 	if (arrayCompare(Object.keys(err.keyValue), ["database", "name"])) value = err.keyValue.name;
+	// @ts-ignore
+	if (arrayCompare(Object.keys(err.keyValue), ["_cid", "slug"])) value = err.keyValue.slug;
 	else {
 		value = err.errmsg!.match(/(["'])(\\?.)*?\1/)![0];
 	}

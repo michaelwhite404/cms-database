@@ -98,7 +98,7 @@ const instantiateFields = (
 	const collection = req.collection;
 	// Fields
 	let collectionFields = collection.fields;
-	let itemFields: ItemFields = { ...req.body.fields };
+	let itemFields: ItemFields = { ...req.body };
 
 	// Delete default fields from body.fields if present
 	defaultCollectonFields.forEach((field) => delete itemFields[field.slug]);
@@ -172,7 +172,7 @@ export const createItem = catchAsync(
 		res: Response,
 		next: NextFunction
 	) => {
-		if (!req.body.fields || objectIsEmpty(req.body.fields))
+		if (!req.body || objectIsEmpty(req.body))
 			return next(
 				new AppError("No arguments are present. Please enter fields in the 'fields' object", 400)
 			);
@@ -256,7 +256,7 @@ export const patchItem = catchAsync(
 		res: Response,
 		next: NextFunction
 	) => {
-		if (!req.body.fields || objectIsEmpty(req.body.fields))
+		if (!req.body || objectIsEmpty(req.body))
 			return next(
 				new AppError("No arguments are present. Please enter fields in the 'fields' object", 400)
 			);
@@ -292,7 +292,7 @@ export const patchItem = catchAsync(
 				_id: req.params.item_id,
 				_cid: req.params.collection_id,
 			},
-			{ ...req.body.fields, "updated-on": new Date() },
+			{ ...req.body, "updated-on": new Date() },
 			{ new: true }
 		);
 
@@ -320,7 +320,7 @@ export const putItem = catchAsync(
 		res: Response,
 		next: NextFunction
 	) => {
-		if (!req.body.fields || objectIsEmpty(req.body.fields))
+		if (!req.body || objectIsEmpty(req.body))
 			return next(
 				new AppError("No arguments are present. Please enter fields in the 'fields' object", 400)
 			);
@@ -377,7 +377,7 @@ export const putItem = catchAsync(
 			{ new: true }
 		);
 		// Take database out of output
-		updatedItem!.database = (undefined as unknown) as string;
+		updatedItem!.database = undefined as unknown as string;
 
 		res.status(200).json({
 			status: "success",
