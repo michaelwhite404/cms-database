@@ -7,7 +7,11 @@ import { arrayCompare } from "../utils/compareArray";
 type ValidationError = mongoose.Error.ValidationError;
 
 const handleCastErrorDB = (err: CastError): AppError => {
-	const message = `Invalid ${err.path}: ${err.value}.`;
+	let value: string = "";
+	if (arrayCompare(Object.keys(err.value), ["_id", "_cid"])) {
+		value = err.value._id;
+	}
+	const message = `Invalid ${err.path}: ${value || err.value}.`;
 	return new AppError(message, 400);
 };
 

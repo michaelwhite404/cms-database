@@ -116,7 +116,7 @@ const instantiateFields = (
 export const getAllItemsInCollection = catchAsync(
 	async (req: CustomRequest<ItemModel>, res: Response) => {
 		const features = new APIFeatures(
-			Item.find({ _cid: req.params.collection_id }).select("-_cid"),
+			Item.find({ _cid: req.params.collection_id }) /* .select("-_cid") */,
 			req.query
 		)
 			.filter()
@@ -124,7 +124,11 @@ export const getAllItemsInCollection = catchAsync(
 			.limitFields()
 			.paginate();
 
-		const items = await features.query;
+		const fetchedItems = await features.query.lean();
+		const items = fetchedItems.map((i) => {
+			delete i._cid;
+			return i;
+		});
 
 		res.status(200).json({
 			status: "success",
@@ -197,7 +201,15 @@ export const createItem = catchAsync(
 		/** Object of item fields that have passed the validation test */
 		const testedFields: ItemFields = {};
 		for (const [itemField, collectionField] of itemFieldArray) {
-			const [valid, message] = testItemValidations(itemField, collectionField);
+			let item: ItemModel | null | undefined = null;
+			if (collectionField.type === "ItemRef") {
+				// Get Item from Collection being referenced
+				item = await Item.findOne({
+					_cid: collectionField.validations!.collectionId!,
+					_id: itemField,
+				});
+			}
+			const [valid, message] = testItemValidations(itemField, collectionField, item);
 			// If validation failed
 			if (!valid) return next(new AppError(message, 400));
 			testedFields[collectionField.slug] = itemField;
@@ -364,8 +376,8 @@ export const putItem = catchAsync(
 			_cid: oldItem._cid,
 			database: oldItem.database,
 			...testedFields,
-			"updated-on": oldItem["updated-on"],
-			"created-on": Date.now(),
+			"updated-on": new Date(),
+			"created-on": oldItem["created-on"],
 		};
 
 		const updatedItem = await Item.findOneAndReplace(

@@ -11,6 +11,7 @@ import {
 } from "../interfaces/collectionInterfaces";
 import fieldTypes from "../enums/fieldTypes";
 import { CollectionValidationMethods } from "../interfaces/validationMethodInterfaces";
+import { ItemModel } from "../interfaces/itemInterfaces";
 
 type CVFailed = [false, string];
 type CVPassed = [true, CollectionField];
@@ -98,7 +99,11 @@ const lessThanZero = (number: number): boolean => {
  * @returns {[boolean, string]} Whether the value passed the vaildation and a message explaining
  * why or why not the value passed
  */
-export const testItemValidations = (value: any, field: CollectionField): [boolean, string] => {
+export const testItemValidations = (
+	value: any,
+	field: CollectionField,
+	item?: ItemModel | undefined | null
+): [boolean, string] => {
 	const missingMessage = (arg: string) => `The argument '${arg}' is required but it is missing`;
 	if (value === undefined) return [false, missingMessage("value")];
 	if (field === undefined) return [false, missingMessage("field")];
@@ -201,9 +206,14 @@ export const testItemValidations = (value: any, field: CollectionField): [boolea
 			const message = `${messageStart} is ${result ? "" : "not "}a valid option`;
 			return [result, message];
 		},
-		// Date: (): [boolean, string] => {
-
-		// }
+		ItemRef: (): [boolean, string] => {
+			/** Is the value one of the Item ids */
+			const result = typeof item === "object" && item != null;
+			const message = `${messageStart} is ${
+				result ? "" : "not "
+			}an item in the referenced collection`;
+			return [result, message];
+		},
 	};
 	return validations[field.type]();
 };
