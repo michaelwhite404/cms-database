@@ -144,7 +144,7 @@ export const createCollection = catchAsync(
 		if (!req.body.name) return next(new AppError("A Collection must have a name", 400));
 		// If a slug was set
 		if (req.body.slug) req.body.slug = slugify(req.body.slug, { lower: true });
-		const database = await Database.findById(req.body.database);
+		const database = await Database.findById(req.databaseRole?.database);
 		if (!database) {
 			return next(
 				new AppError("A collection must be added to a valid database you have access to.", 400)
@@ -177,7 +177,15 @@ export const createCollection = catchAsync(
 
 			// Store Collecion Field
 			for (const testField of bodyFields) {
-				const result = testCollectionValidations(testField);
+				let ids: Array<string> | undefined = undefined;
+				if (testField.type === "ItemRef") {
+					const collections = await Collection.find({
+						database: req.databaseRole!.database as string,
+					}).lean();
+					ids = collections.map((c) => c._id.toString());
+				}
+				const result = testCollectionValidations(testField, ids);
+				// If there is an error
 				if (!result[0]) return next(new AppError(result[1], 400));
 				const field = result[1];
 				fields.push(

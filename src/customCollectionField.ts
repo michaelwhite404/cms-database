@@ -1,13 +1,17 @@
-import { ObjectId } from "mongoose";
+import { ObjectId } from "mongodb";
 import slugify from "slugify";
-import { CollectionField, CollectionValidations } from "./interfaces/collectionInterfaces";
+import {
+	CollectionField,
+	CollectionFieldType,
+	CollectionValidations,
+} from "./interfaces/collectionInterfaces";
 /**
  * Creates a new collection field
  */
 export class CustomCollectionField implements CollectionField {
 	_id: ObjectId | string;
 	name: string;
-	type: string;
+	type: CollectionFieldType;
 	editable: boolean;
 	required: boolean;
 	slug: string;
@@ -26,7 +30,7 @@ export class CustomCollectionField implements CollectionField {
 	 */
 	constructor(
 		name: string,
-		type: string,
+		type: CollectionFieldType,
 		required: boolean = false,
 		validations?: CollectionValidations,
 		helpText?: string,

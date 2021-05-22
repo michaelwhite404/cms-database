@@ -5,14 +5,16 @@ import { Types } from "mongoose";
 
 import {
 	CollectionField,
-	CollectionValidations,
+	CollectionFieldType,
 	CollectionValidationOption,
+	CollectionValidationsKeys,
 } from "../interfaces/collectionInterfaces";
 import fieldTypes from "../enums/fieldTypes";
+import { CollectionValidationMethods } from "../interfaces/validationMethodInterfaces";
 
 type CVFailed = [false, string];
 type CVPassed = [true, CollectionField];
-type ReturnedCollectionValidation = CVPassed | CVFailed;
+export type ReturnedCollectionValidation = CVPassed | CVFailed;
 
 type TCFailed = [false, string];
 type TCPassed = [true, "undefined" | "passed"];
@@ -40,14 +42,15 @@ export const notReservedField = (name: string) => {
  *    message about the results
  */
 export const testAllowedFields = (
-	type: string,
-	validations: CollectionValidations,
-	acceptedField: string,
-	...additionalFields: string[]
+	type: CollectionFieldType,
+	validations: any,
+	acceptedField: CollectionValidationsKeys,
+	...additionalFields: CollectionValidationsKeys[]
 ): [false, string] | [true, "passed"] => {
 	// Aceepted fields
 	const accept = [acceptedField, ...additionalFields];
 	// Invalid fields
+	// @ts-ignore
 	const invalidFields = Object.keys(validations).filter((x) => !accept.includes(x));
 	if (invalidFields.length > 0) {
 		const words = invalidFields.length > 1 ? ["s", "are"] : ["", "is"];
@@ -205,7 +208,10 @@ export const testItemValidations = (value: any, field: CollectionField): [boolea
 	return validations[field.type]();
 };
 
-export const testCollectionValidations = (field: any): ReturnedCollectionValidation => {
+export const testCollectionValidations = (
+	field: any,
+	collectionIds?: string[]
+): ReturnedCollectionValidation => {
 	// Test Name Property
 	if (field === undefined) return [false, "No field was provided"];
 	if (field.name === undefined) return [false, "All fields must have a name"];
@@ -230,8 +236,8 @@ export const testCollectionValidations = (field: any): ReturnedCollectionValidat
 	const defaultField = { ...field, validations: { singleLine: true } } as CollectionField;
 	/** The field name */
 	const name = field.name!;
-	const validations: { [key: string]: Function } = {
-		Standard: (type: string): ReturnedCollectionValidation => {
+	const validations: CollectionValidationMethods = {
+		Standard: (type: CollectionFieldType): ReturnedCollectionValidation => {
 			if (field.validations) {
 				const fieldsPassed = testAllowedFields(type, field.validations, "singleLine");
 				if (!fieldsPassed[0]) return fieldsPassed;
@@ -389,7 +395,7 @@ export const testCollectionValidations = (field: any): ReturnedCollectionValidat
 		},
 		Option: (): ReturnedCollectionValidation => {
 			if (field.validations) {
-				const fieldsPassed = testAllowedFields("Options", field.validations, "options");
+				const fieldsPassed = testAllowedFields("Option", field.validations, "options");
 				if (!fieldsPassed[0]) return fieldsPassed;
 				if (!field.validations.options || !Array.isArray(field.validations.options))
 					return [
@@ -423,7 +429,29 @@ export const testCollectionValidations = (field: any): ReturnedCollectionValidat
 				`The field '${field.name}' must have an 'options' validation that contains an array of options`,
 			];
 		},
+		ItemRef: (): ReturnedCollectionValidation => {
+			if (field.validations) {
+				const fieldsPassed = testAllowedFields("ItemRef", field.validations, "collectionId");
+				if (!fieldsPassed[0]) return fieldsPassed;
+				if (!field.validations.collectionId)
+					return [
+						false,
+						`The field '${field.name}' must have a 'collectionId' validation of the collection this field is referencing`,
+					];
+				if (!collectionIds!.includes(field.validations.collectionId)) {
+					return [
+						false,
+						`The validation 'collectionId' is not a collection in this project for the field '${field.name}'`,
+					];
+				}
+				return [true, field];
+			}
+			return [
+				false,
+				`The field '${field.name}' must have an 'collectionId' validation of the collection this field is referencing`,
+			];
+		},
 	};
-
+	// @ts-ignore
 	return validations[field.type]();
 };

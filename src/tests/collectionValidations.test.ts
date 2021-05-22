@@ -7,7 +7,7 @@ import { testAllowedFields, testCollectionValidations } from "../utils/validatio
 
 test("Outputs whether all of the validation fields are accepted", () => {
 	let validations: CollectionValidations = {};
-	expect(testAllowedFields("Option", validations, "option")).toStrictEqual([true, "passed"]);
+	expect(testAllowedFields("Option", validations, "options")).toStrictEqual([true, "passed"]);
 	validations = { maxLength: 64, minLength: 32, maxSize: 100 };
 	expect(
 		testAllowedFields("PlainText", validations, "singleLine", "maxLength", "minLength")[1]

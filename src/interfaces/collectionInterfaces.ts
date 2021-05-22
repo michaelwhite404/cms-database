@@ -1,4 +1,6 @@
-import { Document, ObjectId, Types } from "mongoose";
+import { Document } from "mongoose";
+import { ObjectId } from "mongodb";
+import fieldTypes from "../enums/fieldTypes";
 
 export interface CollectionField {
 	/** Auto-generated ObjectId */
@@ -6,7 +8,7 @@ export interface CollectionField {
 	/** The name of the collection field */
 	name: string;
 	/** The type of collection field */
-	type: string;
+	type: CollectionFieldType;
 	/** Unique slug identifier for the field */
 	slug: string;
 	/** Shows whether the field is a required field */
@@ -49,8 +51,10 @@ export interface CollectionValidations {
 	collectionId?: string;
 	pattern?: RegExp;
 }
+export type CollectionValidationsKeys = keyof CollectionValidations;
 
 export interface CollectionModel extends Document {
+	_id: string;
 	/** The name of the collection */
 	name: string;
 	/** The name of the collection in singular form (e.g. "Blog Posts" -> "Blog Post") */
@@ -75,7 +79,9 @@ export interface CollectionModel extends Document {
 
 export interface CollectionValidationOption {
 	/** ID of the option */
-	_id: string | Types.ObjectId;
+	_id: string | ObjectId;
 	/** Name of the option */
 	name: string;
 }
+
+export type CollectionFieldType = typeof fieldTypes[number];
