@@ -2,6 +2,7 @@ import slugify from "slugify";
 import validator from "validator";
 import a from "indefinite";
 import { Types } from "mongoose";
+import pluralize from "pluralize";
 
 import {
 	CollectionField,
@@ -11,7 +12,6 @@ import {
 } from "../interfaces/collectionInterfaces";
 import fieldTypes from "../enums/fieldTypes";
 import { CollectionValidationMethods } from "../interfaces/validationMethodInterfaces";
-import { ItemModel } from "../interfaces/itemInterfaces";
 
 type CVFailed = [false, string];
 type CVPassed = [true, CollectionField];
@@ -102,7 +102,7 @@ const lessThanZero = (number: number): boolean => {
 export const testItemValidations = (
 	value: any,
 	field: CollectionField,
-	item?: ItemModel | undefined | null
+	data?: any
 ): [boolean, string] => {
 	const missingMessage = (arg: string) => `The argument '${arg}' is required but it is missing`;
 	if (value === undefined) return [false, missingMessage("value")];
@@ -208,10 +208,18 @@ export const testItemValidations = (
 		},
 		ItemRef: (): [boolean, string] => {
 			/** Is the value one of the Item ids */
-			const result = typeof item === "object" && item != null;
+			const result = typeof data === "object" && data != null;
 			const message = `${messageStart} is ${
 				result ? "" : "not "
 			}an item in the referenced collection`;
+			return [result, message];
+		},
+		ItemRefMulti: (): [boolean, string] => {
+			const length = (data as string[]).length;
+			const result = length === 0;
+			const message = result
+				? `${messageStart} is valid`
+				: `${messageStart} has ${length} invalid ${pluralize("value", length)}: ${data.join(", ")}`;
 			return [result, message];
 		},
 	};
@@ -439,9 +447,9 @@ export const testCollectionValidations = (
 				`The field '${field.name}' must have an 'options' validation that contains an array of options`,
 			];
 		},
-		ItemRef: (): ReturnedCollectionValidation => {
+		Reference: (type: CollectionFieldType): ReturnedCollectionValidation => {
 			if (field.validations) {
-				const fieldsPassed = testAllowedFields("ItemRef", field.validations, "collectionId");
+				const fieldsPassed = testAllowedFields(type, field.validations, "collectionId");
 				if (!fieldsPassed[0]) return fieldsPassed;
 				if (!field.validations.collectionId)
 					return [
@@ -460,6 +468,12 @@ export const testCollectionValidations = (
 				false,
 				`The field '${field.name}' must have an 'collectionId' validation of the collection this field is referencing`,
 			];
+		},
+		ItemRef: (): ReturnedCollectionValidation => {
+			return validations.Reference("ItemRef");
+		},
+		ItemRefMulti: (): ReturnedCollectionValidation => {
+			return validations.Reference("ItemRefMulti");
 		},
 	};
 	// @ts-ignore

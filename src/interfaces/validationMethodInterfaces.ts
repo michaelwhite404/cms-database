@@ -11,5 +11,7 @@ export interface CollectionValidationMethods {
 	Number: () => ReturnedCollectionValidation;
 	Link: () => ReturnedCollectionValidation;
 	Option: () => ReturnedCollectionValidation;
+	Reference: (type: CollectionFieldType) => ReturnedCollectionValidation;
 	ItemRef: () => ReturnedCollectionValidation;
+	ItemRefMulti: () => ReturnedCollectionValidation;
 }

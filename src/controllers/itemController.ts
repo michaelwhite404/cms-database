@@ -201,15 +201,28 @@ export const createItem = catchAsync(
 		/** Object of item fields that have passed the validation test */
 		const testedFields: ItemFields = {};
 		for (const [itemField, collectionField] of itemFieldArray) {
-			let item: ItemModel | null | undefined = null;
+			let data: any = null;
 			if (collectionField.type === "ItemRef") {
 				// Get Item from Collection being referenced
-				item = await Item.findOne({
+				data = await Item.findOne({
 					_cid: collectionField.validations!.collectionId!,
 					_id: itemField,
 				});
 			}
-			const [valid, message] = testItemValidations(itemField, collectionField, item);
+			if (collectionField.type === "ItemRefMulti") {
+				// Receive array of ids from user
+				if (!Array.isArray(itemField)) return next(new AppError("Not an array", 400));
+				// Get items from referenced collection that match the ids
+				const returnedItems = await Item.find({
+					_id: { $in: itemField },
+					_cid: collectionField.validations!.collectionId,
+				});
+				// Map only _ids from recieved collection
+				const returnedItemsIds = returnedItems.map((i) => i._id.toString());
+				// Filter user ids that are not in mapped array
+				data = itemField.filter((i) => !returnedItemsIds.includes(i));
+			}
+			const [valid, message] = testItemValidations(itemField, collectionField, data);
 			// If validation failed
 			if (!valid) return next(new AppError(message, 400));
 			testedFields[collectionField.slug] = itemField;

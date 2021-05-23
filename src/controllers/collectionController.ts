@@ -178,7 +178,7 @@ export const createCollection = catchAsync(
 			// Store Collecion Field
 			for (const testField of bodyFields) {
 				let ids: Array<string> | undefined = undefined;
-				if (testField.type === "ItemRef") {
+				if (testField.type === "ItemRef" || testField.type === "ItemRefMulti") {
 					const collections = await Collection.find({
 						database: req.databaseRole!.database as string,
 					}).lean();
