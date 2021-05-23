@@ -11,7 +11,11 @@ import {
 	CollectionValidationsKeys,
 } from "../interfaces/collectionInterfaces";
 import fieldTypes from "../enums/fieldTypes";
-import { CollectionValidationMethods } from "../interfaces/validationMethodInterfaces";
+import {
+	CollectionValidationMethods,
+	ItemValidationMethods,
+} from "../interfaces/validationMethodInterfaces";
+import Item from "../models/itemModel";
 
 type CVFailed = [false, string];
 type CVPassed = [true, CollectionField];
@@ -99,82 +103,95 @@ const lessThanZero = (number: number): boolean => {
  * @returns {[boolean, string]} Whether the value passed the vaildation and a message explaining
  * why or why not the value passed
  */
-export const testItemValidations = (
+export const testItemValidations = async (
 	value: any,
-	field: CollectionField,
-	data?: any
-): [boolean, string] => {
+	field: CollectionField
+): Promise<[boolean, string]> => {
 	const missingMessage = (arg: string) => `The argument '${arg}' is required but it is missing`;
 	if (value === undefined) return [false, missingMessage("value")];
 	if (field === undefined) return [false, missingMessage("field")];
 
 	const messageStart = `The value for '${field.slug}'`;
 
-	const validations: { [key: string]: Function } = {
+	const validations: ItemValidationMethods = {
 		/** Email validation test */
-		Email: (): [boolean, string] => {
-			if (typeof value !== "string") return [false, `${messageStart} is not a string value`];
+		Email: (): Promise<[boolean, string]> => {
+			if (typeof value !== "string")
+				return Promise.resolve([false, `${messageStart} is not a string value`]);
 			const result = validator.isEmail(value);
 			const message = `${messageStart} is ${result ? "" : "not "}a valid email`;
-			return [result, message];
+			return Promise.resolve([result, message]);
 		},
 		/** Phone validation test */
-		Phone: (): [boolean, string] => {
-			if (typeof value !== "string") return [false, `${messageStart} is not a string value`];
+		Phone: (): Promise<[boolean, string]> => {
+			if (typeof value !== "string")
+				return Promise.resolve([false, `${messageStart} is not a string value`]);
 			const result = validator.isMobilePhone(value);
 			const message = `${messageStart} is ${result ? "" : "not "}a valid phone number`;
-			return [result, message];
+			return Promise.resolve([result, message]);
 		},
 		/** HEX color test */
-		Color: (): [boolean, string] => {
-			if (typeof value !== "string") return [false, `${messageStart} is not a string value`];
+		Color: (): Promise<[boolean, string]> => {
+			if (typeof value !== "string")
+				return Promise.resolve([false, `${messageStart} is not a string value`]);
 			const result = validator.isHexColor(value);
 			const message = `${messageStart} is ${result ? "" : "not "}a valid hex color`;
-			return [result, message];
+			return Promise.resolve([result, message]);
 		},
 		/** Boolean validation test */
-		Bool: (): [boolean, string] => {
+		Bool: (): Promise<[boolean, string]> => {
 			const result = typeof value === "boolean";
 			const message = `${messageStart} is ${result ? "" : "not "}a boolean value`;
-			return [result, message];
+			return Promise.resolve([result, message]);
 		},
 		/** PlainText validation test */
-		PlainText: (): [boolean, string] => {
-			if (typeof value !== "string") return [false, `${messageStart} is not a string value`];
-			if (value.length === 0) return [false, `${messageStart} has no value`];
+		PlainText: (): Promise<[boolean, string]> => {
+			if (typeof value !== "string")
+				return Promise.resolve([false, `${messageStart} is not a string value`]);
+			if (value.length === 0) return Promise.resolve([false, `${messageStart} has no value`]);
 			if (field.validations && Object.keys(field.validations).length > 0) {
 				const { maxLength, minLength, pattern } = field.validations;
 				// maxLength Validation
 				if (typeof maxLength === "number" && value.length > maxLength)
-					return [false, `${messageStart} must not exceed the max character count of ${maxLength}`];
+					return Promise.resolve([
+						false,
+						`${messageStart} must not exceed the max character count of ${maxLength}`,
+					]);
 				// minLength Validation
 				if (typeof minLength === "number" && value.length < minLength)
-					return [false, `${messageStart} must exceed the min character count of ${minLength}`];
+					return Promise.resolve([
+						false,
+						`${messageStart} must exceed the min character count of ${minLength}`,
+					]);
 				// pattern Validation
 				if (pattern instanceof RegExp && value.search(pattern) < 0)
-					return [
+					return Promise.resolve([
 						false,
 						`${messageStart} must be alphanumerical and not contain any spaces or special characters`,
-					];
+					]);
 			}
-			return [true, `${messageStart} is a valid PlainText input`];
+			return Promise.resolve([true, `${messageStart} is a valid PlainText input`]);
 		},
 		/** Number validation test */
-		Number: (): [boolean, string] => {
-			if (typeof value !== "number") return [false, `${messageStart} is not a number`];
+		Number: (): Promise<[boolean, string]> => {
+			if (typeof value !== "number")
+				return Promise.resolve([false, `${messageStart} is not a number`]);
 			if (field.validations && Object.keys(field.validations).length > 0) {
 				const { allowNegative, maximum, minimum, decimalPlaces, format } = field.validations;
 				// (Allow Negative) If the value is is negative and 'allowNegative' is false
 				if (allowNegative === false && value < 0) {
-					return [false, `${messageStart} cannot be a negative number`];
+					return Promise.resolve([false, `${messageStart} cannot be a negative number`]);
 				}
 				// (Maximum) If the value is above the maximum number
 				if (typeof maximum === "number" && value > maximum) {
-					return [false, `${messageStart} cannot exceed a value of ${maximum}`];
+					return Promise.resolve([false, `${messageStart} cannot exceed a value of ${maximum}`]);
 				}
 				// (Minimum) If the value is below the minimum number
 				if (typeof minimum === "number" && value < minimum) {
-					return [false, `${messageStart} cannot be below the value of ${minimum}`];
+					return Promise.resolve([
+						false,
+						`${messageStart} cannot be below the value of ${minimum}`,
+					]);
 				}
 				// Decimal Places Function
 				const countDecimals = (value: number) => {
@@ -183,47 +200,83 @@ export const testItemValidations = (
 				};
 				// (Decimal Places) If the number exceeds the maximum number of decimal places
 				if (typeof decimalPlaces === "number" && countDecimals(value) > decimalPlaces) {
-					return [false, `${messageStart} cannot exceed more than ${decimalPlaces} decimal places`];
+					return Promise.resolve([
+						false,
+						`${messageStart} cannot exceed more than ${decimalPlaces} decimal places`,
+					]);
 				}
 				// Number format
 				if (format === "integer" && countDecimals(value) > 0) {
-					return [false, `${messageStart} is not an integer`];
+					return Promise.resolve([false, `${messageStart} is not an integer`]);
 				}
 			}
-			return [true, `${messageStart} is a valid number`];
+			return Promise.resolve([true, `${messageStart} is a valid number`]);
 		},
 		/** Link validation test */
-		Link: (): [boolean, string] => {
-			if (typeof value !== "string") return [false, `${messageStart} is not a string value`];
+		Link: (): Promise<[boolean, string]> => {
+			if (typeof value !== "string")
+				return Promise.resolve([false, `${messageStart} is not a string value`]);
 			const result = validator.isURL(value);
 			const message = `${messageStart} is ${result ? "" : "not "}a valid link`;
-			return [result, message];
+			return Promise.resolve([result, message]);
 		},
-		Option: (): [boolean, string] => {
+		Option: (): Promise<[boolean, string]> => {
 			const options = field.validations!.options! as CollectionValidationOption[];
 			/** Does the option chosen by the user exists */
 			const result = options.filter((option) => value === option.name).length > 0;
 			const message = `${messageStart} is ${result ? "" : "not "}a valid option`;
-			return [result, message];
+			return Promise.resolve([result, message]);
 		},
-		ItemRef: (): [boolean, string] => {
+		ItemRef: async (): Promise<[boolean, string]> => {
+			const item = await Item.findOne({
+				_cid: field.validations!.collectionId!,
+				_id: value,
+			});
 			/** Is the value one of the Item ids */
-			const result = typeof data === "object" && data != null;
+			const result = typeof item === "object" && item != null;
 			const message = `${messageStart} is ${
 				result ? "" : "not "
 			}an item in the referenced collection`;
-			return [result, message];
+			return Promise.resolve([result, message]);
 		},
-		ItemRefMulti: (): [boolean, string] => {
-			const length = (data as string[]).length;
+		ItemRefMulti: async (): Promise<[boolean, string]> => {
+			// Receive array of ids from user
+			if (!Array.isArray(value)) return Promise.resolve([false, `${messageStart} is not an array`]);
+			// Get items from referenced collection that match the ids
+			const returnedItems = await Item.find({
+				_id: { $in: value },
+				_cid: field.validations!.collectionId!,
+			});
+			// Map only _ids from recieved collection
+			const returnedItemsIds = returnedItems.map((i) => i._id.toString());
+			// Filter user ids that are not in mapped array
+			const notValidIds = value.filter((i) => !returnedItemsIds.includes(i));
+			const length = (notValidIds as string[]).length;
 			const result = length === 0;
 			const message = result
 				? `${messageStart} is valid`
-				: `${messageStart} has ${length} invalid ${pluralize("value", length)}: ${data.join(", ")}`;
-			return [result, message];
+				: `${messageStart} has ${length} invalid ${pluralize("value", length)}: ${notValidIds.join(
+						", "
+				  )}`;
+			return Promise.resolve([result, message]);
+		},
+		Date: (): Promise<[boolean, string]> => {
+			return Promise.resolve([false, "Not Implemented"]);
+		},
+		ImageRef: (): Promise<[boolean, string]> => {
+			return Promise.resolve([false, "Not Implemented"]);
+		},
+		RichText: (): Promise<[boolean, string]> => {
+			return Promise.resolve([false, "Not Implemented"]);
+		},
+		Video: (): Promise<[boolean, string]> => {
+			return Promise.resolve([false, "Not Implemented"]);
+		},
+		User: (): Promise<[boolean, string]> => {
+			return Promise.resolve([false, "Not Implemented"]);
 		},
 	};
-	return validations[field.type]();
+	return await validations[field.type]();
 };
 
 export const testCollectionValidations = (

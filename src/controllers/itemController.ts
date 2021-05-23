@@ -201,28 +201,7 @@ export const createItem = catchAsync(
 		/** Object of item fields that have passed the validation test */
 		const testedFields: ItemFields = {};
 		for (const [itemField, collectionField] of itemFieldArray) {
-			let data: any = null;
-			if (collectionField.type === "ItemRef") {
-				// Get Item from Collection being referenced
-				data = await Item.findOne({
-					_cid: collectionField.validations!.collectionId!,
-					_id: itemField,
-				});
-			}
-			if (collectionField.type === "ItemRefMulti") {
-				// Receive array of ids from user
-				if (!Array.isArray(itemField)) return next(new AppError("Not an array", 400));
-				// Get items from referenced collection that match the ids
-				const returnedItems = await Item.find({
-					_id: { $in: itemField },
-					_cid: collectionField.validations!.collectionId,
-				});
-				// Map only _ids from recieved collection
-				const returnedItemsIds = returnedItems.map((i) => i._id.toString());
-				// Filter user ids that are not in mapped array
-				data = itemField.filter((i) => !returnedItemsIds.includes(i));
-			}
-			const [valid, message] = testItemValidations(itemField, collectionField, data);
+			const [valid, message] = await testItemValidations(itemField, collectionField);
 			// If validation failed
 			if (!valid) return next(new AppError(message, 400));
 			testedFields[collectionField.slug] = itemField;
@@ -282,9 +261,7 @@ export const patchItem = catchAsync(
 		next: NextFunction
 	) => {
 		if (!req.body || objectIsEmpty(req.body))
-			return next(
-				new AppError("No arguments are present. Please enter fields in the 'fields' object", 400)
-			);
+			return next(new AppError("No arguments are present", 400));
 		/** The item soon to be updated */
 		let oldItem = await Item.findById({
 			_id: req.params.item_id,
@@ -306,7 +283,7 @@ export const patchItem = catchAsync(
 		/** Object of item fields that have passed the validation test */
 		const testedFields: ItemFields = {};
 		for (const [itemField, collectionField] of itemFieldArray) {
-			const [valid, message] = testItemValidations(itemField, collectionField);
+			const [valid, message] = await testItemValidations(itemField, collectionField);
 			// If validation failed
 			if (!valid) return next(new AppError(message, 400));
 			testedFields[collectionField.slug] = itemField;
@@ -346,9 +323,7 @@ export const putItem = catchAsync(
 		next: NextFunction
 	) => {
 		if (!req.body || objectIsEmpty(req.body))
-			return next(
-				new AppError("No arguments are present. Please enter fields in the 'fields' object", 400)
-			);
+			return next(new AppError("No arguments are present", 400));
 
 		/** The item soon to be updated */
 		let oldItem = await Item.findById({
@@ -377,7 +352,7 @@ export const putItem = catchAsync(
 		/** Object of item fields that have passed the validation test */
 		const testedFields: ItemFields = {};
 		for (const [itemField, collectionField] of itemFieldArray) {
-			const [valid, message] = testItemValidations(itemField, collectionField);
+			const [valid, message] = await testItemValidations(itemField, collectionField);
 			// If validation failed
 			if (!valid) return next(new AppError(message, 400));
 			testedFields[collectionField.slug] = itemField;
