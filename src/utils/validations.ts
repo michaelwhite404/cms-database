@@ -224,7 +224,7 @@ export const testItemValidations = async (
 		Option: (): Promise<[boolean, string]> => {
 			const options = field.validations!.options! as CollectionValidationOption[];
 			/** Does the option chosen by the user exists */
-			const result = options.filter((option) => value === option.name).length > 0;
+			const result = options.filter((option) => value === option._id.toString()).length > 0;
 			const message = `${messageStart} is ${result ? "" : "not "}a valid option`;
 			return Promise.resolve([result, message]);
 		},

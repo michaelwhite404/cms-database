@@ -233,10 +233,10 @@ test("Outputs whether the input is a vaild Option", async () => {
 			],
 		},
 	};
-	let res = await testItemValidations("Mike", field);
+	let res = await testItemValidations("6078b07befd4501ab881d38c", field);
 	expect(res[0]).toBe(true);
-	res = await testItemValidations("Miguel", field);
+	res = await testItemValidations("60aba60a87cbe18174be99c4", field);
 	expect(res[0]).toBe(false);
-	res = await testItemValidations("Matt", field);
+	res = await testItemValidations("6078b07befd4501ab881d391", field);
 	expect(res[0]).toBe(true);
 });
