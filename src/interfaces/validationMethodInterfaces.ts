@@ -2,18 +2,18 @@ import { ReturnedCollectionValidation } from "../utils/validations";
 import { CollectionFieldType } from "./collectionInterfaces";
 
 export interface CollectionValidationMethods {
-	Standard: (type: CollectionFieldType) => ReturnedCollectionValidation;
-	Email: () => ReturnedCollectionValidation;
-	Phone: () => ReturnedCollectionValidation;
-	Color: () => ReturnedCollectionValidation;
-	Bool: () => ReturnedCollectionValidation;
-	PlainText: () => ReturnedCollectionValidation;
-	Number: () => ReturnedCollectionValidation;
-	Link: () => ReturnedCollectionValidation;
-	Option: () => ReturnedCollectionValidation;
-	Reference: (type: CollectionFieldType) => ReturnedCollectionValidation;
-	ItemRef: () => ReturnedCollectionValidation;
-	ItemRefMulti: () => ReturnedCollectionValidation;
+	Standard: (type: CollectionFieldType) => Promise<ReturnedCollectionValidation>;
+	Email: () => Promise<ReturnedCollectionValidation>;
+	Phone: () => Promise<ReturnedCollectionValidation>;
+	Color: () => Promise<ReturnedCollectionValidation>;
+	Bool: () => Promise<ReturnedCollectionValidation>;
+	PlainText: () => Promise<ReturnedCollectionValidation>;
+	Number: () => Promise<ReturnedCollectionValidation>;
+	Link: () => Promise<ReturnedCollectionValidation>;
+	Option: () => Promise<ReturnedCollectionValidation>;
+	Reference: (type: CollectionFieldType) => Promise<ReturnedCollectionValidation>;
+	ItemRef: () => Promise<ReturnedCollectionValidation>;
+	ItemRefMulti: () => Promise<ReturnedCollectionValidation>;
 }
 
 export interface ItemValidationMethods {
