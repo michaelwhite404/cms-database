@@ -65,7 +65,7 @@ export const createCollectionField = catchAsync(
 		}
 		const pushIndex = req.collection!.fields.length - 4;
 
-		const testResult = testCollectionValidations(req.body);
+		const testResult = await testCollectionValidations(req.body);
 		if (!testResult[0]) return next(new AppError(testResult[1], 400));
 		const finalField = new CustomCollectionField(
 			testResult[1].name,
@@ -184,7 +184,7 @@ export const updateCollectionField = catchAsync(
 			helpText,
 			validations,
 		};
-		const testResult = testCollectionValidations(setField);
+		const testResult = await testCollectionValidations(setField);
 		if (!testResult[0]) return next(new AppError(testResult[1], 400));
 		const finalField = new CustomCollectionField(
 			testResult[1].name,

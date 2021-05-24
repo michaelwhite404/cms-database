@@ -8,7 +8,7 @@ type PrimaryCheckFailed = [false, string];
 type PrimaryChecker = PrimaryCheckPassed | PrimaryCheckFailed;
 type PrimaryType = "Name" | "Slug";
 
-export default (requestFields: any[], type: PrimaryType): PrimaryChecker => {
+export default async (requestFields: any[], type: PrimaryType): Promise<PrimaryChecker> => {
 	const pTypeIndex: number[] = [];
 	let pObj = <Omit<CollectionField, "_id">>{};
 	// Store all indexes of objects with the property 'primaryName'
@@ -25,7 +25,7 @@ export default (requestFields: any[], type: PrimaryType): PrimaryChecker => {
 		// If the 'primaryName' is not of type 'PlainText'
 		if (pObj.type !== "PlainText") return [false, `Primary ${type} must be of type 'PlainText'`];
 		// Validate field
-		const validationResult = testCollectionValidations(pObj);
+		const validationResult = await testCollectionValidations(pObj);
 		if (!validationResult[0]) return validationResult;
 		const returnedField = validationResult[1];
 		const primaryField = new CustomCollectionField(

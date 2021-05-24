@@ -16,6 +16,7 @@ import {
 	ItemValidationMethods,
 } from "../interfaces/validationMethodInterfaces";
 import Item from "../models/itemModel";
+import Collection from "../models/collectionModel";
 
 type CVFailed = [false, string];
 type CVPassed = [true, CollectionField];
@@ -279,59 +280,65 @@ export const testItemValidations = async (
 	return await validations[field.type]();
 };
 
-export const testCollectionValidations = (
+export const testCollectionValidations = async (
 	field: any,
-	collectionIds?: string[]
-): ReturnedCollectionValidation => {
+	database?: string
+): Promise<ReturnedCollectionValidation> => {
 	// Test Name Property
-	if (field === undefined) return [false, "No field was provided"];
-	if (field.name === undefined) return [false, "All fields must have a name"];
-	if (typeof field.name !== "string") return [false, "Name must be a string"];
-	if (!notReservedField(field.name)) return [false, `'${field.name}' is a reserved name.`];
+	if (typeof field !== "object" || field === null)
+		return Promise.resolve([false, "No field was provided"]);
+	if (field.name === undefined) return Promise.resolve([false, "All fields must have a name"]);
+	if (typeof field.name !== "string") return Promise.resolve([false, "Name must be a string"]);
+	if (!notReservedField(field.name))
+		return Promise.resolve([false, `'${field.name}' is a reserved name.`]);
 	//Test Type Proerty
-	if (field.type === undefined) return [false, "All fields must have a type"];
-	if (typeof field.type !== "string") return [false, "Type must be a string"];
+	if (field.type === undefined) return Promise.resolve([false, "All fields must have a type"]);
+	if (typeof field.type !== "string") return Promise.resolve([false, "Type must be a string"]);
 	if (!fieldTypes.includes(field.type))
-		return [
+		return Promise.resolve([
 			false,
 			`'${field.type}' is not a valid type. Valid field types include: ${fieldTypes.join(", ")}`,
-		];
-	if (field.type === "User") return [false, "User cannot set field as type 'User'."];
+		]);
+	if (field.type === "User")
+		return Promise.resolve([false, "User cannot set field as type 'User'."]);
 	// Test helpTest Property
 	if (field.helpText && typeof field.helpText !== "string")
-		return [false, "'helpText' must be a string"];
+		return Promise.resolve([false, "'helpText' must be a string"]);
 	// Test Required Property
 	if (field.required && typeof field.required !== "boolean")
-		return [false, "'required' must be a boolean"];
+		return Promise.resolve([false, "'required' must be a boolean"]);
 	/** Default field if no validations*/
 	const defaultField = { ...field, validations: { singleLine: true } } as CollectionField;
 	/** The field name */
 	const name = field.name!;
 	const validations: CollectionValidationMethods = {
-		Standard: (type: CollectionFieldType): ReturnedCollectionValidation => {
+		Standard: (type: CollectionFieldType): Promise<ReturnedCollectionValidation> => {
 			if (field.validations) {
 				const fieldsPassed = testAllowedFields(type, field.validations, "singleLine");
-				if (!fieldsPassed[0]) return fieldsPassed;
-				return [true, defaultField];
+				if (!fieldsPassed[0]) return Promise.resolve(fieldsPassed);
+				return Promise.resolve([true, defaultField]);
 			}
-			return [true, defaultField];
+			return Promise.resolve([true, defaultField]);
 		},
-		Email: (): ReturnedCollectionValidation => {
+		Email: (): Promise<ReturnedCollectionValidation> => {
 			return validations.Standard("Email");
 		},
-		Phone: (): ReturnedCollectionValidation => {
+		Phone: (): Promise<ReturnedCollectionValidation> => {
 			return validations.Standard("Phone");
 		},
-		Color: (): ReturnedCollectionValidation => {
+		Color: (): Promise<ReturnedCollectionValidation> => {
 			return validations.Standard("Color");
 		},
-		Bool: (): ReturnedCollectionValidation => {
+		Bool: (): Promise<ReturnedCollectionValidation> => {
 			if (field.validations && Object.keys(field.validations).length > 0)
-				return [false, `The field '${field.name}' needs no validations as it is a boolean type`];
+				return Promise.resolve([
+					false,
+					`The field '${field.name}' needs no validations as it is a boolean type`,
+				]);
 			const passedField = field as CollectionField;
-			return [true, passedField];
+			return Promise.resolve([true, passedField]);
 		},
-		PlainText: (): ReturnedCollectionValidation => {
+		PlainText: (): Promise<ReturnedCollectionValidation> => {
 			if (field.validations && Object.keys(field.validations).length > 0) {
 				const fieldsPassed = testAllowedFields(
 					"PlainText",
@@ -340,55 +347,55 @@ export const testCollectionValidations = (
 					"maxLength",
 					"minLength"
 				);
-				if (!fieldsPassed[0]) return fieldsPassed;
+				if (!fieldsPassed[0]) return Promise.resolve(fieldsPassed);
 				const { maxLength, minLength, singleLine } = field.validations;
 				// Max Length must be a number
 				const maxLengthTest = typeCheck(maxLength, "maxLength", "number", name);
-				if (!maxLengthTest[0]) return maxLengthTest;
+				if (!maxLengthTest[0]) return Promise.resolve(maxLengthTest);
 				//If maxLength exists but is less than zero
 				if (maxLengthTest[1] === "passed" && lessThanZero(maxLength!))
-					return [
+					return Promise.resolve([
 						false,
 						`The validation 'maxLength' cannot be less than zero for the field '${name}'`,
-					];
+					]);
 				// Min Length must be a number
 				const minLengthTest = typeCheck(minLength, "minLength", "number", name);
-				if (!minLengthTest[0]) return minLengthTest;
+				if (!minLengthTest[0]) return Promise.resolve(minLengthTest);
 				// If minLength exists but is less than zero
 				if (minLengthTest[1] === "passed" && lessThanZero(minLength!))
-					return [
+					return Promise.resolve([
 						false,
 						`The validation 'minLength' cannot be less than zero for the field '${name}'`,
-					];
+					]);
 				// Max Length must be greater than min length
 				if (minLength && maxLength && minLength > maxLength) {
-					return [
+					return Promise.resolve([
 						false,
 						`The validation 'minLength' is greater than 'maxLength' for the field '${name}'`,
-					];
+					]);
 				}
 				// Single Line must be a boolean
 				const singleLineTest = typeCheck(singleLine, "singleLine", "boolean", name);
-				if (!singleLineTest[0]) return singleLineTest;
+				if (!singleLineTest[0]) return Promise.resolve(singleLineTest);
 				if (singleLineTest[1] === "undefined") field.validations.singleLine = true;
 				const passedField = field as CollectionField;
-				return [true, passedField];
+				return Promise.resolve([true, passedField]);
 			}
 			// No validations exist
-			return [true, defaultField];
+			return Promise.resolve([true, defaultField]);
 		},
-		Number: (): ReturnedCollectionValidation => {
+		Number: (): Promise<ReturnedCollectionValidation> => {
 			if (field.validations && Object.keys(field.validations).length > 0) {
 				if (!field.validations.format)
-					return [
+					return Promise.resolve([
 						false,
 						`The field '${field.name}' must have a 'format' validation. The value can either be 'integer' or 'decimal'.`,
-					];
+					]);
 				if (field.validations.format !== "integer" && field.validations.format !== "decimal")
-					return [
+					return Promise.resolve([
 						false,
 						`The validation 'format' value for the field '${field.name}' can only be 'integer' or 'deciamal`,
-					];
+					]);
 
 				const fieldsPassed = testAllowedFields(
 					"Number",
@@ -399,26 +406,26 @@ export const testCollectionValidations = (
 					"decimalPlaces",
 					"allowNegative"
 				);
-				if (!fieldsPassed[0]) return fieldsPassed;
+				if (!fieldsPassed[0]) return Promise.resolve(fieldsPassed);
 
 				const { format, maximum, minimum, allowNegative, decimalPlaces } = field.validations;
 
 				// Maximum must be a number
 				const maximumTest = typeCheck(maximum, "maximum", "number", name);
-				if (!maximumTest[0]) return maximumTest;
+				if (!maximumTest[0]) return Promise.resolve(maximumTest);
 				// Minimum must be a number
 				const minimumTest = typeCheck(minimum, "minimum", "number", name);
-				if (!minimumTest[0]) return minimumTest;
+				if (!minimumTest[0]) return Promise.resolve(minimumTest);
 				// Maximum must be greater than minimum
 				if (minimum && maximum && minimum > maximum) {
-					return [
+					return Promise.resolve([
 						false,
 						`The validation 'minimum' is greater than 'maximum' for the field '${name}'`,
-					];
+					]);
 				}
 				// Allow Negative must be a boolean
 				const allowNegativeTest = typeCheck(allowNegative, "allowNegative", "boolean", name);
-				if (!allowNegativeTest[0]) return allowNegativeTest;
+				if (!allowNegativeTest[0]) return Promise.resolve(allowNegativeTest);
 				// If allow negative is not set, make it false
 				if (allowNegativeTest[1] === "undefined") field.validations.allowNegative = false;
 				// If allowNegative
@@ -426,66 +433,69 @@ export const testCollectionValidations = (
 					field.validations.allowNegative === false &&
 					((maximum && lessThanZero(maximum)) || (minimum && lessThanZero(minimum)))
 				)
-					return [
+					return Promise.resolve([
 						false,
 						`The validations 'minimum' and 'maximum' can only be negative when 'allowNegative' is to true for the field '${field.name}'`,
-					];
+					]);
 				// Decimal Places must be a number
 				const decimalPlacesTest = typeCheck(decimalPlaces, "decimalPlaces", "number", name);
-				if (!decimalPlacesTest[0]) return decimalPlacesTest;
+				if (!decimalPlacesTest[0]) return Promise.resolve(decimalPlacesTest);
 				if (format === "integer" && decimalPlaces && decimalPlaces !== 0)
-					return [
+					return Promise.resolve([
 						false,
 						`The validation 'decimalPlaces' is unnecessary since the format is an integer for the field '${name}'`,
-					];
+					]);
 				if (format === "decimal" && decimalPlacesTest[1] === "undefined")
 					field.validations.decimalPlaces = 2;
 				if (decimalPlacesTest[1] === "passed" && decimalPlaces < 1)
-					return [
+					return Promise.resolve([
 						false,
 						`The validation 'decimalPlaces' cannot be less than 1 for the field '${name}' when the 'format' is a decimal`,
-					];
+					]);
 				if (decimalPlacesTest[1] === "passed" && decimalPlaces > 5)
-					return [
+					return Promise.resolve([
 						false,
 						`The validation 'decimalPlaces' cannot be greater than 5 for the field '${name}'`,
-					];
+					]);
 
 				const passedField = field as CollectionField;
-				return [true, passedField];
+				return Promise.resolve([true, passedField]);
 			}
 			// If no validations
 			const defaultNumberField = {
 				...field,
 				validations: { format: "decimal", decimalPlaces: 2, allowNegative: false },
 			} as CollectionField;
-			return [true, defaultNumberField];
+			return Promise.resolve([true, defaultNumberField]);
 		},
-		Link: (): ReturnedCollectionValidation => {
+		Link: (): Promise<ReturnedCollectionValidation> => {
 			return validations.Standard("Link");
 		},
-		Option: (): ReturnedCollectionValidation => {
+		Option: (): Promise<ReturnedCollectionValidation> => {
 			if (field.validations) {
 				const fieldsPassed = testAllowedFields("Option", field.validations, "options");
-				if (!fieldsPassed[0]) return fieldsPassed;
+				if (!fieldsPassed[0]) return Promise.resolve(fieldsPassed);
 				if (!field.validations.options || !Array.isArray(field.validations.options))
-					return [
+					return Promise.resolve([
 						false,
 						`The field '${field.name}' must have an 'options' validation that contains an array of options`,
-					];
+					]);
 				const requestOptions = field.validations.options as any[];
 				if (requestOptions.length === 0)
-					return [false, `The field '${field.name}' has no values in the 'options' array`];
+					return Promise.resolve([
+						false,
+						`The field '${field.name}' has no values in the 'options' array`,
+					]);
 				if (requestOptions.filter((opt) => typeof opt !== "string").length > 0)
-					return [
+					return Promise.resolve([
 						false,
 						`The field '${field.name}' must have an 'options' validation that contains an array of only strings`,
-					];
+					]);
 				if (requestOptions.filter((opt) => opt.length > 64).length > 0)
-					return [
+					return Promise.resolve([
 						false,
 						`The field '${field.name}' must only have options that are a maximum of 64 characters`,
-					];
+					]);
 				const returnOptions = requestOptions.map((opt) => ({
 					_id: new Types.ObjectId(),
 					name: opt,
@@ -493,39 +503,44 @@ export const testCollectionValidations = (
 				field.validations.options = returnOptions;
 				const passedField = field as CollectionField;
 
-				return [true, passedField];
+				return Promise.resolve([true, passedField]);
 			}
-			return [
+			return Promise.resolve([
 				false,
 				`The field '${field.name}' must have an 'options' validation that contains an array of options`,
-			];
+			]);
 		},
-		Reference: (type: CollectionFieldType): ReturnedCollectionValidation => {
+		Reference: async (type: CollectionFieldType): Promise<ReturnedCollectionValidation> => {
 			if (field.validations) {
 				const fieldsPassed = testAllowedFields(type, field.validations, "collectionId");
-				if (!fieldsPassed[0]) return fieldsPassed;
+				if (!fieldsPassed[0]) return Promise.resolve(fieldsPassed);
 				if (!field.validations.collectionId)
-					return [
+					return Promise.resolve([
 						false,
 						`The field '${field.name}' must have a 'collectionId' validation of the collection this field is referencing`,
-					];
-				if (!collectionIds!.includes(field.validations.collectionId)) {
-					return [
+					]);
+				// See if collection is in database
+				const collection = await Collection.findOne({
+					_id: field.validations.collectionId,
+					database,
+				}).lean();
+				if (!collection) {
+					return Promise.resolve([
 						false,
 						`The validation 'collectionId' is not a collection in this project for the field '${field.name}'`,
-					];
+					]);
 				}
-				return [true, field];
+				return Promise.resolve([true, field]);
 			}
-			return [
+			return Promise.resolve([
 				false,
 				`The field '${field.name}' must have an 'collectionId' validation of the collection this field is referencing`,
-			];
+			]);
 		},
-		ItemRef: (): ReturnedCollectionValidation => {
+		ItemRef: (): Promise<ReturnedCollectionValidation> => {
 			return validations.Reference("ItemRef");
 		},
-		ItemRefMulti: (): ReturnedCollectionValidation => {
+		ItemRefMulti: (): Promise<ReturnedCollectionValidation> => {
 			return validations.Reference("ItemRefMulti");
 		},
 	};

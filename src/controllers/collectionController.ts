@@ -138,18 +138,13 @@ export const createCollection = catchAsync(
 	async (req: CustomRequest<CollectionModel>, res: Response, next: NextFunction) => {
 		if (req.databaseRole!.role === "viewer")
 			return next(new AppError("You are not authorized to perform this action", 403));
+		const database = req.databaseRole!.database;
 		/** Array holding finalized collection fields */
 		let fields: Omit<CollectionField, "_id">[] = [];
 		// If the body does not have a 'name' property, throw error
 		if (!req.body.name) return next(new AppError("A Collection must have a name", 400));
 		// If a slug was set
 		if (req.body.slug) req.body.slug = slugify(req.body.slug, { lower: true });
-		const database = await Database.findById(req.databaseRole?.database);
-		if (!database) {
-			return next(
-				new AppError("A collection must be added to a valid database you have access to.", 400)
-			);
-		}
 		// Fields must be a type of array
 		if (req.body.fields && !Array.isArray(req.body.fields))
 			return next(new AppError("'fields' must be a type of array", 400));
@@ -164,27 +159,20 @@ export const createCollection = catchAsync(
 				return next(new AppError("All fields must have diffferent names", 400));
 
 			// Test primary Fields
-			// Primary Naame
-			let pNameChecker = primaryChecker(bodyFields, "Name");
+			// Primary Name
+			let pNameChecker = await primaryChecker(bodyFields, "Name");
 			if (!pNameChecker[0]) return next(new AppError(pNameChecker[1], 400));
 			fields.push(pNameChecker[1]);
 			// Primary Slug
-			let pSlugChecker = primaryChecker(pNameChecker[2], "Slug");
+			let pSlugChecker = await primaryChecker(pNameChecker[2], "Slug");
 			if (!pSlugChecker[0]) return next(new AppError(pSlugChecker[1], 400));
 			fields.push(pSlugChecker[1]);
 			// Get remaining body fields
 			bodyFields = pSlugChecker[2];
 
-			// Store Collecion Field
+			// Store Collection Field
 			for (const testField of bodyFields) {
-				let ids: Array<string> | undefined = undefined;
-				if (testField.type === "ItemRef" || testField.type === "ItemRefMulti") {
-					const collections = await Collection.find({
-						database: req.databaseRole!.database as string,
-					}).lean();
-					ids = collections.map((c) => c._id.toString());
-				}
-				const result = testCollectionValidations(testField, ids);
+				const result = await testCollectionValidations(testField, database as string);
 				// If there is an error
 				if (!result[0]) return next(new AppError(result[1], 400));
 				const field = result[1];
@@ -208,7 +196,7 @@ export const createCollection = catchAsync(
 		// CREATE COLLECTION!!!
 		const collection = await Collection.create({
 			name: req.body.name,
-			database: database._id,
+			database: req.databaseRole!.database,
 			fields,
 			slug: req.body.slug,
 			createdBy: req.user!._id,
@@ -225,7 +213,8 @@ export const createCollection = catchAsync(
 );
 
 export const updateCollection = catchAsync(
-	async (req: CustomRequest<CollectionModel>, res: Response) => {
+	async (req: CustomRequest<CollectionModel>, res: Response, next: NextFunction) => {
+		if (req.body.fields) return next(new AppError("Fields cannot be created with this route", 400));
 		if (req.body.name) req.body.singularName = pluralize.singular(req.body.name);
 		else delete req.body.singularName;
 		req.body.updatedBy = req.user!._id as string;
