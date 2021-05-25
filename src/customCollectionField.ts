@@ -15,7 +15,7 @@ export class CustomCollectionField implements CollectionField {
 	editable: boolean;
 	required: boolean;
 	slug: string;
-	validations: CollectionValidations | undefined;
+	validations: CollectionValidations<string> | undefined;
 	helpText: string | undefined;
 	primary: boolean;
 
@@ -32,7 +32,7 @@ export class CustomCollectionField implements CollectionField {
 		name: string,
 		type: CollectionFieldType,
 		required: boolean = false,
-		validations?: CollectionValidations,
+		validations?: CollectionValidations<string>,
 		helpText?: string,
 		primary?: boolean
 	) {

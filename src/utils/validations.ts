@@ -8,7 +8,10 @@ import {
 	CollectionField,
 	CollectionFieldType,
 	CollectionValidationOption,
+	CollectionValidations,
 	CollectionValidationsKeys,
+	DateFormat,
+	NumberFormat,
 } from "../interfaces/collectionInterfaces";
 import fieldTypes from "../enums/fieldTypes";
 import {
@@ -394,7 +397,7 @@ export const testCollectionValidations = async (
 				if (field.validations.format !== "integer" && field.validations.format !== "decimal")
 					return Promise.resolve([
 						false,
-						`The validation 'format' value for the field '${field.name}' can only be 'integer' or 'deciamal`,
+						`The validation 'format' value for the field '${field.name}' can only be 'integer' or 'decimal'.`,
 					]);
 
 				const fieldsPassed = testAllowedFields(
@@ -464,7 +467,11 @@ export const testCollectionValidations = async (
 			// If no validations
 			const defaultNumberField = {
 				...field,
-				validations: { format: "decimal", decimalPlaces: 2, allowNegative: false },
+				validations: {
+					format: "decimal",
+					decimalPlaces: 2,
+					allowNegative: false,
+				} as CollectionValidations<NumberFormat>,
 			} as CollectionField;
 			return Promise.resolve([true, defaultNumberField]);
 		},
@@ -542,6 +549,29 @@ export const testCollectionValidations = async (
 		},
 		ItemRefMulti: (): Promise<ReturnedCollectionValidation> => {
 			return validations.Reference("ItemRefMulti");
+		},
+		Date: (): Promise<ReturnedCollectionValidation> => {
+			if (field.validations && Object.keys(field.validations).length > 0) {
+				const fieldsPassed = testAllowedFields("Date", field.validations, "format");
+				if (!fieldsPassed[0]) return Promise.resolve(fieldsPassed);
+				if (field?.validations?.format) {
+					const { format } = field.validations;
+					if (format !== "date" && format !== "date-time") {
+						return Promise.resolve([
+							false,
+							`The validation 'format' value for the field '${field.name}' can only be 'date' or 'date-time`,
+						]);
+					}
+					return Promise.resolve([true, field]);
+				}
+			}
+			const defaultDateField = {
+				...field,
+				validations: {
+					format: "date",
+				} as CollectionValidations<DateFormat>,
+			} as CollectionField;
+			return Promise.resolve([true, defaultDateField]);
 		},
 	};
 	// @ts-ignore

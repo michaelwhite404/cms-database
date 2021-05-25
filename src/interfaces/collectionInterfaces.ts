@@ -16,7 +16,7 @@ export interface CollectionField {
 	/** Shows whether the user can edit the field */
 	editable: boolean;
 	/** Validations an item field must adhere to */
-	validations?: CollectionValidations;
+	validations?: CollectionValidations<string>;
 	/** Human readable text that describes the field */
 	helpText?: string;
 	/** The order number of the field */
@@ -25,7 +25,7 @@ export interface CollectionField {
 	primary?: boolean;
 }
 
-export interface CollectionValidations {
+export interface CollectionValidations<Format> {
 	/** The maximum length a valid string can be */
 	maxLength?: number;
 	/** The minimum length a vaild string can be */
@@ -43,7 +43,7 @@ export interface CollectionValidations {
 	/** Array of options in a collection a user can pick from */
 	options?: CollectionValidationOption[] | string[];
 	/** Whether the format of the number is an integer or decimal */
-	format?: "integer" | "decimal";
+	format?: CollectionFormat<Format>;
 	precision?: number;
 	/** Can the number be a negative number */
 	allowNegative?: boolean;
@@ -51,7 +51,11 @@ export interface CollectionValidations {
 	collectionId?: string;
 	pattern?: RegExp;
 }
-export type CollectionValidationsKeys = keyof CollectionValidations;
+export type CollectionFormat<T> = T;
+export type NumberFormat = "integer" | "decimal";
+export type DateFormat = "date" | "date-time";
+
+export type CollectionValidationsKeys = keyof CollectionValidations<any>;
 
 export interface CollectionModel extends Document {
 	_id: string;

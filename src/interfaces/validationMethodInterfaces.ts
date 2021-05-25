@@ -14,6 +14,7 @@ export interface CollectionValidationMethods {
 	Reference: (type: CollectionFieldType) => Promise<ReturnedCollectionValidation>;
 	ItemRef: () => Promise<ReturnedCollectionValidation>;
 	ItemRefMulti: () => Promise<ReturnedCollectionValidation>;
+	Date: () => Promise<ReturnedCollectionValidation>;
 }
 
 export interface ItemValidationMethods {
