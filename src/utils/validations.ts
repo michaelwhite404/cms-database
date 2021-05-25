@@ -104,13 +104,14 @@ const lessThanZero = (number: number): boolean => {
  * Validates the item field value as a valid argument
  * @param {any} value The value of the item field
  * @param {CollectionField} field The collection field being tested against
- * @returns {[boolean, string]} Whether the value passed the vaildation and a message explaining
- * why or why not the value passed
+ * @returns {[boolean, string, any]} Array that shows: whether the value passed the vaildation,
+ * a message explaining why or why not the value passed, and a new value if the input value needs
+ * to be changed
  */
 export const testItemValidations = async (
 	value: any,
 	field: CollectionField
-): Promise<[boolean, string]> => {
+): Promise<[boolean, string, any?]> => {
 	const missingMessage = (arg: string) => `The argument '${arg}' is required but it is missing`;
 	if (value === undefined) return [false, missingMessage("value")];
 	if (field === undefined) return [false, missingMessage("field")];
@@ -264,8 +265,11 @@ export const testItemValidations = async (
 				  )}`;
 			return Promise.resolve([result, message]);
 		},
-		Date: (): Promise<[boolean, string]> => {
-			return Promise.resolve([false, "Not Implemented"]);
+		Date: (): Promise<[boolean, string, string?]> => {
+			const date = new Date(value);
+			if (date.toString() === "Invalid Date")
+				return Promise.resolve([false, `${messageStart} is not a valid Date`]);
+			return Promise.resolve([true, `${messageStart} is a valid Date`, date.toISOString()]);
 		},
 		ImageRef: (): Promise<[boolean, string]> => {
 			return Promise.resolve([false, "Not Implemented"]);

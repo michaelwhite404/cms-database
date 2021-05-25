@@ -28,7 +28,7 @@ export interface ItemValidationMethods {
 	Option: () => Promise<[boolean, string]>;
 	ItemRef: () => Promise<[boolean, string]>;
 	ItemRefMulti: () => Promise<[boolean, string]>;
-	Date: () => Promise<[boolean, string]>;
+	Date: () => Promise<[boolean, string, string?]>;
 	ImageRef: () => Promise<[boolean, string]>;
 	RichText: () => Promise<[boolean, string]>;
 	Video: () => Promise<[boolean, string]>;

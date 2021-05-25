@@ -177,9 +177,7 @@ export const createItem = catchAsync(
 		next: NextFunction
 	) => {
 		if (!req.body || objectIsEmpty(req.body))
-			return next(
-				new AppError("No arguments are present. Please enter fields in the 'fields' object", 400)
-			);
+			return next(new AppError("No arguments are present", 400));
 
 		let { itemFields, collectionFields } = instantiateFields(req);
 
@@ -201,10 +199,10 @@ export const createItem = catchAsync(
 		/** Object of item fields that have passed the validation test */
 		const testedFields: ItemFields = {};
 		for (const [itemField, collectionField] of itemFieldArray) {
-			const [valid, message] = await testItemValidations(itemField, collectionField);
+			const [valid, message, updatedField] = await testItemValidations(itemField, collectionField);
 			// If validation failed
 			if (!valid) return next(new AppError(message, 400));
-			testedFields[collectionField.slug] = itemField;
+			testedFields[collectionField.slug] = updatedField || itemField;
 		}
 		/** Created Item */
 		const item = await Item.create({
