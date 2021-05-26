@@ -9,7 +9,7 @@ export const dashboardData = catchAsync(
 		const user = req.user!._id;
 		const databaseRoles = await DatabaseRole.find({ user });
 		const databaseRoleIds = databaseRoles.map((d) => d.database);
-		const renameLater = await DatabaseRole.aggregate([
+		const databases = await DatabaseRole.aggregate([
 			{ $match: { database: { $in: databaseRoleIds } } },
 			{ $group: { _id: "$database", users: { $push: "$user" } } },
 			{
@@ -40,10 +40,15 @@ export const dashboardData = catchAsync(
 				},
 			},
 		]);
+		databases.forEach((db) => {
+			db.totalUsers = db.users.length;
+			const dbObj = databaseRoles.find((d) => d.database.toString() === db._id.toString());
+			if (dbObj) db.role = dbObj.role;
+		});
 
 		res.status(200).json({
 			status: "success",
-			databases: renameLater,
+			databases,
 		});
 	}
 );
