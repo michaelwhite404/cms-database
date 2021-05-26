@@ -29,7 +29,7 @@ export interface UserModel extends Document {
 	createdAt: Date;
 	/** Field indicating whether or not the user is an active user */
 	active: boolean;
-	correctPassword(inputPassword: any, password: string): boolean;
+	correctPassword(inputPassword: any, password: string): Promise<boolean>;
 	changedPasswordAfter(JWTTimestamp: number): boolean;
 	/** Returns a new password reset token */
 	createPasswordResetToken(): string;

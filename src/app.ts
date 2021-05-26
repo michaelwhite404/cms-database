@@ -9,6 +9,7 @@ import AppError from "./utils/appError";
 import collectionRouter from "./routes/collectionRoutes";
 import databaseRouter from "./routes/databaseRoutes";
 import userRouter from "./routes/userRoutes";
+import viewRouter from "./routes/viewRoutes";
 import globalErrorHandler from "./controllers/errorController";
 
 const app = express();
@@ -39,6 +40,7 @@ app.use("/api", limiter);
 app.use("/api/v1/collections", collectionRouter);
 app.use("/api/v1/databases", databaseRouter);
 app.use("/api/v1/users", userRouter);
+app.use("/api/v1/ui", viewRouter);
 
 // If url is not found
 app.all("*", (req, _, next) => {
