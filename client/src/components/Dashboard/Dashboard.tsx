@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Main from "./Main";
-import DesktopSidebar from "./DesktopSidebar";
-import MobileSidebar from "./MobileSidebar";
+import DesktopSidebar from "../Sidebar/DesktopSidebar";
+import MobileSidebar from "../Sidebar/MobileSidebar";
 
 /* const navigation = [
 	{ name: "Dashboard", href: "#", icon: HomeIcon, current: true },

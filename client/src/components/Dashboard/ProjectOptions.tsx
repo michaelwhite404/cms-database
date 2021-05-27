@@ -7,7 +7,7 @@ import {
 	UserAddIcon,
 } from "@heroicons/react/solid";
 import { Fragment } from "react";
-import MenuItem from "./MenuItem";
+import MenuItem from "../MenuItem";
 
 const primaryOptions = [
 	{ name: "Edit", icon: PencilAltIcon },

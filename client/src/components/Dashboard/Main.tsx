@@ -4,10 +4,10 @@ import { MenuAlt1Icon } from "@heroicons/react/outline";
 import { ChevronRightIcon, SearchIcon } from "@heroicons/react/solid";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import Badge from "./Badge";
+import Badge from "../Badge";
 import ProjectOptions from "./ProjectOptions";
-import classNames from "../utils/classNames";
-import { APIDashboardResponse } from "../interfaces/APIResponse";
+import classNames from "../../utils/classNames";
+import { APIDashboardResponse } from "../../interfaces/APIResponse";
 import PinnedProject from "./PinnedProject";
 
 interface MainProps {

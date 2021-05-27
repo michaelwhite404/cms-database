@@ -1,7 +1,7 @@
 import { Menu, Transition } from "@headlessui/react";
 import { SelectorIcon } from "@heroicons/react/solid";
 import { Fragment } from "react";
-import MenuItem from "./MenuItem";
+import MenuItem from "../MenuItem";
 
 const profileMenu = {
 	first: ["View Profile", "Settings", "Notifications"],

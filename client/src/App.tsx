@@ -6,7 +6,7 @@ import { CollectionModel } from "../../src/interfaces/collectionInterfaces";
 import { ItemModel } from "../../src/interfaces/itemInterfaces";
 import { APICollectionResponse, APIItemResponse } from "./interfaces/APIResponse";
 import AppError from "../../src/utils/appError";
-import Dashboard from "./components/Dashboard";
+import Dashboard from "./components/Dashboard/Dashboard";
 import Login from "./components/Login";
 
 function App() {

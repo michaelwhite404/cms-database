@@ -1,4 +1,4 @@
-import classNames from "../utils/classNames";
+import classNames from "../../utils/classNames";
 import SidebarSearch from "./SidebarSearch";
 import UserAccountDropdown from "./UserAccountDropdown";
 import { ClockIcon, CodeIcon, HomeIcon, ViewListIcon } from "@heroicons/react/outline";

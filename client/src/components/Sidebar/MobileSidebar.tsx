@@ -1,7 +1,7 @@
 import { Dialog, Transition } from "@headlessui/react";
 import { ClockIcon, CodeIcon, HomeIcon, ViewListIcon, XIcon } from "@heroicons/react/outline";
 import { Fragment } from "react";
-import classNames from "../utils/classNames";
+import classNames from "../../utils/classNames";
 
 const navigation = [
 	{ name: "Dashboard", href: "#", icon: HomeIcon, current: true },

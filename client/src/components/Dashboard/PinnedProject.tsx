@@ -2,9 +2,9 @@ import { Menu, Transition } from "@headlessui/react";
 import { DotsVerticalIcon } from "@heroicons/react/solid";
 import React, { Fragment } from "react";
 import { Link } from "react-router-dom";
-import { APIDashboardResponse } from "../interfaces/APIResponse";
-import classNames from "../utils/classNames";
-import MenuItem from "./MenuItem";
+import { APIDashboardResponse } from "../../interfaces/APIResponse";
+import classNames from "../../utils/classNames";
+import MenuItem from "../MenuItem";
 
 const pinnedProjectsOptions = {
 	first: ["View"],
