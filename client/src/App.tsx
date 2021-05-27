@@ -1,12 +1,12 @@
 import axios, { AxiosError } from "axios";
 import React, { useEffect, useState } from "react";
-import { BrowserRouter as Router, Link, Route, Switch, useParams } from "react-router-dom";
+import { BrowserRouter as Router, Route, Switch, useParams } from "react-router-dom";
 import "./App.css";
 import { CollectionModel } from "../../src/interfaces/collectionInterfaces";
 import { ItemModel } from "../../src/interfaces/itemInterfaces";
 import { APICollectionResponse, APIItemResponse } from "./interfaces/APIResponse";
 import AppError from "../../src/utils/appError";
-import Sidebar from "./components/Sidebar";
+import Dashboard from "./components/Dashboard";
 import Login from "./components/Login";
 
 function App() {
@@ -32,7 +32,7 @@ function App() {
 						<Login />
 					</Route>
 					<Route path="/dashboard">
-						<Sidebar />
+						<Dashboard />
 					</Route>
 					<Route path="/databases/:database" component={Database} />
 					<Route path="/collections/:collection" component={Collection} />

@@ -1,5 +1,4 @@
 import { Menu } from "@headlessui/react";
-import { TrashIcon } from "@heroicons/react/solid";
 import classNames from "../utils/classNames";
 
 export default function MenuItem({

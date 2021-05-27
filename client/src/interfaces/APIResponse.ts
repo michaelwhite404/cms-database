@@ -1,5 +1,6 @@
 import { CollectionModel } from "../../../src/interfaces/collectionInterfaces";
 import DatabaseModel from "../../../src/interfaces/databaseInterface";
+import { DatabaseRoles } from "../../../src/interfaces/databaseRoleInterface";
 import { ItemModel } from "../../../src/interfaces/itemInterfaces";
 
 interface APIResponse {
@@ -30,4 +31,21 @@ export interface APIDatabaseRepsonse extends APIResponse {
 export interface APIItemResponse extends APIResponse {
 	item: ItemModel;
 	items: ItemModel[];
+}
+
+export interface APIDashboardResponse {
+	status: "success";
+	databases: {
+		_id: string;
+		users: {
+			email: string;
+			firstName: string;
+			lastName: string;
+		}[];
+		name: string;
+		slug: string;
+		totalUsers: number;
+		role: DatabaseRoles;
+		pinned: boolean;
+	}[];
 }

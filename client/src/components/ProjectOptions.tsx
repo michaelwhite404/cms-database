@@ -9,10 +9,6 @@ import {
 import { Fragment } from "react";
 import MenuItem from "./MenuItem";
 
-function classNames(...classes: any[]) {
-	return classes.filter(Boolean).join(" ");
-}
-
 const primaryOptions = [
 	{ name: "Edit", icon: PencilAltIcon },
 	{ name: "Duplicate", icon: DuplicateIcon },
