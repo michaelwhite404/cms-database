@@ -12,4 +12,6 @@ export default interface DatabaseRoleModel extends Document {
 	database: string | ObjectId | DatabaseModel;
 	/** The role the user has for this database */
 	role: DatabaseRoles;
+	/** If the user pinned the database */
+	pinned: boolean;
 }

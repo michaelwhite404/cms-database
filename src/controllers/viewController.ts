@@ -43,7 +43,10 @@ export const dashboardData = catchAsync(
 		databases.forEach((db) => {
 			db.totalUsers = db.users.length;
 			const dbObj = databaseRoles.find((d) => d.database.toString() === db._id.toString());
-			if (dbObj) db.role = dbObj.role;
+			if (dbObj) {
+				db.role = dbObj.role;
+				db.pinned = dbObj.pinned;
+			}
 		});
 
 		res.status(200).json({

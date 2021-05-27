@@ -10,11 +10,13 @@ import {
 	SelectorIcon,
 	TrashIcon,
 	UserAddIcon,
+	CodeIcon,
 } from "@heroicons/react/solid";
 import Main from "./Main";
 
 const navigation = [
 	{ name: "Dashboard", href: "#", icon: HomeIcon, current: true },
+	{ name: "Documentation", href: "#", icon: CodeIcon, current: false },
 	{ name: "My tasks", href: "#", icon: ViewListIcon, current: false },
 	{ name: "Recent", href: "#", icon: ClockIcon, current: false },
 ];

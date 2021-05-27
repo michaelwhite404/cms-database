@@ -24,6 +24,12 @@ const databaseRoleSchema = new Schema({
 			message: "Database roles can only be 'owner', 'editor' or 'viewer'",
 		},
 	},
+	pinned: {
+		type: Boolean,
+		required: true,
+		immutable: false,
+		defualt: false,
+	},
 });
 
 const DatabaseRole: Model<DatabaseRoleModel> = model<DatabaseRoleModel>(
