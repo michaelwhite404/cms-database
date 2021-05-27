@@ -7,6 +7,7 @@ import { Link } from "react-router-dom";
 import Badge from "./Badge";
 import ProjectOptions from "./ProjectOptions";
 import { DatabaseRoles } from "../../../src/interfaces/databaseRoleInterface";
+import classNames from "../utils/classNames";
 
 interface APIDashboardResponse {
 	status: "success";
@@ -23,10 +24,6 @@ interface APIDashboardResponse {
 		role: DatabaseRoles;
 		pinned: boolean;
 	}[];
-}
-
-function classNames(...classes: any[]) {
-	return classes.filter(Boolean).join(" ");
 }
 
 interface MainProps {

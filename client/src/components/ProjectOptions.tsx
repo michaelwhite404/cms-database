@@ -7,10 +7,17 @@ import {
 	UserAddIcon,
 } from "@heroicons/react/solid";
 import { Fragment } from "react";
+import MenuItem from "./MenuItem";
 
 function classNames(...classes: any[]) {
 	return classes.filter(Boolean).join(" ");
 }
+
+const primaryOptions = [
+	{ name: "Edit", icon: PencilAltIcon },
+	{ name: "Duplicate", icon: DuplicateIcon },
+	{ name: "Share", icon: UserAddIcon },
+];
 
 export default function ProjectOptions() {
 	return (
@@ -36,72 +43,12 @@ export default function ProjectOptions() {
 							className="mx-3 origin-top-right absolute right-7 top-0 w-48 mt-1 rounded-md shadow-lg z-10 bg-white ring-1 ring-black ring-opacity-5 divide-y divide-gray-200 focus:outline-none"
 						>
 							<div className="py-1">
-								<Menu.Item>
-									{({ active }) => (
-										<button
-											className={classNames(
-												active ? "bg-gray-100 text-gray-900" : "text-gray-700",
-												"group flex items-center px-4 py-2 text-sm"
-											)}
-										>
-											<PencilAltIcon
-												className="mr-3 h-5 w-5 text-gray-400 group-hover:text-gray-500"
-												aria-hidden="true"
-											/>
-											Edit
-										</button>
-									)}
-								</Menu.Item>
-								<Menu.Item>
-									{({ active }) => (
-										<button
-											className={classNames(
-												active ? "bg-gray-100 text-gray-900" : "text-gray-700",
-												"group flex items-center px-4 py-2 text-sm"
-											)}
-										>
-											<DuplicateIcon
-												className="mr-3 h-5 w-5 text-gray-400 group-hover:text-gray-500"
-												aria-hidden="true"
-											/>
-											Duplicate
-										</button>
-									)}
-								</Menu.Item>
-								<Menu.Item>
-									{({ active }) => (
-										<button
-											className={classNames(
-												active ? "bg-gray-100 text-gray-900" : "text-gray-700",
-												"group flex items-center px-4 py-2 text-sm"
-											)}
-										>
-											<UserAddIcon
-												className="mr-3 h-5 w-5 text-gray-400 group-hover:text-gray-500"
-												aria-hidden="true"
-											/>
-											Share
-										</button>
-									)}
-								</Menu.Item>
+								{primaryOptions.map((option) => (
+									<MenuItem name={option.name} Icon={option.icon} />
+								))}
 							</div>
 							<div className="py-1">
-								<Menu.Item>
-									{({ active }) => (
-										<button
-											className={classNames(
-												active ? "bg-gray-100 text-gray-900" : "text-gray-700",
-												"group flex items-center px-4 py-2 text-sm"
-											)}
-										>
-											<TrashIcon
-												className="mr-3 h-5 w-5 text-gray-400 group-hover:text-gray-500"
-												aria-hidden="true"
-											/>
-											Delete
-										</button>
-									)}
-								</Menu.Item>
+								<MenuItem name="Delete" Icon={TrashIcon} />
 							</div>
 						</Menu.Items>
 					</Transition>
