@@ -11,7 +11,6 @@ import { APIDashboardResponse } from "../interfaces/APIResponse";
 import PinnedProject from "./PinnedProject";
 
 interface MainProps {
-	open: boolean;
 	setSidebarOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
