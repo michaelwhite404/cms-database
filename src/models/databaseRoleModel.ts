@@ -28,7 +28,7 @@ const databaseRoleSchema = new Schema({
 		type: Boolean,
 		required: true,
 		immutable: false,
-		defualt: false,
+		default: false,
 	},
 });
 

@@ -15,7 +15,11 @@ const primaryOptions = [
 	{ name: "Share", icon: UserAddIcon },
 ];
 
-export default function ProjectOptions() {
+interface ProjectOptionsProps {
+	setOpenDeleteModal: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+export default function ProjectOptions({ setOpenDeleteModal }: ProjectOptionsProps) {
 	return (
 		<Menu as="div" className="relative flex justify-end items-center">
 			{({ open }) => (
@@ -44,7 +48,7 @@ export default function ProjectOptions() {
 								))}
 							</div>
 							<div className="py-1">
-								<MenuItem name="Delete" Icon={TrashIcon} />
+								<MenuItem name="Delete" Icon={TrashIcon} onClick={() => setOpenDeleteModal(true)} />
 							</div>
 						</Menu.Items>
 					</Transition>

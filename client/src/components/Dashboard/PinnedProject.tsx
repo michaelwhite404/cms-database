@@ -1,7 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Menu, Transition } from "@headlessui/react";
 import { DotsVerticalIcon } from "@heroicons/react/solid";
-import axios from "axios";
 import React, { Fragment, useCallback } from "react";
 import { Link, useHistory } from "react-router-dom";
 import { APIDashboardResponse } from "../../interfaces/APIResponse";

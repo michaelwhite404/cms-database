@@ -134,11 +134,12 @@ export const updateDatabase = catchAsync(
  */
 export const deleteDatabase = catchAsync(
 	async (req: CustomRequest<DatabaseModel>, res: Response) => {
-		const databaseId = req.params.database_id;
+		const database = req.params.database_id;
 		const [collections, items] = await Promise.all([
-			Collection.deleteMany({ database: databaseId }),
-			Item.deleteMany({ database: databaseId }),
-			Database.findByIdAndDelete(databaseId),
+			Collection.deleteMany({ database }),
+			Item.deleteMany({ database }),
+			Database.findByIdAndDelete(database),
+			DatabaseRole.deleteMany({ database }),
 		]);
 
 		// Send response
