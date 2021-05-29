@@ -1,21 +1,37 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { Menu, Transition } from "@headlessui/react";
 import { DotsVerticalIcon } from "@heroicons/react/solid";
-import React, { Fragment } from "react";
-import { Link } from "react-router-dom";
+import axios from "axios";
+import React, { Fragment, useCallback } from "react";
+import { Link, useHistory } from "react-router-dom";
 import { APIDashboardResponse } from "../../interfaces/APIResponse";
 import classNames from "../../utils/classNames";
 import MenuItem from "../MenuItem";
 
-const pinnedProjectsOptions = {
-	first: ["View"],
-	second: ["Remove from pinned", "Share"],
-};
-
 export default function PinnedProject({
 	project,
+	removePin,
 }: {
 	project: APIDashboardResponse["databases"][0];
+	removePin: (database_id: string) => any;
 }) {
+	const history = useHistory();
+	const pinnedProjectsOptions = {
+		first: [
+			{
+				name: "View",
+				onClick: useCallback(() => history.push(`/databases/${project.slug}`), [history]),
+			},
+		],
+		second: [
+			{
+				name: "Remove from pinned",
+				onClick: useCallback(() => removePin(project._id), []),
+			},
+			{ name: "Share" },
+		],
+	};
+
 	return (
 		<div>
 			<li key={project._id} className="relative col-span-1 flex shadow-sm rounded-md">
@@ -60,12 +76,12 @@ export default function PinnedProject({
 									>
 										<div className="py-1">
 											{pinnedProjectsOptions.first.map((option) => (
-												<MenuItem name={option} />
+												<MenuItem name={option.name} onClick={option.onClick} />
 											))}
 										</div>
 										<div className="py-1">
 											{pinnedProjectsOptions.second.map((option) => (
-												<MenuItem name={option} />
+												<MenuItem name={option.name} onClick={option.onClick} />
 											))}
 										</div>
 									</Menu.Items>

@@ -26,6 +26,19 @@ export default function Main({ setSidebarOpen }: MainProps) {
 		}
 	};
 
+	const removePin = async (databaseId: string) => {
+		try {
+			axios.patch(`/api/v1/databases/roles/pinned/${databaseId}`);
+			const index = projects.findIndex((p) => p._id === databaseId);
+			if (index < 0) return;
+			let editProjects = [...projects];
+			editProjects[index].pinned = false;
+			setProjects(editProjects);
+		} catch (err) {
+			console.log(err);
+		}
+	};
+
 	useEffect(() => {
 		fetchProjects();
 	}, []);
@@ -210,7 +223,7 @@ export default function Main({ setSidebarOpen }: MainProps) {
 					</h2>
 					<ul className="grid grid-cols-1 gap-4 sm:gap-6 sm:grid-cols-2 xl:grid-cols-4 mt-3">
 						{pinnedProjects.map((project) => (
-							<PinnedProject project={project} />
+							<PinnedProject project={project} removePin={removePin} />
 						))}
 					</ul>
 				</div>
@@ -263,7 +276,7 @@ export default function Main({ setSidebarOpen }: MainProps) {
 										Members
 									</th>
 									<th className="hidden md:table-cell px-6 py-3 border-b border-gray-200 bg-gray-50 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-										Last updated
+										Last Viewed
 									</th>
 									<th className="pr-6 py-3 border-b border-gray-200 bg-gray-50 text-right text-xs font-medium text-gray-500 uppercase tracking-wider" />
 								</tr>

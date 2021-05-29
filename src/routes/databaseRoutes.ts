@@ -2,6 +2,7 @@ import { Router } from "express";
 import * as databaseController from "../controllers/databaseController";
 import * as authController from "../controllers/authController";
 import collectionRouter from "./collectionRoutes";
+import databaseRoleRouter from "./databaseRoleRoutes";
 
 /** Router for database routes*/
 const router = Router();
@@ -10,6 +11,7 @@ router.use("/:database_id/collections", collectionRouter);
 
 router.use(authController.protect);
 
+router.use("/roles", databaseRoleRouter);
 router.get(["/", "/roles"], databaseController.getAllDatabases);
 router.post("/", databaseController.createDatabase);
 
