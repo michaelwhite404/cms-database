@@ -7,9 +7,14 @@ import axios from "axios";
 interface DeleteModalProps {
 	project: DashboardDatabase;
 	setOpenDeleteModal: React.Dispatch<React.SetStateAction<boolean>>;
+	deleteProject: (databaseId: string) => Promise<void>;
 }
 
-export default function DeleteModal({ project, setOpenDeleteModal }: DeleteModalProps) {
+export default function DeleteModal({
+	project,
+	setOpenDeleteModal,
+	deleteProject,
+}: DeleteModalProps) {
 	const [open, setOpen] = useState(false);
 
 	useEffect(() => {
@@ -18,16 +23,12 @@ export default function DeleteModal({ project, setOpenDeleteModal }: DeleteModal
 
 	const handleClose = () => {
 		setOpen(false);
-		setTimeout(() => setOpenDeleteModal(false), 300);
+		setOpenDeleteModal(false);
 	};
 
-	const handleDelete = async () => {
-		try {
-			await axios.delete(`/api/v1/databases/${project._id}`);
-			handleClose();
-		} catch (err) {
-			console.log(err);
-		}
+	const handleDelete = () => {
+		deleteProject(project._id);
+		handleClose();
 	};
 
 	const cancelButtonRef = useRef(null);
@@ -40,7 +41,7 @@ export default function DeleteModal({ project, setOpenDeleteModal }: DeleteModal
 				className="fixed z-10 inset-0 overflow-y-auto"
 				initialFocus={cancelButtonRef}
 				open={open}
-				onClose={setOpen}
+				onClose={handleClose}
 			>
 				<div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
 					<Transition.Child
@@ -79,8 +80,8 @@ export default function DeleteModal({ project, setOpenDeleteModal }: DeleteModal
 									</Dialog.Title>
 									<div className="mt-2">
 										<p className="text-sm text-gray-500">
-											Are you sure you want to project? All of your data will be permanently removed
-											from our servers forever. This action cannot be undone.
+											Are you sure you want to delete this project? All of your data will be
+											permanently removed from our servers forever. This action cannot be undone.
 										</p>
 									</div>
 								</div>

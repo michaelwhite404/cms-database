@@ -6,7 +6,13 @@ import classNames from "../../utils/classNames";
 import Badge from "../Badge";
 import ProjectOptions from "./ProjectOptions";
 
-export default function DashboardTableRow({ project }: { project: DashboardDatabase }) {
+export default function DashboardTableRow({
+	project,
+	deleteProject,
+}: {
+	project: DashboardDatabase;
+	deleteProject: (databaseId: string) => Promise<void>;
+}) {
 	const [openDeleteModal, setOpenDeleteModal] = useState(false);
 
 	return (
@@ -52,9 +58,13 @@ export default function DashboardTableRow({ project }: { project: DashboardDatab
 				{/* {project.lastUpdated} */}
 			</td>
 			<td className="pr-6">
-				<ProjectOptions setOpenDeleteModal={setOpenDeleteModal} />
+				<ProjectOptions projectRole={project.role} setOpenDeleteModal={setOpenDeleteModal} />
 				{openDeleteModal && (
-					<DeleteModal project={project} setOpenDeleteModal={setOpenDeleteModal} />
+					<DeleteModal
+						project={project}
+						setOpenDeleteModal={setOpenDeleteModal}
+						deleteProject={deleteProject}
+					/>
 				)}
 			</td>
 		</tr>

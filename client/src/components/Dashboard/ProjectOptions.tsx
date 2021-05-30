@@ -7,6 +7,7 @@ import {
 	UserAddIcon,
 } from "@heroicons/react/solid";
 import { Fragment } from "react";
+import { DatabaseRoles } from "../../../../src/interfaces/databaseRoleInterface";
 import MenuItem from "../MenuItem";
 
 const primaryOptions = [
@@ -16,10 +17,11 @@ const primaryOptions = [
 ];
 
 interface ProjectOptionsProps {
+	projectRole: DatabaseRoles;
 	setOpenDeleteModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function ProjectOptions({ setOpenDeleteModal }: ProjectOptionsProps) {
+export default function ProjectOptions({ projectRole, setOpenDeleteModal }: ProjectOptionsProps) {
 	return (
 		<Menu as="div" className="relative flex justify-end items-center">
 			{({ open }) => (
@@ -47,9 +49,15 @@ export default function ProjectOptions({ setOpenDeleteModal }: ProjectOptionsPro
 									<MenuItem name={option.name} Icon={option.icon} />
 								))}
 							</div>
-							<div className="py-1">
-								<MenuItem name="Delete" Icon={TrashIcon} onClick={() => setOpenDeleteModal(true)} />
-							</div>
+							{projectRole === "owner" && (
+								<div className="py-1">
+									<MenuItem
+										name="Delete"
+										Icon={TrashIcon}
+										onClick={() => setOpenDeleteModal(true)}
+									/>
+								</div>
+							)}
 						</Menu.Items>
 					</Transition>
 				</>

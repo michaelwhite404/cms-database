@@ -27,7 +27,7 @@ export default function Main({ setSidebarOpen }: MainProps) {
 
 	const removePin = async (databaseId: string) => {
 		try {
-			axios.patch(`/api/v1/databases/roles/pinned/${databaseId}`);
+			await axios.patch(`/api/v1/databases/roles/pinned/${databaseId}`);
 			const index = projects.findIndex((p) => p._id === databaseId);
 			if (index < 0) return;
 			let editProjects = [...projects];
@@ -38,7 +38,15 @@ export default function Main({ setSidebarOpen }: MainProps) {
 		}
 	};
 
-	const deleteProject = () => {};
+	const deleteProject = async (databaseId: string) => {
+		try {
+			await axios.delete(`/api/v1/databases/${databaseId}`);
+			const newProjects = projects.filter((p) => p._id !== databaseId);
+			setProjects(newProjects);
+		} catch (err) {
+			console.log(err.response.data);
+		}
+	};
 
 	useEffect(() => {
 		fetchProjects();
@@ -284,7 +292,7 @@ export default function Main({ setSidebarOpen }: MainProps) {
 							</thead>
 							<tbody className="bg-white divide-y divide-gray-100">
 								{projects.map((project) => (
-									<DashboardTableRow project={project} />
+									<DashboardTableRow project={project} deleteProject={deleteProject} />
 								))}
 							</tbody>
 						</table>
