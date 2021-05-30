@@ -21,7 +21,7 @@ export default function UserAccountDropdown() {
 									<img
 										className="w-10 h-10 bg-gray-300 rounded-full flex-shrink-0"
 										src="https://images.unsplash.com/photo-1567290329751-0700a37da0af?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"
-										alt=""
+										alt="User Profile"
 									/>
 									<span className="flex-1 flex flex-col min-w-0">
 										<span className="text-gray-900 text-sm font-medium truncate">

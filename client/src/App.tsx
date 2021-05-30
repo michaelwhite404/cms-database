@@ -2,9 +2,8 @@ import axios, { AxiosError } from "axios";
 import React, { useEffect, useState } from "react";
 import { BrowserRouter as Router, Route, Switch, useParams } from "react-router-dom";
 import "./App.css";
-import { CollectionModel } from "../../src/interfaces/collectionInterfaces";
 import { ItemModel } from "../../src/interfaces/itemInterfaces";
-import { APICollectionResponse, APIItemResponse } from "./interfaces/APIResponse";
+import { APIItemResponse } from "./interfaces/APIResponse";
 import AppError from "../../src/utils/appError";
 import Dashboard from "./components/Dashboard/Dashboard";
 import Login from "./components/Login";
@@ -81,41 +80,41 @@ function Home() {
 // 	);
 // }
 
-function Database(/* props */) {
-	const [collections, setCollections] = useState<CollectionModel[]>([]);
+// function Database(/* props */) {
+// 	const [collections, setCollections] = useState<CollectionModel[]>([]);
 
-	const params = useParams<{ database: string }>();
-	// console.log(props.match.params.database);
-	const fetchData = async () => {
-		try {
-			const res = await axios.get<APICollectionResponse>(
-				`/api/v1/databases/${params.database}/collections?slug=true`
-			);
-			setCollections(res.data.collections);
-		} catch (err) {
-			console.log((err as AxiosError<AppError>).response!.data);
-		}
-	};
+// 	const params = useParams<{ database: string }>();
+// 	// console.log(props.match.params.database);
+// 	const fetchData = async () => {
+// 		try {
+// 			const res = await axios.get<APICollectionResponse>(
+// 				`/api/v1/databases/${params.database}/collections?slug=true`
+// 			);
+// 			setCollections(res.data.collections);
+// 		} catch (err) {
+// 			console.log((err as AxiosError<AppError>).response!.data);
+// 		}
+// 	};
 
-	useEffect(() => {
-		fetchData();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+// 	useEffect(() => {
+// 		fetchData();
+// 		// eslint-disable-next-line react-hooks/exhaustive-deps
+// 	}, []);
 
-	return (
-		<>
-			<h2 className="text-3xl font-bold">Collections</h2>
-			{collections.map((collection) => (
-				<li key={collection._id}>
-					<div>{collection.name}</div>
-					<div>{collection.createdAt}</div>
-					<div>{collection.slug}</div>
-					<div>{collection._id}</div>
-				</li>
-			))}
-		</>
-	);
-}
+// 	return (
+// 		<>
+// 			<h2 className="text-3xl font-bold">Collections</h2>
+// 			{collections.map((collection) => (
+// 				<li key={collection._id}>
+// 					<div>{collection.name}</div>
+// 					<div>{collection.createdAt}</div>
+// 					<div>{collection.slug}</div>
+// 					<div>{collection._id}</div>
+// 				</li>
+// 			))}
+// 		</>
+// 	);
+// }
 
 function Collection() {
 	const [items, setItems] = useState<ItemModel[]>([]);
