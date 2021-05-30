@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Main from "./Main";
 import DesktopSidebar from "../Sidebar/DesktopSidebar";
 import MobileSidebar from "../Sidebar/MobileSidebar";
@@ -16,9 +16,14 @@ const teams = [
 	{ name: "Customer Success", href: "#", bgColorClass: "bg-yellow-500" },
 ]; */
 
-export default function Example() {
+export default function Dashboard() {
 	const [sidebarOpen, setSidebarOpen] = useState(false);
 	const [successNotificationOpen, setSuccessNotificationOpen] = useState(false);
+	const [successMessage, setSuccessMessage] = useState<[string, string?]>([""]);
+
+	useEffect(() => {
+		document.title = "My Dashboard";
+	}, []);
 
 	return (
 		<div className="h-screen flex overflow-hidden bg-white">
@@ -31,12 +36,11 @@ export default function Example() {
 			<Main
 				setSidebarOpen={setSidebarOpen}
 				setSuccessNotificationOpen={setSuccessNotificationOpen}
+				setSuccessMessage={setSuccessMessage}
 			/>
 
 			<SuccessNotification show={successNotificationOpen} setShow={setSuccessNotificationOpen}>
-				<div className="ml-3 w-0 flex-1 pt-0.5">
-					<p className="text-sm font-medium text-gray-900">Project Successfully Deleted!</p>
-				</div>
+				{successMessage}
 			</SuccessNotification>
 		</div>
 	);

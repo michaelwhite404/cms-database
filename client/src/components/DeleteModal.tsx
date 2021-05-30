@@ -2,7 +2,6 @@ import { Fragment, useEffect, useRef, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { TrashIcon } from "@heroicons/react/outline";
 import DashboardDatabase from "../interfaces/DashboardDatabase";
-import axios from "axios";
 
 interface DeleteModalProps {
 	project: DashboardDatabase;
