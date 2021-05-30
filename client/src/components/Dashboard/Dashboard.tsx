@@ -2,6 +2,7 @@ import { useState } from "react";
 import Main from "./Main";
 import DesktopSidebar from "../Sidebar/DesktopSidebar";
 import MobileSidebar from "../Sidebar/MobileSidebar";
+import SuccessNotification from "../SuccessNotification";
 
 /* const navigation = [
 	{ name: "Dashboard", href: "#", icon: HomeIcon, current: true },
@@ -17,6 +18,7 @@ const teams = [
 
 export default function Example() {
 	const [sidebarOpen, setSidebarOpen] = useState(false);
+	const [successNotificationOpen, setSuccessNotificationOpen] = useState(false);
 
 	return (
 		<div className="h-screen flex overflow-hidden bg-white">
@@ -26,7 +28,16 @@ export default function Example() {
 			<DesktopSidebar />
 
 			{/* Dashboard Content */}
-			<Main setSidebarOpen={setSidebarOpen} />
+			<Main
+				setSidebarOpen={setSidebarOpen}
+				setSuccessNotificationOpen={setSuccessNotificationOpen}
+			/>
+
+			<SuccessNotification show={successNotificationOpen} setShow={setSuccessNotificationOpen}>
+				<div className="ml-3 w-0 flex-1 pt-0.5">
+					<p className="text-sm font-medium text-gray-900">Project Successfully Deleted!</p>
+				</div>
+			</SuccessNotification>
 		</div>
 	);
 }

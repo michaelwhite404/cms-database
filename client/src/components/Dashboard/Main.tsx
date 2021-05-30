@@ -11,9 +11,10 @@ import DashboardTableRow from "./DashboardTableRow";
 
 interface MainProps {
 	setSidebarOpen: React.Dispatch<React.SetStateAction<boolean>>;
+	setSuccessNotificationOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function Main({ setSidebarOpen }: MainProps) {
+export default function Main({ setSidebarOpen, setSuccessNotificationOpen }: MainProps) {
 	const [projects, setProjects] = useState<DashboardDatabase[]>([]);
 	const pinnedProjects = projects.filter((project) => project.pinned);
 	const fetchProjects = async () => {
@@ -42,6 +43,10 @@ export default function Main({ setSidebarOpen }: MainProps) {
 		try {
 			await axios.delete(`/api/v1/databases/${databaseId}`);
 			const newProjects = projects.filter((p) => p._id !== databaseId);
+			setSuccessNotificationOpen(true);
+			setTimeout(() => {
+				setSuccessNotificationOpen(false);
+			}, 3500);
 			setProjects(newProjects);
 		} catch (err) {
 			console.log(err.response.data);
