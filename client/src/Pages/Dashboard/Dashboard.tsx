@@ -10,6 +10,7 @@ import PinnedProjects from "./PinnedProjects";
 import ProjectsTable from "./ProjectsTable";
 import SuccessNotification from "../../components/SuccessNotification";
 import DeleteModal from "../../components/DeleteModal";
+import Slideover from "../../components/Slideover";
 
 export default function Dashboard() {
 	const [projects, setProjects] = useState<DashboardDatabase[]>([]);
@@ -17,6 +18,7 @@ export default function Dashboard() {
 	const [successMessage, setSuccessMessage] = useState<[string, string?]>([""]);
 	const [openDeleteModal, setOpenDeleteModal] = useState(false);
 	const [deleteProjectId, setDeleteProjectId] = useState("");
+	const [openSlideover, setOpenSlideover] = useState(false);
 
 	const pinnedProjects = projects.filter((project) => project.pinned);
 
@@ -67,7 +69,7 @@ export default function Dashboard() {
 			<>
 				{/* Page title & actions */}
 				<Heading title="Dashboard">
-					<HeadingButtons />
+					<HeadingButtons setOpenSlideover={setOpenSlideover} />
 				</Heading>
 
 				{/* Pinned projects */}
@@ -95,6 +97,8 @@ export default function Dashboard() {
 					setOpenDeleteModal={setOpenDeleteModal}
 					deleteProject={deleteProject}
 				/>
+
+				<Slideover open={openSlideover} setOpen={setOpenSlideover} />
 			</>
 		</AppContainer>
 	);
