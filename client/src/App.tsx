@@ -7,7 +7,7 @@ import { APIItemResponse } from "./interfaces/APIResponse";
 import AppError from "../../src/utils/appError";
 import Dashboard from "./components/Dashboard/Dashboard";
 import Login from "./components/Login";
-import Project from "./components/ProjectPage/Project";
+import Project from "./Pages/Project/Project";
 
 function App() {
 	return (
