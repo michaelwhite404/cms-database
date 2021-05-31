@@ -5,9 +5,9 @@ import "./App.css";
 import { ItemModel } from "../../src/interfaces/itemInterfaces";
 import { APIItemResponse } from "./interfaces/APIResponse";
 import AppError from "../../src/utils/appError";
-import Dashboard from "./components/Dashboard/Dashboard";
 import Login from "./components/Login";
 import Project from "./Pages/Project/Project";
+import Dashboard from "./Pages/Dashboard/Dashboard";
 
 function App() {
 	return (
@@ -31,9 +31,8 @@ function App() {
 					<Route path="/login">
 						<Login />
 					</Route>
-					<Route path="/dashboard">
-						<Dashboard />
-					</Route>
+					<Route path="/dashboard" component={Dashboard} />
+
 					<Route path="/databases/:database" component={Project} />
 					<Route path="/collections/:collection" component={Collection} />
 					<Route path="/">

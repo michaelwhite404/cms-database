@@ -1,20 +1,20 @@
-import { useState } from "react";
 import { Link } from "react-router-dom";
-import DeleteModal from "../DeleteModal";
 import DashboardDatabase from "../../interfaces/DashboardDatabase";
 import classNames from "../../utils/classNames";
-import Badge from "../Badge";
+import Badge from "../../components/Badge";
 import ProjectOptions from "./ProjectOptions";
+
+interface DashboardTableRowProps {
+	project: DashboardDatabase;
+	setOpenDeleteModal: React.Dispatch<React.SetStateAction<boolean>>;
+	setDeleteProjectId: React.Dispatch<React.SetStateAction<string>>;
+}
 
 export default function DashboardTableRow({
 	project,
-	deleteProject,
-}: {
-	project: DashboardDatabase;
-	deleteProject: (databaseId: string) => Promise<void>;
-}) {
-	const [openDeleteModal, setOpenDeleteModal] = useState(false);
-
+	setOpenDeleteModal,
+	setDeleteProjectId,
+}: DashboardTableRowProps) {
 	return (
 		<tr key={project._id}>
 			<td className="px-6 py-3 max-w-0 w-full whitespace-nowrap text-sm font-medium text-gray-900">
@@ -58,14 +58,11 @@ export default function DashboardTableRow({
 				{/* {project.lastUpdated} */}
 			</td>
 			<td className="pr-6">
-				<ProjectOptions projectRole={project.role} setOpenDeleteModal={setOpenDeleteModal} />
-				{openDeleteModal && (
-					<DeleteModal
-						project={project}
-						setOpenDeleteModal={setOpenDeleteModal}
-						deleteProject={deleteProject}
-					/>
-				)}
+				<ProjectOptions
+					project={project}
+					setOpenDeleteModal={setOpenDeleteModal}
+					setDeleteProjectId={setDeleteProjectId}
+				/>
 			</td>
 		</tr>
 	);

@@ -1,6 +1,6 @@
 import { Menu, Transition } from "@headlessui/react";
 import { Fragment } from "react";
-import SmallProfileMenuItem from "./SmallProfileMenuItem";
+import SmallProfileMenuItem from "../SmallProfileMenuItem";
 
 const profileMenu = {
 	first: ["View Profile", "Settings", "Notifications"],

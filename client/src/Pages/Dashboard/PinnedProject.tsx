@@ -5,7 +5,7 @@ import React, { Fragment, useCallback } from "react";
 import { Link, useHistory } from "react-router-dom";
 import { APIDashboardResponse } from "../../interfaces/APIResponse";
 import classNames from "../../utils/classNames";
-import MenuItem from "../MenuItem";
+import MenuItem from "../../components/MenuItem";
 
 export default function PinnedProject({
 	project,

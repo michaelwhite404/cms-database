@@ -1,5 +1,5 @@
-import AppContainer from "../../components/AppContainer";
-import Heading from "../../components/Heading";
+import AppContainer from "../../components/AppContainer/AppContainer";
+import Heading from "../../components/AppContainer/Heading";
 import HeadingButtons from "./HeadingButtons";
 
 export default function Project() {

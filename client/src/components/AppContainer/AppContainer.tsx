@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import MainSection from "./MainSection";
-import DesktopSidebar from "./Sidebar/DesktopSidebar";
-import MobileSidebar from "./Sidebar/MobileSidebar";
+import DesktopSidebar from "../Sidebar/DesktopSidebar";
+import MobileSidebar from "../Sidebar/MobileSidebar";
 
 interface AppContainerProps {
 	children: JSX.Element;

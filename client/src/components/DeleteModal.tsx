@@ -1,32 +1,26 @@
-import { Fragment, useEffect, useRef, useState } from "react";
+import { Fragment, useRef } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { TrashIcon } from "@heroicons/react/outline";
-import DashboardDatabase from "../interfaces/DashboardDatabase";
 
 interface DeleteModalProps {
-	project: DashboardDatabase;
+	open: boolean;
+	projectId: string;
 	setOpenDeleteModal: React.Dispatch<React.SetStateAction<boolean>>;
 	deleteProject: (databaseId: string) => Promise<void>;
 }
 
 export default function DeleteModal({
-	project,
+	open,
+	projectId,
 	setOpenDeleteModal,
 	deleteProject,
 }: DeleteModalProps) {
-	const [open, setOpen] = useState(false);
-
-	useEffect(() => {
-		setTimeout(() => setOpen(true), 1);
-	}, []);
-
 	const handleClose = () => {
-		setOpen(false);
 		setOpenDeleteModal(false);
 	};
 
 	const handleDelete = () => {
-		deleteProject(project._id);
+		deleteProject(projectId);
 		handleClose();
 	};
 

@@ -7,8 +7,8 @@ import {
 	UserAddIcon,
 } from "@heroicons/react/solid";
 import { Fragment } from "react";
-import { DatabaseRoles } from "../../../../src/interfaces/databaseRoleInterface";
-import MenuItem from "../MenuItem";
+import MenuItem from "../../components/MenuItem";
+import DashboardDatabase from "../../interfaces/DashboardDatabase";
 
 const primaryOptions = [
 	{ name: "Edit", icon: PencilAltIcon },
@@ -17,11 +17,21 @@ const primaryOptions = [
 ];
 
 interface ProjectOptionsProps {
-	projectRole: DatabaseRoles;
+	project: DashboardDatabase;
 	setOpenDeleteModal: React.Dispatch<React.SetStateAction<boolean>>;
+	setDeleteProjectId: React.Dispatch<React.SetStateAction<string>>;
 }
 
-export default function ProjectOptions({ projectRole, setOpenDeleteModal }: ProjectOptionsProps) {
+export default function ProjectOptions({
+	project,
+	setOpenDeleteModal,
+	setDeleteProjectId,
+}: ProjectOptionsProps) {
+	const setupDeleteModal = () => {
+		setOpenDeleteModal(true);
+		setDeleteProjectId(project._id);
+	};
+
 	return (
 		<Menu as="div" className="relative flex justify-end items-center">
 			{({ open }) => (
@@ -49,13 +59,9 @@ export default function ProjectOptions({ projectRole, setOpenDeleteModal }: Proj
 									<MenuItem name={option.name} Icon={option.icon} />
 								))}
 							</div>
-							{projectRole === "owner" && (
+							{project.role === "owner" && (
 								<div className="py-1">
-									<MenuItem
-										name="Delete"
-										Icon={TrashIcon}
-										onClick={() => setOpenDeleteModal(true)}
-									/>
+									<MenuItem name="Delete" Icon={TrashIcon} onClick={setupDeleteModal} />
 								</div>
 							)}
 						</Menu.Items>
