@@ -40,17 +40,17 @@ export default function UserProfile() {
 							>
 								<div className="py-1">
 									{profileMenu.first.map((item) => (
-										<SmallProfileMenuItem name={item} />
+										<SmallProfileMenuItem name={item} key={item} />
 									))}
 								</div>
 								<div className="py-1">
 									{profileMenu.second.map((item) => (
-										<SmallProfileMenuItem name={item} />
+										<SmallProfileMenuItem name={item} key={item} />
 									))}
 								</div>
 								<div className="py-1">
 									{profileMenu.third.map((item) => (
-										<SmallProfileMenuItem name={item} />
+										<SmallProfileMenuItem name={item} key={item} />
 									))}
 								</div>
 							</Menu.Items>

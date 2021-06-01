@@ -1,7 +1,8 @@
 import React, { Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
-import { XIcon } from "@heroicons/react/outline";
-import { LinkIcon, PlusIcon, QuestionMarkCircleIcon } from "@heroicons/react/solid";
+import { XIcon, PlusCircleIcon } from "@heroicons/react/outline";
+import { MailIcon } from "@heroicons/react/solid";
+import SelectMenu from "./SelectMenu";
 
 const team = [
 	{
@@ -25,7 +26,7 @@ const team = [
 		imageUrl:
 			"https://images.unsplash.com/photo-1519345182560-3f2917c472ef?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
 	},
-	{
+	/* {
 		name: "Floyd Miles",
 		email: "floydmiles@example.com",
 		href: "#",
@@ -38,13 +39,17 @@ const team = [
 		href: "#",
 		imageUrl:
 			"https://images.unsplash.com/photo-1502685104226-ee32379fefbe?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-	},
+	}, */
 ];
 
 interface SlideoverProps {
 	open: boolean;
 	setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
+
+const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+	e.preventDefault();
+};
 
 export default function Slideover({ open, setOpen }: SlideoverProps) {
 	return (
@@ -79,12 +84,15 @@ export default function Slideover({ open, setOpen }: SlideoverProps) {
 							leaveTo="translate-x-full"
 						>
 							<div className="w-screen max-w-md">
-								<form className="h-full divide-y divide-gray-200 flex flex-col bg-white shadow-xl">
+								<form
+									className="h-full divide-y divide-gray-200 flex flex-col bg-white shadow-xl"
+									onSubmit={handleSubmit}
+								>
 									<div className="flex-1 h-0 overflow-y-auto">
 										<div className="py-6 px-4 bg-indigo-700 sm:px-6">
 											<div className="flex items-center justify-between">
 												<Dialog.Title className="text-lg font-medium text-white">
-													New Project
+													Create New Project
 												</Dialog.Title>
 												<div className="ml-3 h-7 flex items-center">
 													<button
@@ -120,6 +128,7 @@ export default function Slideover({ open, setOpen }: SlideoverProps) {
 																name="project_name"
 																id="project_name"
 																className="block w-full shadow-sm sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md"
+																autoComplete="off"
 															/>
 														</div>
 													</div>
@@ -135,136 +144,62 @@ export default function Slideover({ open, setOpen }: SlideoverProps) {
 																id="description"
 																name="description"
 																rows={4}
-																className="block w-full shadow-sm sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md"
+																className="block w-full min-h-64 shadow-sm sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md"
 																defaultValue={""}
+																maxLength={256}
 															/>
 														</div>
 													</div>
 													<div>
-														<h3 className="text-sm font-medium text-gray-900">Team Members</h3>
-														<div className="mt-2">
-															<div className="flex space-x-2">
+														<label
+															htmlFor="users"
+															className="block text-sm font-medium text-gray-900"
+														>
+															Share With
+														</label>
+														<div className="mt-2 flex rounded-md shadow-sm">
+															<div className="relative flex items-stretch flex-grow focus-within:z-10">
+																<div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+																	<MailIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+																</div>
+																<input
+																	type="text"
+																	name="email"
+																	id="email"
+																	className="focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-none rounded-l-md pl-10 sm:text-sm border-gray-300"
+																	placeholder="example@email.com"
+																/>
+															</div>
+															<button className="-ml-px relative inline-flex items-center space-x-2 px-4 py-2 border border-gray-300 text-sm font-medium rounded-r-md text-gray-700 bg-gray-50 hover:bg-gray-100 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500">
+																<PlusCircleIcon
+																	className="h-5 w-5 text-gray-400"
+																	aria-hidden="true"
+																/>
+																<span>Add</span>
+															</button>
+														</div>
+														<div className="mt-4">
+															<div className="flex flex-col space-y-2 ">
 																{team.map((person) => (
-																	<a
-																		key={person.email}
-																		href={person.href}
-																		className="rounded-full hover:opacity-75"
-																	>
+																	<div className="flex items-center" key={person.email}>
 																		<img
 																			className="inline-block h-8 w-8 rounded-full"
 																			src={person.imageUrl}
 																			alt={person.name}
 																		/>
-																	</a>
+																		<div className="pl-3 flex flex-col">
+																			<div className="font-medium">{person.name}</div>
+																			<div className="font-normal text-sm text-gray-500">
+																				{person.email}
+																			</div>
+																		</div>
+																		<div className="ml-auto">
+																			<SelectMenu />
+																		</div>
+																	</div>
 																))}
-																<button
-																	type="button"
-																	className="flex-shrink-0 bg-white inline-flex h-8 w-8 items-center justify-center rounded-full border-2 border-dashed border-gray-200 text-gray-400 hover:text-gray-500 hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-																>
-																	<span className="sr-only">Add team member</span>
-																	<PlusIcon className="h-5 w-5" aria-hidden="true" />
-																</button>
 															</div>
 														</div>
-													</div>
-													<fieldset>
-														<legend className="text-sm font-medium text-gray-900">Privacy</legend>
-														<div className="mt-2 space-y-5">
-															<div className="relative flex items-start">
-																<div className="absolute flex items-center h-5">
-																	<input
-																		id="privacy_public"
-																		name="privacy"
-																		aria-describedby="privacy_public_description"
-																		type="radio"
-																		className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300"
-																		defaultChecked
-																	/>
-																</div>
-																<div className="pl-7 text-sm">
-																	<label
-																		htmlFor="privacy_public"
-																		className="font-medium text-gray-900"
-																	>
-																		Public access
-																	</label>
-																	<p id="privacy_public_description" className="text-gray-500">
-																		Everyone with the link will see this project.
-																	</p>
-																</div>
-															</div>
-															<div>
-																<div className="relative flex items-start">
-																	<div className="absolute flex items-center h-5">
-																		<input
-																			id="privacy_private-to-project"
-																			name="privacy"
-																			aria-describedby="privacy_private-to-project_description"
-																			type="radio"
-																			className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300"
-																		/>
-																	</div>
-																	<div className="pl-7 text-sm">
-																		<label
-																			htmlFor="privacy_private-to-project"
-																			className="font-medium text-gray-900"
-																		>
-																			Private to project members
-																		</label>
-																		<p
-																			id="privacy_private-to-project_description"
-																			className="text-gray-500"
-																		>
-																			Only members of this project would be able to access.
-																		</p>
-																	</div>
-																</div>
-															</div>
-															<div>
-																<div className="relative flex items-start">
-																	<div className="absolute flex items-center h-5">
-																		<input
-																			id="privacy_private"
-																			name="privacy"
-																			aria-describedby="privacy_private-to-project_description"
-																			type="radio"
-																			className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300"
-																		/>
-																	</div>
-																	<div className="pl-7 text-sm">
-																		<label
-																			htmlFor="privacy_private"
-																			className="font-medium text-gray-900"
-																		>
-																			Private to you
-																		</label>
-																		<p id="privacy_private_description" className="text-gray-500">
-																			You are the only one able to access this project.
-																		</p>
-																	</div>
-																</div>
-															</div>
-														</div>
-													</fieldset>
-												</div>
-												<div className="pt-4 pb-6">
-													<div className="flex text-sm">
-														<button className="group inline-flex items-center font-medium text-indigo-600 hover:text-indigo-900">
-															<LinkIcon
-																className="h-5 w-5 text-indigo-500 group-hover:text-indigo-900"
-																aria-hidden="true"
-															/>
-															<span className="ml-2">Copy link</span>
-														</button>
-													</div>
-													<div className="mt-4 flex text-sm">
-														<button className="group inline-flex items-center text-gray-500 hover:text-gray-900">
-															<QuestionMarkCircleIcon
-																className="h-5 w-5 text-gray-400 group-hover:text-gray-500"
-																aria-hidden="true"
-															/>
-															<span className="ml-2">Learn more about sharing</span>
-														</button>
 													</div>
 												</div>
 											</div>

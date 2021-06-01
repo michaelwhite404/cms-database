@@ -13,7 +13,7 @@ export default function PinnedProjects({ projects, removePin }: PinnedProjectsPr
 			<h2 className="text-gray-500 text-xs font-medium uppercase tracking-wide">Pinned Projects</h2>
 			<ul className="grid grid-cols-1 gap-4 sm:gap-6 sm:grid-cols-2 xl:grid-cols-4 mt-3">
 				{projects.map((project) => (
-					<PinnedProject project={project} removePin={removePin} />
+					<PinnedProject project={project} removePin={removePin} key={project._id} />
 				))}
 			</ul>
 		</div>

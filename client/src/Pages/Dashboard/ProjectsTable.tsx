@@ -36,6 +36,7 @@ export default function ProjectsTable({
 								project={project}
 								setOpenDeleteModal={setOpenDeleteModal}
 								setDeleteProjectId={setDeleteProjectId}
+								key={project._id}
 							/>
 						))}
 					</tbody>

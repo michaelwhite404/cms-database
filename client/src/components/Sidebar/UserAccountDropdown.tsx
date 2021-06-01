@@ -53,17 +53,17 @@ export default function UserAccountDropdown() {
 						>
 							<div className="py-1">
 								{profileMenu.first.map((item) => (
-									<MenuItem name={item} />
+									<MenuItem name={item} key={item} />
 								))}
 							</div>
 							<div className="py-1">
 								{profileMenu.second.map((item) => (
-									<MenuItem name={item} />
+									<MenuItem name={item} key={item} />
 								))}
 							</div>
 							<div className="py-1">
 								{profileMenu.third.map((item) => (
-									<MenuItem name={item} />
+									<MenuItem name={item} key={item} />
 								))}
 							</div>
 						</Menu.Items>

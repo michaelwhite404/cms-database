@@ -56,12 +56,17 @@ export default function ProjectOptions({
 						>
 							<div className="py-1">
 								{primaryOptions.map((option) => (
-									<MenuItem name={option.name} Icon={option.icon} />
+									<MenuItem name={option.name} Icon={option.icon} key={option.name} />
 								))}
 							</div>
 							{project.role === "owner" && (
 								<div className="py-1">
-									<MenuItem name="Delete" Icon={TrashIcon} onClick={setupDeleteModal} />
+									<MenuItem
+										name="Delete"
+										Icon={TrashIcon}
+										onClick={setupDeleteModal}
+										key="Delete"
+									/>
 								</div>
 							)}
 						</Menu.Items>
