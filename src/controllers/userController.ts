@@ -120,7 +120,7 @@ export const getUserByEmail = catchAsync(
 			status: "success",
 			user: {
 				_id: user._id,
-				fullName: user.fullName,
+				name: user.fullName,
 				email: user.email,
 			},
 		});

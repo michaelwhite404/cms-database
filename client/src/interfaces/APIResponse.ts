@@ -2,6 +2,7 @@ import { CollectionModel } from "../../../src/interfaces/collectionInterfaces";
 import DatabaseModel from "../../../src/interfaces/databaseInterface";
 import { ItemModel } from "../../../src/interfaces/itemInterfaces";
 import DashboardDatabase from "./DashboardDatabase";
+import ISharedUser from "./ISharedUser";
 
 interface APIResponse {
 	/** The status of the response */
@@ -36,4 +37,9 @@ export interface APIItemResponse extends APIResponse {
 export interface APIDashboardResponse {
 	status: "success";
 	databases: DashboardDatabase[];
+}
+
+export interface APIUserByEmailRes {
+	status: "success";
+	user: ISharedUser;
 }

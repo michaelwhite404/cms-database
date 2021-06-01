@@ -32,6 +32,8 @@ const databaseRoleSchema = new Schema({
 	},
 });
 
+databaseRoleSchema.index({ database: 1, user: 1 }, { unique: true });
+
 const DatabaseRole: Model<DatabaseRoleModel> = model<DatabaseRoleModel>(
 	"DatabaseRole",
 	databaseRoleSchema

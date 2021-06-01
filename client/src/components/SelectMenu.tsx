@@ -1,7 +1,7 @@
 import { Listbox, Transition } from "@headlessui/react";
 import { CheckIcon } from "@heroicons/react/outline";
 import { ChevronDownIcon } from "@heroicons/react/solid";
-import React, { Fragment, useState } from "react";
+import React, { Fragment } from "react";
 import classNames from "../utils/classNames";
 
 const statuses = [
@@ -9,9 +9,17 @@ const statuses = [
 	{ name: "Viewer", value: "viewer" },
 ];
 
-export default function SelectMenu() {
-	const [selected, setSelected] = useState(statuses[0]);
+interface SelectMenuProps {
+	selected: { name: string; value: "editor" | "viewer" };
+	setSelected: React.Dispatch<
+		React.SetStateAction<{
+			name: string;
+			value: "editor" | "viewer";
+		}>
+	>;
+}
 
+export default function SelectMenu({ selected, setSelected }: SelectMenuProps) {
 	return (
 		<Listbox value={selected} onChange={setSelected}>
 			{({ open }) => (

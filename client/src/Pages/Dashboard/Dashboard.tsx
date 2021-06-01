@@ -11,6 +11,7 @@ import ProjectsTable from "./ProjectsTable";
 import SuccessNotification from "../../components/SuccessNotification";
 import DeleteModal from "../../components/DeleteModal";
 import Slideover from "../../components/Slideover";
+import CreateProjectSlideover from "./Slideover/CreateProjectSlideover";
 
 export default function Dashboard() {
 	const [projects, setProjects] = useState<DashboardDatabase[]>([]);
@@ -45,6 +46,10 @@ export default function Dashboard() {
 		}
 	};
 
+	/**
+	 * Deletes a database by the database ID
+	 * @param databaseId The ID of database being deleted
+	 */
 	const deleteProject = async (databaseId: string) => {
 		try {
 			await axios.delete(`/api/v1/databases/${databaseId}`);
@@ -61,11 +66,8 @@ export default function Dashboard() {
 		}
 	};
 
-	const testSharedUser = async (email: string) => {
-		const user = await axios.get(`/api/v1/users/email/${email}`);
-	};
-
 	useEffect(() => {
+		document.title = "Dashboard";
 		fetchProjects();
 	}, []);
 
@@ -103,7 +105,9 @@ export default function Dashboard() {
 					deleteProject={deleteProject}
 				/>
 
-				<Slideover open={openSlideover} setOpen={setOpenSlideover} />
+				<Slideover open={openSlideover} setOpen={setOpenSlideover}>
+					<CreateProjectSlideover setOpen={setOpenSlideover} />
+				</Slideover>
 			</>
 		</AppContainer>
 	);
