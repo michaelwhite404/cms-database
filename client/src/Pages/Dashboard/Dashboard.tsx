@@ -19,6 +19,7 @@ export default function Dashboard() {
 	const [openDeleteModal, setOpenDeleteModal] = useState(false);
 	const [deleteProjectId, setDeleteProjectId] = useState("");
 	const [openSlideover, setOpenSlideover] = useState(false);
+	const [sharedUsers, setSharedUsers] = useState({});
 
 	const pinnedProjects = projects.filter((project) => project.pinned);
 
@@ -58,6 +59,10 @@ export default function Dashboard() {
 		} catch (err) {
 			console.log(err.response.data);
 		}
+	};
+
+	const testSharedUser = async (email: string) => {
+		const user = await axios.get(`/api/v1/users/email/${email}`);
 	};
 
 	useEffect(() => {

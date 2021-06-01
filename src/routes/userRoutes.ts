@@ -14,6 +14,7 @@ router.use(authController.protect);
 
 router.route("/").get(userController.getAllUsers);
 router.get("/me", userController.getMe);
+router.get("/email/:email", userController.getUserByEmail);
 router
 	.route("/:user_id")
 	.get(userController.getUser)

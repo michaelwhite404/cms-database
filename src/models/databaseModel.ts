@@ -9,6 +9,11 @@ const databaseSchema = new Schema({
 		type: String,
 		required: [true, "Each database must have a name"],
 	},
+	description: {
+		type: String,
+		required: false,
+		maxlength: 256,
+	},
 	createdBy: {
 		type: Types.ObjectId,
 		ref: "User",

@@ -91,7 +91,11 @@ export const getAllDatabases = catchAsync(
 export const createDatabase = catchAsync(
 	async (req: CustomRequest<DatabaseModel>, res: Response) => {
 		/** Database created */
-		const database = await Database.create({ name: req.body.name, createdBy: req.user!._id });
+		const database = await Database.create({
+			name: req.body.name,
+			description: req.body.description,
+			createdBy: req.user!._id,
+		});
 		await DatabaseRole.create({
 			user: req.user!._id,
 			database: database._id,

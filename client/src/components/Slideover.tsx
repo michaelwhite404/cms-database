@@ -1,8 +1,10 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { XIcon, PlusCircleIcon } from "@heroicons/react/outline";
 import { MailIcon } from "@heroicons/react/solid";
 import SelectMenu from "./SelectMenu";
+import axios from "axios";
+import SharedUser from "../Pages/Dashboard/Slideover/SharedUser";
 
 const team = [
 	{
@@ -52,6 +54,28 @@ const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
 };
 
 export default function Slideover({ open, setOpen }: SlideoverProps) {
+	const [shareEmail, setShareEmail] = useState("");
+	const [users, setUsers] = useState(team);
+
+	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		setShareEmail(e.target!.value);
+	};
+
+	const handleShareSubmit = async () => {
+		if (!shareEmail) return;
+		const res = await axios.get(`/api/v1/users/email/${shareEmail}`);
+		const user = res.data.user;
+		setUsers([
+			{
+				name: user.fullName,
+				email: user.email,
+				href: "#",
+				imageUrl: `https://ui-avatars.com/api/?background=ffb300&name=${user.fullName}&length=1&color=ffffff`,
+			},
+			...users,
+		]);
+		setShareEmail("");
+	};
 	return (
 		<Transition.Root show={open} as={Fragment}>
 			<Dialog
@@ -166,11 +190,17 @@ export default function Slideover({ open, setOpen }: SlideoverProps) {
 																	type="text"
 																	name="email"
 																	id="email"
+																	value={shareEmail}
 																	className="focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-none rounded-l-md pl-10 sm:text-sm border-gray-300"
 																	placeholder="example@email.com"
+																	onChange={handleChange}
 																/>
 															</div>
-															<button className="-ml-px relative inline-flex items-center space-x-2 px-4 py-2 border border-gray-300 text-sm font-medium rounded-r-md text-gray-700 bg-gray-50 hover:bg-gray-100 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500">
+															<button
+																type="button"
+																className="-ml-px relative inline-flex items-center space-x-2 px-4 py-2 border border-gray-300 text-sm font-medium rounded-r-md text-gray-700 bg-gray-50 hover:bg-gray-100 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
+																onClick={handleShareSubmit}
+															>
 																<PlusCircleIcon
 																	className="h-5 w-5 text-gray-400"
 																	aria-hidden="true"
@@ -180,23 +210,8 @@ export default function Slideover({ open, setOpen }: SlideoverProps) {
 														</div>
 														<div className="mt-4">
 															<div className="flex flex-col space-y-2 ">
-																{team.map((person) => (
-																	<div className="flex items-center" key={person.email}>
-																		<img
-																			className="inline-block h-8 w-8 rounded-full"
-																			src={person.imageUrl}
-																			alt={person.name}
-																		/>
-																		<div className="pl-3 flex flex-col">
-																			<div className="font-medium">{person.name}</div>
-																			<div className="font-normal text-sm text-gray-500">
-																				{person.email}
-																			</div>
-																		</div>
-																		<div className="ml-auto">
-																			<SelectMenu />
-																		</div>
-																	</div>
+																{users.map((person) => (
+																	<SharedUser person={person} key={person.email} />
 																))}
 															</div>
 														</div>

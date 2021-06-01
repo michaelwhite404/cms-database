@@ -6,6 +6,8 @@ export default interface DatabaseModel extends Document {
 	_id: string;
 	/** The name of the database */
 	name: string;
+	/** A description of the database */
+	description?: string;
 	/** The user that created the database */
 	createdBy: string | ObjectId;
 	/** Unique slug identifier for the database */

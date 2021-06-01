@@ -107,3 +107,22 @@ export const getMe = (req: CustomRequest<UserModel>, res: Response) => {
 		user,
 	});
 };
+
+export const getUserByEmail = catchAsync(
+	async (req: CustomRequest<UserModel>, res: Response, next: NextFunction) => {
+		const user = await User.findOne({ email: req.params.email });
+
+		if (!user) {
+			return next(new AppError("No user found with that ID", 404));
+		}
+
+		res.status(200).json({
+			status: "success",
+			user: {
+				_id: user._id,
+				fullName: user.fullName,
+				email: user.email,
+			},
+		});
+	}
+);
