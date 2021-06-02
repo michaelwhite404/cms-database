@@ -19,17 +19,17 @@ const primaryOptions = [
 interface ProjectOptionsProps {
 	project: DashboardDatabase;
 	setOpenDeleteModal: React.Dispatch<React.SetStateAction<boolean>>;
-	setDeleteProjectId: React.Dispatch<React.SetStateAction<string>>;
+	setProjectToDelete: React.Dispatch<React.SetStateAction<DashboardDatabase>>;
 }
 
 export default function ProjectOptions({
 	project,
 	setOpenDeleteModal,
-	setDeleteProjectId,
+	setProjectToDelete,
 }: ProjectOptionsProps) {
 	const setupDeleteModal = () => {
 		setOpenDeleteModal(true);
-		setDeleteProjectId(project._id);
+		setProjectToDelete(project);
 	};
 
 	return (

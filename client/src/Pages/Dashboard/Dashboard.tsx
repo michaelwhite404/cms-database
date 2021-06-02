@@ -18,7 +18,9 @@ export default function Dashboard() {
 	const [successNotificationOpen, setSuccessNotificationOpen] = useState(false);
 	const [successMessage, setSuccessMessage] = useState<[string, string?]>([""]);
 	const [openDeleteModal, setOpenDeleteModal] = useState(false);
-	const [deleteProjectId, setDeleteProjectId] = useState("");
+	const [projectToDelete, setProjectToDelete] = useState<DashboardDatabase>(
+		{} as DashboardDatabase
+	);
 	const [openSlideover, setOpenSlideover] = useState(false);
 	const [sharedUsers, setSharedUsers] = useState({});
 
@@ -89,7 +91,7 @@ export default function Dashboard() {
 				<ProjectsTable
 					projects={projects}
 					setOpenDeleteModal={setOpenDeleteModal}
-					setDeleteProjectId={setDeleteProjectId}
+					setProjectToDelete={setProjectToDelete}
 				/>
 
 				{/* Success Notification */}
@@ -100,7 +102,7 @@ export default function Dashboard() {
 				{/* Delete Modal */}
 				<DeleteModal
 					open={openDeleteModal}
-					projectId={deleteProjectId}
+					project={projectToDelete}
 					setOpenDeleteModal={setOpenDeleteModal}
 					deleteProject={deleteProject}
 				/>

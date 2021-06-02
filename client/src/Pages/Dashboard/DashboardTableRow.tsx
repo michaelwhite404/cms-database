@@ -7,13 +7,13 @@ import ProjectOptions from "./ProjectOptions";
 interface DashboardTableRowProps {
 	project: DashboardDatabase;
 	setOpenDeleteModal: React.Dispatch<React.SetStateAction<boolean>>;
-	setDeleteProjectId: React.Dispatch<React.SetStateAction<string>>;
+	setProjectToDelete: React.Dispatch<React.SetStateAction<DashboardDatabase>>;
 }
 
 export default function DashboardTableRow({
 	project,
 	setOpenDeleteModal,
-	setDeleteProjectId,
+	setProjectToDelete,
 }: DashboardTableRowProps) {
 	return (
 		<tr key={project._id}>
@@ -61,7 +61,7 @@ export default function DashboardTableRow({
 				<ProjectOptions
 					project={project}
 					setOpenDeleteModal={setOpenDeleteModal}
-					setDeleteProjectId={setDeleteProjectId}
+					setProjectToDelete={setProjectToDelete}
 				/>
 			</td>
 		</tr>

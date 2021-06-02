@@ -1,27 +1,38 @@
-import { Fragment, useRef } from "react";
+import { Fragment, useRef, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { TrashIcon } from "@heroicons/react/outline";
+import DashboardDatabase from "../interfaces/DashboardDatabase";
 
 interface DeleteModalProps {
 	open: boolean;
-	projectId: string;
+	project: DashboardDatabase;
 	setOpenDeleteModal: React.Dispatch<React.SetStateAction<boolean>>;
 	deleteProject: (databaseId: string) => Promise<void>;
 }
 
 export default function DeleteModal({
 	open,
-	projectId,
+	project,
 	setOpenDeleteModal,
 	deleteProject,
 }: DeleteModalProps) {
+	const [input, setInput] = useState("");
+	const [deleteable, setDeleteable] = useState(false);
+
 	const handleClose = () => {
 		setOpenDeleteModal(false);
+		setInput("");
 	};
 
 	const handleDelete = () => {
-		deleteProject(projectId);
+		if (!deleteable) return;
+		deleteProject(project._id);
 		handleClose();
+	};
+
+	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		setInput(e.target!.value);
+		e.target!.value === project.slug ? setDeleteable(true) : setDeleteable(false);
 	};
 
 	const cancelButtonRef = useRef(null);
@@ -79,10 +90,35 @@ export default function DeleteModal({
 									</div>
 								</div>
 							</div>
+							<div className="mt-12 mb-3 text-center text-base text-gray-500">
+								<p>
+									Confirm by typing{" "}
+									<div className="inline-block text-red-600 font-semibold">{project.slug}</div>{" "}
+									below.
+								</p>
+							</div>
+							<div>
+								<label htmlFor="input" className="sr-only">
+									Input
+								</label>
+								<div className="mt-1">
+									<input
+										type="text"
+										name="input"
+										id="input"
+										value={input}
+										className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
+										placeholder={project.slug}
+										onChange={handleChange}
+									/>
+								</div>
+							</div>
 							<div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
 								<button
 									type="button"
-									className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm"
+									className={`w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 ${
+										deleteable ? "bg-red-600 hover:bg-red-700" : "bg-red-300 cursor-auto"
+									} text-base font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm`}
 									onClick={handleDelete}
 								>
 									Delete
