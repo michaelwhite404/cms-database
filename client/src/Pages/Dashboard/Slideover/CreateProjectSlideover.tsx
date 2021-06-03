@@ -4,22 +4,41 @@ import { MailIcon } from "@heroicons/react/solid";
 import axios from "axios";
 import React, { useState } from "react";
 import { APIUserByEmailRes } from "../../../interfaces/APIResponse";
+import DashboardDatabase from "../../../interfaces/DashboardDatabase";
 import ISharedUser from "../../../interfaces/ISharedUser";
 import SharedUser from "./SharedUser";
 
 interface CreateProjectSlideover {
+	projects: DashboardDatabase[];
 	setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+	setProjects: React.Dispatch<React.SetStateAction<DashboardDatabase[]>>;
 }
 
-const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-	e.preventDefault();
-};
-
-export default function CreateProjectSlidover({ setOpen }: CreateProjectSlideover) {
+export default function CreateProjectSlidover({
+	setOpen,
+	projects,
+	setProjects,
+}: CreateProjectSlideover) {
+	const [projectDetails, setProjectDetails] = useState({ name: "", description: "" });
 	const [shareEmail, setShareEmail] = useState("");
 	const [users, setUsers] = useState<ISharedUser[]>([]);
 
-	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+	const handleDetailsSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+		e.preventDefault();
+		try {
+			/* const database =  */ await axios.post("/api/v1/databases", projectDetails);
+			// const newProjects = [...projects];
+			// enw
+		} catch (err) {
+			console.log(err.response.data);
+		}
+	};
+
+	const handleDetailsChange = (e: React.ChangeEvent<HTMLInputElement & HTMLTextAreaElement>) => {
+		setProjectDetails({ ...projectDetails, [e.target!.name]: e.target!.value });
+	};
+
+	const handleShareChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setShareEmail(e.target!.value);
 	};
 
@@ -50,7 +69,7 @@ export default function CreateProjectSlidover({ setOpen }: CreateProjectSlideove
 	return (
 		<form
 			className="h-full divide-y divide-gray-200 flex flex-col bg-white shadow-xl"
-			onSubmit={handleSubmit}
+			onSubmit={handleDetailsSubmit}
 		>
 			<div className="flex-1 h-0 overflow-y-auto">
 				<div className="py-6 px-4 bg-indigo-700 sm:px-6">
@@ -79,16 +98,18 @@ export default function CreateProjectSlidover({ setOpen }: CreateProjectSlideove
 					<div className="px-4 divide-y divide-gray-200 sm:px-6">
 						<div className="space-y-6 pt-6 pb-5">
 							<div>
-								<label htmlFor="project_name" className="block text-sm font-medium text-gray-900">
+								<label htmlFor="name" className="block text-sm font-medium text-gray-900">
 									Project name
 								</label>
 								<div className="mt-1">
 									<input
 										type="text"
-										name="project_name"
-										id="project_name"
+										name="name"
+										id="name"
 										className="block w-full shadow-sm sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md"
 										autoComplete="off"
+										onChange={handleDetailsChange}
+										value={projectDetails.name}
 									/>
 								</div>
 							</div>
@@ -104,6 +125,8 @@ export default function CreateProjectSlidover({ setOpen }: CreateProjectSlideove
 										className="block w-full min-h-64 shadow-sm sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md"
 										defaultValue={""}
 										maxLength={256}
+										onChange={handleDetailsChange}
+										value={projectDetails.description}
 									/>
 								</div>
 							</div>
@@ -123,7 +146,7 @@ export default function CreateProjectSlidover({ setOpen }: CreateProjectSlideove
 											value={shareEmail}
 											className="focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-none rounded-l-md pl-10 sm:text-sm border-gray-300"
 											placeholder="example@email.com"
-											onChange={handleChange}
+											onChange={handleShareChange}
 										/>
 									</div>
 									<button

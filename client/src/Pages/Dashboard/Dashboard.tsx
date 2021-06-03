@@ -108,7 +108,11 @@ export default function Dashboard() {
 				/>
 
 				<Slideover open={openSlideover} setOpen={setOpenSlideover}>
-					<CreateProjectSlideover setOpen={setOpenSlideover} />
+					<CreateProjectSlideover
+						setOpen={setOpenSlideover}
+						setProjects={setProjects}
+						projects={projects}
+					/>
 				</Slideover>
 			</>
 		</AppContainer>
