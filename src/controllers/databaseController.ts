@@ -13,6 +13,8 @@ import APIFeatures from "../utils/APIFeatures";
 import AppError from "../utils/appError";
 import catchAsync from "../utils/catchAsync";
 import Item from "../models/itemModel";
+import pluralize from "pluralize";
+import objectIsEmpty from "../utils/objectIsEmpty";
 
 export const hasAccess = catchAsync(
 	async (req: CustomRequest<DatabaseModel>, _: Response, next: NextFunction) => {
@@ -164,35 +166,89 @@ export const deleteDatabase = catchAsync(
  */
 export const shareDatabase = catchAsync(
 	async (req: CustomRequest<UserModel & DatabaseRoleModel>, res: Response, next: NextFunction) => {
-		const email = req.body.email;
-		const role = req.body.role;
-		// If the user puts in their own email
-		if (email === req.user!.email)
-			return next(new AppError("You cannot share this database with yourself", 400));
-		// If they set someone else as a user
-		if (role === "owner") return next(new AppError("You cannot make someone else an owner", 400));
-		// Get user and current user's database role
-		const [user, databaseRole] = await Promise.all([
-			User.findOne({ email }),
-			DatabaseRole.findOne({ database: req.params.database_id, user: req.user!._id }),
-			// Data
-		]);
-		// If the user doesn't exist
-		if (!user) return next(new AppError("There is no user with this email", 404));
-		// If the current user has no access to the database
-		if (!databaseRole) return next(new AppError("There is no database with this ID", 404));
-		// If the user already has access to the database
-		if (await DatabaseRole.findOne({ database: req.params.database_id, user: user._id }))
-			return next(new AppError(`${user.fullName} already has access to this database`, 400));
-		await DatabaseRole.create({
-			user: user._id,
-			database: req.params.database_id,
-			role,
-		});
+		const { body } = req;
+		/** Array of potential shares */
+		let potentialShares: any[] = [];
+		if (Array.isArray(body)) potentialShares = [...body];
+		else if (typeof body === "object" && body !== null) potentialShares.push(body);
+		else return next(new AppError("Invalid body", 400));
+		if (potentialShares.length === 0 || objectIsEmpty(potentialShares[0]))
+			return next(new AppError("No arguments are present", 400));
+		/** Array of validated shares */
+		const validatedShares: Omit<DatabaseRoleModel, "_id">[] = [];
+		let setError = <{ message: string; code: number }>{};
+		let singleShareMessage = "";
+		// Validate each item
+
+		for (let item of potentialShares) {
+			const { email, role } = item;
+			// If the user puts in their own email
+			if (email === req.user!.email) {
+				setError = { message: "You cannot share this database with yourself", code: 400 };
+				continue;
+			}
+			// If they set someone else as a owner
+			if (role === "owner") {
+				setError = { message: "You cannot make someone else an owner", code: 400 };
+				continue;
+			}
+			if (!["editor", "viewer"].includes(role)) {
+				setError = { message: "Role must be 'editor' or 'viewer'", code: 400 };
+				continue;
+			}
+			// Get user and current user's database role
+			const [user, databaseRole] = await Promise.all([
+				User.findOne({ email }),
+				DatabaseRole.findOne({ database: req.params.database_id, user: req.user!._id }),
+			]);
+			// If the user doesn't exist
+			if (!user) {
+				setError = { message: "There is no user with this email", code: 404 };
+				continue;
+			}
+			// If the current user has no access to the database
+			if (!databaseRole) {
+				setError = { message: "There is no database with this ID", code: 404 };
+				continue;
+			}
+			// If the user already has access to the database
+			if (await DatabaseRole.findOne({ database: req.params.database_id, user: user._id })) {
+				setError = {
+					message: `${user.fullName} already has access to this database`,
+					code: 400,
+				};
+				continue;
+			}
+			const constructedRole = {
+				user: user._id,
+				database: req.params.database_id,
+				role,
+				pinned: false,
+			};
+			validatedShares.push(constructedRole as Omit<DatabaseRoleModel, "_id">);
+			singleShareMessage = `${user.fullName} is now ${a(role!)} of this database`;
+		}
+		if (potentialShares.length === 1 && Object.keys(setError).length > 0)
+			return next(new AppError(setError.message, setError.code));
+		// @ts-ignore
+		const result = await DatabaseRole.insertMany(validatedShares);
+		const message =
+			body === 1
+				? singleShareMessage
+				: `${result.length} ${pluralize("user", result.length)} ${pluralize(
+						"has",
+						result.length
+				  )} been added to the database`;
 
 		res.status(200).json({
 			status: "success",
-			message: `${user.fullName} is now ${a(role!)} of this database`,
+			message,
 		});
 	}
 );
+
+// const shareDatabaseWithMany = catchAsync(
+// 	async (req: Request, res: Response, next: NextFunction) => {
+// const dbRole = await DatabaseRole.insertMany([], { ordered: true });
+// 	}
+// );
