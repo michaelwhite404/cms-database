@@ -107,7 +107,7 @@ export default function Dashboard() {
 					deleteProject={deleteProject}
 				/>
 
-				<Slideover open={openSlideover} setOpen={setOpenSlideover}>
+				<Slideover size="md" open={openSlideover} setOpen={setOpenSlideover}>
 					<CreateProjectSlideover
 						setOpen={setOpenSlideover}
 						setProjects={setProjects}

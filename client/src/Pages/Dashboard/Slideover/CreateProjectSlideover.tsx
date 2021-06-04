@@ -3,7 +3,8 @@ import { XIcon, PlusCircleIcon } from "@heroicons/react/outline";
 import { MailIcon } from "@heroicons/react/solid";
 import axios from "axios";
 import React, { useState } from "react";
-import { APIUserByEmailRes } from "../../../interfaces/APIResponse";
+import { useHistory } from "react-router";
+import { APIDatabaseRepsonse, APIUserByEmailRes } from "../../../interfaces/APIResponse";
 import DashboardDatabase from "../../../interfaces/DashboardDatabase";
 import ISharedUser from "../../../interfaces/ISharedUser";
 import SharedUser from "./SharedUser";
@@ -23,12 +24,15 @@ export default function CreateProjectSlidover({
 	const [shareEmail, setShareEmail] = useState("");
 	const [users, setUsers] = useState<ISharedUser[]>([]);
 
+	const history = useHistory();
+
 	const handleDetailsSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		try {
-			/* const database =  */ await axios.post("/api/v1/databases", projectDetails);
-			// const newProjects = [...projects];
-			// enw
+			const res = await axios.post<APIDatabaseRepsonse>("/api/v1/databases", projectDetails);
+			const { database } = res.data;
+			await axios.post(`/api/v1/databases/${database._id}/share`, users);
+			history.push(`/databases/${database.slug}`);
 		} catch (err) {
 			console.log(err.response.data);
 		}

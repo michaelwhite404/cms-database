@@ -14,6 +14,7 @@ export default function Project() {
 	const params = useParams<{ database: string }>();
 	const fetchData = async () => {
 		try {
+			// await Promise.all()
 			const res = await axios.get<APICollectionResponse>(
 				`/api/v1/databases/${params.database}/collections?slug=true`
 			);

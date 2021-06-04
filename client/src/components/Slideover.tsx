@@ -5,9 +5,12 @@ interface SlideoverProps {
 	children: JSX.Element;
 	open: boolean;
 	setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+	size: SidebarSize;
 }
 
-export default function Slideover({ children, open, setOpen }: SlideoverProps) {
+type SidebarSize = "xs" | "sm" | "md" | "lg" | "xl" | "2xl";
+
+export default function Slideover({ size, children, open, setOpen }: SlideoverProps) {
 	return (
 		<Transition.Root show={open} as={Fragment}>
 			<Dialog
@@ -39,7 +42,7 @@ export default function Slideover({ children, open, setOpen }: SlideoverProps) {
 							leaveFrom="translate-x-0"
 							leaveTo="translate-x-full"
 						>
-							<div className="w-screen max-w-md">{children}</div>
+							<div className={`w-screen max-w-${size}`}>{children}</div>
 						</Transition.Child>
 					</div>
 				</div>
