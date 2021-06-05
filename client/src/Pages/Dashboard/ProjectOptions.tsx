@@ -5,16 +5,11 @@ import {
 	PencilAltIcon,
 	TrashIcon,
 	UserAddIcon,
+	ExternalLinkIcon,
 } from "@heroicons/react/solid";
 import { Fragment } from "react";
 import MenuItem from "../../components/MenuItem";
 import DashboardDatabase from "../../interfaces/DashboardDatabase";
-
-const primaryOptions = [
-	{ name: "Edit", icon: PencilAltIcon },
-	{ name: "Duplicate", icon: DuplicateIcon },
-	{ name: "Share", icon: UserAddIcon },
-];
 
 interface ProjectOptionsProps {
 	project: DashboardDatabase;
@@ -27,10 +22,19 @@ export default function ProjectOptions({
 	setOpenDeleteModal,
 	setProjectToDelete,
 }: ProjectOptionsProps) {
+	const openInNewTab = () => {
+		window.open(`/databases/${project.slug}`, "_blank");
+	};
 	const setupDeleteModal = () => {
 		setOpenDeleteModal(true);
 		setProjectToDelete(project);
 	};
+	const primaryOptions = [
+		{ name: "Edit", icon: PencilAltIcon },
+		{ name: "Duplicate", icon: DuplicateIcon },
+		{ name: "Share", icon: UserAddIcon },
+		{ name: "Open in New Tab", icon: ExternalLinkIcon, onClick: openInNewTab },
+	];
 
 	return (
 		<Menu as="div" className="relative flex justify-end items-center">
@@ -56,7 +60,12 @@ export default function ProjectOptions({
 						>
 							<div className="py-1">
 								{primaryOptions.map((option) => (
-									<MenuItem name={option.name} Icon={option.icon} key={option.name} />
+									<MenuItem
+										name={option.name}
+										Icon={option.icon}
+										key={option.name}
+										onClick={option.onClick}
+									/>
 								))}
 							</div>
 							{project.role === "owner" && (
