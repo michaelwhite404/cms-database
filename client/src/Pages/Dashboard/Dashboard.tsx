@@ -12,6 +12,7 @@ import SuccessNotification from "../../components/SuccessNotification";
 import DeleteModal from "../../components/DeleteModal";
 import Slideover from "../../components/Slideover";
 import CreateProjectSlideover from "./Slideover/CreateProjectSlideover";
+import ShareModal from "../../components/ShareModal";
 
 export default function Dashboard() {
 	const [projects, setProjects] = useState<DashboardDatabase[]>([]);
@@ -106,6 +107,9 @@ export default function Dashboard() {
 					setOpenDeleteModal={setOpenDeleteModal}
 					deleteProject={deleteProject}
 				/>
+
+				{/* Share Modal */}
+				<ShareModal />
 
 				<Slideover size="md" open={openSlideover} setOpen={setOpenSlideover}>
 					<CreateProjectSlideover

@@ -31,7 +31,7 @@ export default function CreateProjectSlidover({
 		try {
 			const res = await axios.post<APIDatabaseRepsonse>("/api/v1/databases", projectDetails);
 			const { database } = res.data;
-			await axios.post(`/api/v1/databases/${database._id}/share`, users);
+			if (users.length > 0) await axios.post(`/api/v1/databases/${database._id}/share`, users);
 			history.push(`/databases/${database.slug}`);
 		} catch (err) {
 			console.log(err.response.data);
@@ -127,7 +127,6 @@ export default function CreateProjectSlidover({
 										name="description"
 										rows={4}
 										className="block w-full min-h-64 shadow-sm sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md"
-										defaultValue={""}
 										maxLength={256}
 										onChange={handleDetailsChange}
 										value={projectDetails.description}

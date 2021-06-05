@@ -93,7 +93,7 @@ export default function DeleteModal({
 							<div className="mt-12 mb-3 text-center text-base text-gray-500">
 								<p>
 									Confirm by typing{" "}
-									<div className="inline-block text-red-600 font-semibold">{project.slug}</div>{" "}
+									<span className="inline-block text-red-600 font-semibold">{project.slug}</span>{" "}
 									below.
 								</p>
 							</div>

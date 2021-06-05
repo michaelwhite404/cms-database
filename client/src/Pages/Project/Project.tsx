@@ -18,7 +18,6 @@ export default function Project() {
 			const res = await axios.get<APICollectionResponse>(
 				`/api/v1/databases/${params.database}/collections?slug=true`
 			);
-			console.log(res);
 			setCollections(res.data.collections);
 		} catch (err) {
 			console.log((err as AxiosError<AppError>).response!.data);
