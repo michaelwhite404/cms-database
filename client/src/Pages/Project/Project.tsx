@@ -1,6 +1,7 @@
 import axios, { AxiosError } from "axios";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import ProjectMainArea from "./ProjectMainArea";
 import { CollectionModel } from "../../../../src/interfaces/collectionInterfaces";
 import AppError from "../../../../src/utils/appError";
 import AppContainer from "../../components/AppContainer/AppContainer";
@@ -34,17 +35,7 @@ export default function Project() {
 				<Heading title="Project">
 					<HeadingButtons />
 				</Heading>
-				<ul>
-					{collections.map((collection) => (
-						<li key={collection._id}>
-							<div>{collection.name}</div>
-							<div>{collection.createdAt}</div>
-							<div>{collection.slug}</div>
-							<div>{collection._id}</div>
-							<hr />
-						</li>
-					))}
-				</ul>
+				<ProjectMainArea collections={collections} />
 			</>
 		</AppContainer>
 	);
