@@ -43,3 +43,8 @@ export interface APIUserByEmailRes {
 	status: "success";
 	user: ISharedUser;
 }
+
+export interface APIPinnedResponse {
+	status: "success";
+	pinned: boolean;
+}

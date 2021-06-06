@@ -8,12 +8,14 @@ interface DashboardTableRowProps {
 	project: DashboardDatabase;
 	setOpenDeleteModal: React.Dispatch<React.SetStateAction<boolean>>;
 	setProjectToDelete: React.Dispatch<React.SetStateAction<DashboardDatabase>>;
+	togglePin: (databaseId: string) => Promise<void>;
 }
 
 export default function DashboardTableRow({
 	project,
 	setOpenDeleteModal,
 	setProjectToDelete,
+	togglePin,
 }: DashboardTableRowProps) {
 	return (
 		<tr key={project._id}>
@@ -62,6 +64,7 @@ export default function DashboardTableRow({
 					project={project}
 					setOpenDeleteModal={setOpenDeleteModal}
 					setProjectToDelete={setProjectToDelete}
+					togglePin={togglePin}
 				/>
 			</td>
 		</tr>

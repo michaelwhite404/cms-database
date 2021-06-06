@@ -8,6 +8,7 @@ import {
 	ExternalLinkIcon,
 } from "@heroicons/react/solid";
 import { Fragment } from "react";
+import { TiPin } from "react-icons/ti";
 import MenuItem from "../../components/MenuItem";
 import DashboardDatabase from "../../interfaces/DashboardDatabase";
 
@@ -15,12 +16,14 @@ interface ProjectOptionsProps {
 	project: DashboardDatabase;
 	setOpenDeleteModal: React.Dispatch<React.SetStateAction<boolean>>;
 	setProjectToDelete: React.Dispatch<React.SetStateAction<DashboardDatabase>>;
+	togglePin: (databaseId: string) => Promise<void>;
 }
 
 export default function ProjectOptions({
 	project,
 	setOpenDeleteModal,
 	setProjectToDelete,
+	togglePin,
 }: ProjectOptionsProps) {
 	const openInNewTab = () => {
 		window.open(`/databases/${project.slug}`, "_blank");
@@ -33,6 +36,11 @@ export default function ProjectOptions({
 		{ name: "Edit", icon: PencilAltIcon },
 		{ name: "Duplicate", icon: DuplicateIcon },
 		{ name: "Share", icon: UserAddIcon },
+		{
+			name: `${project.pinned ? "Unpin" : "Pin"} Project`,
+			icon: TiPin,
+			onClick: () => togglePin(project._id),
+		},
 		{ name: "Open in New Tab", icon: ExternalLinkIcon, onClick: openInNewTab },
 	];
 

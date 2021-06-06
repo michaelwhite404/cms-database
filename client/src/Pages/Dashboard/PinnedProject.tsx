@@ -9,10 +9,10 @@ import MenuItem from "../../components/MenuItem";
 
 export default function PinnedProject({
 	project,
-	removePin,
+	togglePin,
 }: {
 	project: APIDashboardResponse["databases"][0];
-	removePin: (database_id: string) => any;
+	togglePin: (database_id: string) => any;
 }) {
 	const history = useHistory();
 	const pinnedProjectsOptions = {
@@ -25,7 +25,7 @@ export default function PinnedProject({
 		second: [
 			{
 				name: "Remove from pinned",
-				onClick: useCallback(() => removePin(project._id), []),
+				onClick: useCallback(() => togglePin(project._id), []),
 			},
 			{ name: "Share" },
 		],

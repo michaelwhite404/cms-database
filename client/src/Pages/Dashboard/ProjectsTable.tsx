@@ -5,12 +5,14 @@ interface ProjectsTableProps {
 	projects: DashboardDatabase[];
 	setOpenDeleteModal: React.Dispatch<React.SetStateAction<boolean>>;
 	setProjectToDelete: React.Dispatch<React.SetStateAction<DashboardDatabase>>;
+	togglePin: (databaseId: string) => Promise<void>;
 }
 
 export default function ProjectsTable({
 	projects,
 	setOpenDeleteModal,
 	setProjectToDelete,
+	togglePin,
 }: ProjectsTableProps) {
 	return (
 		<div className="hidden mt-8 sm:block">
@@ -36,6 +38,7 @@ export default function ProjectsTable({
 								project={project}
 								setOpenDeleteModal={setOpenDeleteModal}
 								setProjectToDelete={setProjectToDelete}
+								togglePin={togglePin}
 								key={project._id}
 							/>
 						))}

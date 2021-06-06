@@ -2,7 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import AppContainer from "../../components/AppContainer/AppContainer";
 import Heading from "../../components/AppContainer/Heading";
-import { APIDashboardResponse } from "../../interfaces/APIResponse";
+import { APIDashboardResponse, APIPinnedResponse } from "../../interfaces/APIResponse";
 import DashboardDatabase from "../../interfaces/DashboardDatabase";
 import HeadingButtons from "./HeadingButtons";
 import ProjectsList from "./ProjectsList";
@@ -36,13 +36,16 @@ export default function Dashboard() {
 		}
 	};
 
-	const removePin = async (databaseId: string) => {
+	const togglePin = async (databaseId: string) => {
 		try {
-			await axios.patch(`/api/v1/databases/roles/pinned/${databaseId}`);
+			const res = await axios.patch<APIPinnedResponse>(
+				`/api/v1/databases/roles/pinned/${databaseId}`
+			);
+			const { pinned } = res.data;
 			const index = projects.findIndex((p) => p._id === databaseId);
 			if (index < 0) return;
 			let editProjects = [...projects];
-			editProjects[index].pinned = false;
+			editProjects[index].pinned = pinned;
 			setProjects(editProjects);
 		} catch (err) {
 			console.log(err);
@@ -83,7 +86,7 @@ export default function Dashboard() {
 				</Heading>
 
 				{/* Pinned projects */}
-				<PinnedProjects projects={pinnedProjects} removePin={removePin} />
+				<PinnedProjects projects={pinnedProjects} togglePin={togglePin} />
 
 				{/* Projects list (only on smallest breakpoint) */}
 				<ProjectsList projects={projects} />
@@ -93,6 +96,7 @@ export default function Dashboard() {
 					projects={projects}
 					setOpenDeleteModal={setOpenDeleteModal}
 					setProjectToDelete={setProjectToDelete}
+					togglePin={togglePin}
 				/>
 
 				{/* Success Notification */}
@@ -109,7 +113,7 @@ export default function Dashboard() {
 				/>
 
 				{/* Share Modal */}
-				<ShareModal />
+				{/* <ShareModal /> */}
 
 				<Slideover size="md" open={openSlideover} setOpen={setOpenSlideover}>
 					<CreateProjectSlideover
