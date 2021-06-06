@@ -8,11 +8,13 @@ import AppContainer from "../../components/AppContainer/AppContainer";
 import Heading from "../../components/AppContainer/Heading";
 import { APICollectionResponse } from "../../interfaces/APIResponse";
 import HeadingButtons from "./HeadingButtons";
+import DatabaseModel from "../../../../src/interfaces/databaseInterface";
 
 export default function Project() {
 	const [collections, setCollections] = useState<CollectionModel[]>([]);
-
+	const [activeCollection, setActiveCollection] = useState<DatabaseModel | {}>({});
 	const params = useParams<{ database: string }>();
+
 	const fetchData = async () => {
 		try {
 			// await Promise.all()
@@ -35,7 +37,11 @@ export default function Project() {
 				<Heading title="Project">
 					<HeadingButtons />
 				</Heading>
-				<ProjectMainArea collections={collections} />
+				<ProjectMainArea
+					activeCollection={activeCollection}
+					setActiveCollection={setActiveCollection}
+					collections={collections}
+				/>
 			</>
 		</AppContainer>
 	);

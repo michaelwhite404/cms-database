@@ -5,6 +5,7 @@ module.exports = {
 		extend: {},
 	},
 	variants: {
+		display: ["responsive", "group-hover"],
 		extend: {},
 	},
 	plugins: [require("@tailwindcss/forms")],
