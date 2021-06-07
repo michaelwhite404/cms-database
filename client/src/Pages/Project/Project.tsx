@@ -44,7 +44,7 @@ export default function Project() {
 		<AppContainer>
 			<>
 				<Heading loaded={loaded} title={`${currentDatabase ? currentDatabase.name : ""}`}>
-					<HeadingButtons loaded={loaded} />
+					<HeadingButtons loaded={loaded} setOpenSlideover={setOpenSlideover} />
 				</Heading>
 				<ProjectMainArea
 					activeCollection={activeCollection}
