@@ -9,8 +9,11 @@ import Heading from "../../components/AppContainer/Heading";
 import { APICollectionResponse, APIDatabaseRepsonse } from "../../interfaces/APIResponse";
 import HeadingButtons from "./HeadingButtons";
 import DatabaseModel from "../../../../src/interfaces/databaseInterface";
+import Slideover from "../../components/Slideover";
+import CreateCollectionSlideover from "./CreateCollectionSlideover";
 
 export default function Project() {
+	const [openSlideover, setOpenSlideover] = useState(false);
 	const [loaded, setLoaded] = useState(false);
 	const [currentDatabase, setCurrentDatabase] = useState<DatabaseModel | null>(null);
 	const [collections, setCollections] = useState<CollectionModel[]>([]);
@@ -49,6 +52,9 @@ export default function Project() {
 					collections={collections}
 					loaded={loaded}
 				/>
+				<Slideover size="4xl" open={openSlideover} setOpen={setOpenSlideover}>
+					<CreateCollectionSlideover setOpen={setOpenSlideover} />
+				</Slideover>
 			</>
 		</AppContainer>
 	);
