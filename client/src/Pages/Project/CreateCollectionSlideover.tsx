@@ -1,7 +1,9 @@
 import { Dialog } from "@headlessui/react";
-import { XIcon } from "@heroicons/react/solid";
+import { LinkIcon, XIcon } from "@heroicons/react/solid";
 import pluralize from "pluralize";
 import React, { useState } from "react";
+import slugify from "slugify";
+import MiniBadge from "../../components/MiniBadge";
 import CountableBadge from "./CountableBadge";
 
 interface CreateCollectionSlideoverProps {
@@ -11,6 +13,7 @@ interface CreateCollectionSlideoverProps {
 export default function CreateCollectionSlideover({ setOpen }: CreateCollectionSlideoverProps) {
 	const [newCollectionData, setNewCollectionData] = useState({
 		name: "",
+		slug: "",
 		pluralName: "Items",
 		singularName: "Item",
 		fields: [],
@@ -25,6 +28,7 @@ export default function CreateCollectionSlideover({ setOpen }: CreateCollectionS
 		setNewCollectionData({
 			...newCollectionData,
 			name,
+			slug: slugify(name, { lower: true }),
 			pluralName: pluralize(name) || "Items",
 			singularName: pluralize.singular(name) || "Item",
 		});
@@ -61,8 +65,9 @@ export default function CreateCollectionSlideover({ setOpen }: CreateCollectionS
 						</p>
 					</div>
 				</div>
-				<div className="flex-1 flex flex-col justify-between">
-					<div className="px-4 divide-y divide-gray-200 sm:px-6">
+				<div className="flex-1 flex flex-col justify-between divide-y divide-gray-200 py-4">
+					<div className="px-4 sm:px-6">
+						<h3 className="text-2xl font-semibold">Collection Settings</h3>
 						<div className="space-y-6 pt-6 pb-5">
 							<div>
 								<label htmlFor="name" className="block text-sm font-medium text-gray-900">
@@ -84,6 +89,45 @@ export default function CreateCollectionSlideover({ setOpen }: CreateCollectionS
 									<CountableBadge name={newCollectionData.singularName} type="singular" />
 									<CountableBadge name={newCollectionData.pluralName} type="plural" margin />
 								</div>
+							</div>
+						</div>
+						<div>
+							<label htmlFor="slug" className="block text-sm font-medium text-gray-900">
+								Collection URL
+							</label>
+							<div className="mt-2 mb-2.5">
+								<input
+									type="text"
+									name="slug"
+									id="slug"
+									className="block w-full shadow-sm sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md"
+									autoComplete="off"
+									placeholder="E.g. posts"
+									value={newCollectionData.slug}
+									onChange={handleChange}
+									onBlur={() =>
+										setNewCollectionData({
+											...newCollectionData,
+											slug: slugify(newCollectionData.slug, { lower: true }),
+										})
+									}
+								/>
+							</div>
+							<div>
+								<MiniBadge>
+									<span className="flex text-gray-500">
+										<LinkIcon className="w-3 mr-2 ml-1" />
+										<span>mywebsite.com/</span>
+										<span className="text-indigo-600">
+											{newCollectionData.slug ||
+												slugify(newCollectionData.name, { lower: true }) ||
+												"items"}
+										</span>
+										<span>{`/${slugify(newCollectionData.singularName, {
+											lower: true,
+										})}-page`}</span>
+									</span>
+								</MiniBadge>
 							</div>
 						</div>
 					</div>
