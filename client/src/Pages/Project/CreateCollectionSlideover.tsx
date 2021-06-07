@@ -1,10 +1,11 @@
-import { Dialog } from "@headlessui/react";
-import { LinkIcon, XIcon } from "@heroicons/react/solid";
 import pluralize from "pluralize";
 import React, { useState } from "react";
 import slugify from "slugify";
-import MiniBadge from "../../components/MiniBadge";
+import Pane from "../../components/Pane";
 import CountableBadge from "./CountableBadge";
+import FullCollectionURL from "./Slideover/FullCollectionURL";
+import SlideoverHeading from "./Slideover/SlideoverHeading";
+import StandardInput from "./Slideover/StandardInput";
 
 interface CreateCollectionSlideoverProps {
 	setOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -43,94 +44,51 @@ export default function CreateCollectionSlideover({ setOpen }: CreateCollectionS
 			onSubmit={handleSubmit}
 		>
 			<div className="flex-1 h-0 overflow-y-auto">
-				<div className="py-6 px-4 bg-indigo-700 sm:px-6">
-					<div className="flex items-center justify-between">
-						<Dialog.Title className="text-lg font-medium text-white">
-							Create New Collection
-						</Dialog.Title>
-						<div className="ml-3 h-7 flex items-center">
-							<button
-								type="button"
-								className="bg-indigo-700 rounded-md text-indigo-200 hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
-								onClick={() => setOpen(false)}
-							>
-								<span className="sr-only">Close panel</span>
-								<XIcon className="h-6 w-6" aria-hidden="true" />
-							</button>
-						</div>
-					</div>
-					<div className="mt-1">
-						<p className="text-sm text-indigo-300">
-							Get started by filling in the information below to create your new project.
-						</p>
-					</div>
-				</div>
+				{/* Slideover heading */}
+				<SlideoverHeading setOpen={setOpen} />
 				<div className="flex-1 flex flex-col justify-between divide-y divide-gray-200 py-4">
-					<div className="px-4 sm:px-6">
-						<h3 className="text-2xl font-semibold">Collection Settings</h3>
-						<div className="space-y-6 pt-6 pb-5">
-							<div>
-								<label htmlFor="name" className="block text-sm font-medium text-gray-900">
-									Collection Name
-								</label>
-								<div className="mt-2 mb-2.5">
-									<input
-										type="text"
+					<Pane>
+						<>
+							<Pane.Title>Collection Settings</Pane.Title>
+							<Pane.Item>
+								<>
+									<StandardInput
+										title="Collection Name"
 										name="name"
-										id="name"
-										className="block w-full shadow-sm sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md"
-										autoComplete="off"
-										placeholder="E.g. Blog Posts"
+										handleChange={handleNameChange}
 										value={newCollectionData.name}
-										onChange={handleNameChange}
 									/>
-								</div>
-								<div>
-									<CountableBadge name={newCollectionData.singularName} type="singular" />
-									<CountableBadge name={newCollectionData.pluralName} type="plural" margin />
-								</div>
-							</div>
-						</div>
-						<div>
-							<label htmlFor="slug" className="block text-sm font-medium text-gray-900">
-								Collection URL
-							</label>
-							<div className="mt-2 mb-2.5">
-								<input
-									type="text"
-									name="slug"
-									id="slug"
-									className="block w-full shadow-sm sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md"
-									autoComplete="off"
-									placeholder="E.g. posts"
-									value={newCollectionData.slug}
-									onChange={handleChange}
-									onBlur={() =>
-										setNewCollectionData({
-											...newCollectionData,
-											slug: slugify(newCollectionData.slug, { lower: true }),
-										})
-									}
-								/>
-							</div>
-							<div>
-								<MiniBadge>
-									<span className="flex text-gray-500">
-										<LinkIcon className="w-3 mr-2 ml-1" />
-										<span>mywebsite.com/</span>
-										<span className="text-indigo-600">
-											{newCollectionData.slug ||
-												slugify(newCollectionData.name, { lower: true }) ||
-												"items"}
-										</span>
-										<span>{`/${slugify(newCollectionData.singularName, {
-											lower: true,
-										})}-page`}</span>
-									</span>
-								</MiniBadge>
-							</div>
-						</div>
-					</div>
+									{/* Singular and plural badges */}
+									<div>
+										<CountableBadge name={newCollectionData.singularName} type="singular" />
+										<CountableBadge name={newCollectionData.pluralName} type="plural" margin />
+									</div>
+								</>
+							</Pane.Item>
+							<Pane.Item>
+								<>
+									<StandardInput
+										title="Collection URL"
+										name="slug"
+										handleChange={handleChange}
+										value={newCollectionData.slug}
+										handleBlur={() =>
+											setNewCollectionData({
+												...newCollectionData,
+												slug: slugify(newCollectionData.slug, { lower: true }),
+											})
+										}
+									/>
+									<FullCollectionURL data={newCollectionData} />
+								</>
+							</Pane.Item>
+						</>
+					</Pane>
+					<Pane>
+						<>
+							<Pane.Title>Collection Fields</Pane.Title>
+						</>
+					</Pane>
 				</div>
 			</div>
 			<div className="flex-shrink-0 px-4 py-4 flex justify-end">
