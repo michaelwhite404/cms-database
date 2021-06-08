@@ -7,7 +7,6 @@ import CountableBadge from "./CountableBadge";
 import FullCollectionURL from "./Slideover/FullCollectionURL";
 import SlideoverHeading from "./Slideover/SlideoverHeading";
 import StandardInput from "./Slideover/StandardInput";
-import PlainTextIcon from "../../components/PlainTextIcon";
 import CollectionFieldRow from "./CollectionFieldRow";
 
 interface CreateCollectionSlideoverProps {
@@ -61,6 +60,8 @@ export default function CreateCollectionSlideover({ setOpen }: CreateCollectionS
 								name="name"
 								handleChange={handleNameChange}
 								value={newCollectionData.name}
+								placeholder="E.g. Blog Posts"
+								required
 							/>
 							{/* Singular and plural badges */}
 							<div>
@@ -74,6 +75,8 @@ export default function CreateCollectionSlideover({ setOpen }: CreateCollectionS
 								name="slug"
 								handleChange={handleChange}
 								value={newCollectionData.slug}
+								required
+								placeholder="E.g. posts"
 								handleBlur={() =>
 									setNewCollectionData({
 										...newCollectionData,
@@ -91,7 +94,7 @@ export default function CreateCollectionSlideover({ setOpen }: CreateCollectionS
 							<div className="block w-full shadow-sm border rounded-md">
 								<CollectionFieldRow name="Name" type="PlainText" />
 								<CollectionFieldRow name="Slug" type="PlainText" />
-								<div
+								{/*<div
 									className="flex items-center border-b py-2.5 px-4 text-xs text-gray-700"
 									style={{ userSelect: "none" }}
 								>
@@ -99,16 +102,7 @@ export default function CreateCollectionSlideover({ setOpen }: CreateCollectionS
 									<span className="mr-3">Name</span>
 									<span className="text-gray-400">(Plain Text)</span>
 									<span className="text-gray-400 ml-auto">Required Field</span>
-								</div>
-								<div
-									className="flex items-center border-b-0 py-2.5 px-4 text-xs text-gray-700"
-									style={{ userSelect: "none" }}
-								>
-									<PlainTextIcon className="mr-3" />
-									<span className="mr-3">Slug</span>
-									<span className="text-gray-400">(Plain Text)</span>
-									<span className="text-gray-400 ml-auto">Required Field</span>
-								</div>
+								</div> */}
 							</div>
 						</Pane.Item>
 					</Pane>

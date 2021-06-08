@@ -1,9 +1,15 @@
+import { FaAsterisk } from "react-icons/fa";
+
 interface StandardInputProps {
 	title: string;
 	name: string;
 	handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 	handleBlur?: () => void;
 	value: string;
+	required?: boolean;
+	className?: string;
+	placeholder?: string;
+	helpText?: string;
 }
 
 export default function StandardInput({
@@ -12,12 +18,18 @@ export default function StandardInput({
 	value,
 	handleChange,
 	handleBlur,
+	required,
+	className,
+	placeholder,
+	helpText,
 }: StandardInputProps) {
 	return (
-		<>
-			<label htmlFor={name} className="block text-sm font-medium text-gray-900">
+		<div className={className}>
+			<label htmlFor={name} className="flex text-sm font-medium text-gray-900 ">
 				{title}
+				{required && <FaAsterisk color="red" className="w-1.5 ml-1.5 inline" />}
 			</label>
+			{helpText && <div className="text-gray-500 text-xs mt-1">{helpText}</div>}
 			<div className="mt-2 mb-2.5">
 				<input
 					type="text"
@@ -25,13 +37,12 @@ export default function StandardInput({
 					id={name}
 					className="block w-full shadow-sm sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md"
 					autoComplete="off"
-					placeholder="E.g. Blog Posts"
+					placeholder={placeholder}
 					value={value}
 					onChange={handleChange}
 					onBlur={handleBlur}
 				/>
 			</div>
-			{/* {children} */}
-		</>
+		</div>
 	);
 }
