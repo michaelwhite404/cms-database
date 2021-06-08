@@ -13,7 +13,9 @@ export default function CountableBadge({ name, type, margin }: CountableBadgePro
 	return (
 		<MiniBadge margin={margin}>
 			<>
-				<span className="text-gray-500">{capitalize(type)} version: </span>
+				<span className="text-gray-500" style={{ userSelect: "none" }}>
+					{capitalize(type)} version:{" "}
+				</span>
 				<span /* contentEditable={true} */ className="focus:outline-none">{name}</span>
 				<span className="ml-1 relative bottom-0.5">
 					<PencilIcon className="hidden w-3 group-hover:inline-block" />

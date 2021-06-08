@@ -1,23 +1,28 @@
 import pluralize from "pluralize";
 import React, { useState } from "react";
 import slugify from "slugify";
+import CollectionData from "../../../../src/interfaces/collectionDataInterfaces";
 import Pane from "../../components/Pane";
 import CountableBadge from "./CountableBadge";
 import FullCollectionURL from "./Slideover/FullCollectionURL";
 import SlideoverHeading from "./Slideover/SlideoverHeading";
 import StandardInput from "./Slideover/StandardInput";
+import PlainTextIcon from "../../components/PlainTextIcon";
 
 interface CreateCollectionSlideoverProps {
 	setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export default function CreateCollectionSlideover({ setOpen }: CreateCollectionSlideoverProps) {
-	const [newCollectionData, setNewCollectionData] = useState({
+	const [newCollectionData, setNewCollectionData] = useState<CollectionData>({
 		name: "",
 		slug: "",
 		pluralName: "Items",
 		singularName: "Item",
-		fields: [],
+		fields: [
+			{ name: "Name", type: "PlainText", required: true, primaryName: true },
+			{ name: "Slug", type: "PlainText", required: true, primarySlug: true },
+		],
 	});
 
 	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -48,46 +53,61 @@ export default function CreateCollectionSlideover({ setOpen }: CreateCollectionS
 				<SlideoverHeading setOpen={setOpen} />
 				<div className="flex-1 flex flex-col justify-between divide-y divide-gray-200 py-4">
 					<Pane>
-						<>
-							<Pane.Title>Collection Settings</Pane.Title>
-							<Pane.Item>
-								<>
-									<StandardInput
-										title="Collection Name"
-										name="name"
-										handleChange={handleNameChange}
-										value={newCollectionData.name}
-									/>
-									{/* Singular and plural badges */}
-									<div>
-										<CountableBadge name={newCollectionData.singularName} type="singular" />
-										<CountableBadge name={newCollectionData.pluralName} type="plural" margin />
-									</div>
-								</>
-							</Pane.Item>
-							<Pane.Item>
-								<>
-									<StandardInput
-										title="Collection URL"
-										name="slug"
-										handleChange={handleChange}
-										value={newCollectionData.slug}
-										handleBlur={() =>
-											setNewCollectionData({
-												...newCollectionData,
-												slug: slugify(newCollectionData.slug, { lower: true }),
-											})
-										}
-									/>
-									<FullCollectionURL data={newCollectionData} />
-								</>
-							</Pane.Item>
-						</>
+						<Pane.Title>Collection Settings</Pane.Title>
+						<Pane.Item>
+							<StandardInput
+								title="Collection Name"
+								name="name"
+								handleChange={handleNameChange}
+								value={newCollectionData.name}
+							/>
+							{/* Singular and plural badges */}
+							<div>
+								<CountableBadge name={newCollectionData.singularName} type="singular" />
+								<CountableBadge name={newCollectionData.pluralName} type="plural" margin />
+							</div>
+						</Pane.Item>
+						<Pane.Item>
+							<StandardInput
+								title="Collection URL"
+								name="slug"
+								handleChange={handleChange}
+								value={newCollectionData.slug}
+								handleBlur={() =>
+									setNewCollectionData({
+										...newCollectionData,
+										slug: slugify(newCollectionData.slug, { lower: true }),
+									})
+								}
+							/>
+							<FullCollectionURL data={newCollectionData} />
+						</Pane.Item>
 					</Pane>
 					<Pane>
-						<>
-							<Pane.Title>Collection Fields</Pane.Title>
-						</>
+						<Pane.Title>Collection Fields</Pane.Title>
+						<Pane.Item>
+							<div className="mb-3">Basic Info</div>
+							<div className="block w-full shadow-sm border rounded-md">
+								<div
+									className="flex items-center border-b py-2.5 px-4 text-xs text-gray-700"
+									style={{ userSelect: "none" }}
+								>
+									<PlainTextIcon className="mr-3" />
+									<span className="mr-3">Name</span>
+									<span className="text-gray-400">(Plain Text)</span>
+									<span className="text-gray-400 ml-auto">Required Field</span>
+								</div>
+								<div
+									className="flex items-center border-b-0 py-2.5 px-4 text-xs text-gray-700"
+									style={{ userSelect: "none" }}
+								>
+									<PlainTextIcon className="mr-3" />
+									<span className="mr-3">Slug</span>
+									<span className="text-gray-400">(Plain Text)</span>
+									<span className="text-gray-400 ml-auto">Required Field</span>
+								</div>
+							</div>
+						</Pane.Item>
 					</Pane>
 				</div>
 			</div>

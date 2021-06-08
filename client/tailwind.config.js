@@ -6,7 +6,7 @@ module.exports = {
 	},
 	variants: {
 		display: ["responsive", "group-hover"],
-		extend: {},
+		extend: { borderWidth: ["last"] },
 	},
 	plugins: [require("@tailwindcss/forms")],
 };
