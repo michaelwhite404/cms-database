@@ -8,6 +8,7 @@ import FullCollectionURL from "./Slideover/FullCollectionURL";
 import SlideoverHeading from "./Slideover/SlideoverHeading";
 import StandardInput from "./Slideover/StandardInput";
 import PlainTextIcon from "../../components/PlainTextIcon";
+import CollectionFieldRow from "./CollectionFieldRow";
 
 interface CreateCollectionSlideoverProps {
 	setOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -88,6 +89,8 @@ export default function CreateCollectionSlideover({ setOpen }: CreateCollectionS
 						<Pane.Item>
 							<div className="mb-3">Basic Info</div>
 							<div className="block w-full shadow-sm border rounded-md">
+								<CollectionFieldRow name="Name" type="PlainText" />
+								<CollectionFieldRow name="Slug" type="PlainText" />
 								<div
 									className="flex items-center border-b py-2.5 px-4 text-xs text-gray-700"
 									style={{ userSelect: "none" }}
