@@ -20,6 +20,9 @@ export default function CreateCollectionSlideover({ setOpen }: CreateCollectionS
 	const [newCollectionData, setNewCollectionData] = useState<CollectionData>(defaultCollectionData);
 	const [activeField, setActiveField] = useState<CollectionDataFields | null>(null);
 
+	const basicInfoFields = newCollectionData.fields.slice(0, 2);
+	const customFields = newCollectionData.fields.slice(2);
+
 	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 	};
@@ -87,27 +90,14 @@ export default function CreateCollectionSlideover({ setOpen }: CreateCollectionS
 						<Pane.Item>
 							<div className="mb-3">Basic Info</div>
 							<div className="block w-full shadow-sm border rounded-md">
-								<CollectionFieldRow
-									name="Name"
-									type="PlainText"
-									activeField={activeField}
-									setActiveField={setActiveField}
-								/>
-								<CollectionFieldRow
-									name="Slug"
-									type="PlainText"
-									activeField={activeField}
-									setActiveField={setActiveField}
-								/>
-								{/*<div
-									className="flex items-center border-b py-2.5 px-4 text-xs text-gray-700"
-									style={{ userSelect: "none" }}
-								>
-									<PlainTextIcon className="mr-3" />
-									<span className="mr-3">Name</span>
-									<span className="text-gray-400">(Plain Text)</span>
-									<span className="text-gray-400 ml-auto">Required Field</span>
-								</div> */}
+								{basicInfoFields.map((field) => (
+									<CollectionFieldRow
+										key={field.tempId}
+										field={field}
+										activeField={activeField}
+										setActiveField={setActiveField}
+									/>
+								))}
 							</div>
 						</Pane.Item>
 					</Pane>

@@ -1,3 +1,4 @@
+import { v4 as uuid } from "uuid";
 import CollectionData from "../../../src/interfaces/collectionDataInterfaces";
 
 const defaultCollectionData: CollectionData = {
@@ -7,6 +8,7 @@ const defaultCollectionData: CollectionData = {
 	singularName: "Item",
 	fields: [
 		{
+			tempId: uuid(),
 			name: "Name",
 			type: "PlainText",
 			required: true,
@@ -14,6 +16,7 @@ const defaultCollectionData: CollectionData = {
 			validations: { singleLine: true },
 		},
 		{
+			tempId: uuid(),
 			name: "Slug",
 			type: "PlainText",
 			required: true,

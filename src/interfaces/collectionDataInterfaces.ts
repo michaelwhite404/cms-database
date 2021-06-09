@@ -43,6 +43,8 @@ export default interface CollectionData {
 }
 
 export interface CollectionDataFields {
+	/** A temporary ID given to the field before it is created */
+	tempId: string;
 	/** The name of the collection field */
 	name: string;
 	/** The type of collection field  */
