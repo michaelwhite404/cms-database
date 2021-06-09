@@ -17,7 +17,7 @@ export default function Project() {
 	const [loaded, setLoaded] = useState(false);
 	const [currentDatabase, setCurrentDatabase] = useState<DatabaseModel | null>(null);
 	const [collections, setCollections] = useState<CollectionModel[]>([]);
-	const [activeCollection, setActiveCollection] = useState<DatabaseModel | {}>({});
+	const [activeCollection, setActiveCollection] = useState<CollectionModel | null>(null);
 	const params = useParams<{ database: string }>();
 
 	const fetchData = async () => {

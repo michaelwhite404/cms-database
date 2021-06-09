@@ -9,24 +9,16 @@ import CountableBadge from "./CountableBadge";
 import FullCollectionURL from "./Slideover/FullCollectionURL";
 import SlideoverHeading from "./Slideover/SlideoverHeading";
 import StandardInput from "./Slideover/StandardInput";
-import CollectionFieldRow from "./CollectionFieldRow";
+import CollectionFieldRow from "./Slideover/CollectionFieldRow";
+import defaultCollectionData from "../../utils/defaultCollectionData";
 
 interface CreateCollectionSlideoverProps {
 	setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export default function CreateCollectionSlideover({ setOpen }: CreateCollectionSlideoverProps) {
-	const [newCollectionData, setNewCollectionData] = useState<CollectionData>({
-		name: "",
-		slug: "",
-		pluralName: "Items",
-		singularName: "Item",
-		fields: [
-			{ name: "Name", type: "PlainText", required: true, primaryName: true },
-			{ name: "Slug", type: "PlainText", required: true, primarySlug: true },
-		],
-	});
-	const [activeField, setActiveField] = useState<CollectionDataFields | undefined>(undefined);
+	const [newCollectionData, setNewCollectionData] = useState<CollectionData>(defaultCollectionData);
+	const [activeField, setActiveField] = useState<CollectionDataFields | null>(null);
 
 	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();

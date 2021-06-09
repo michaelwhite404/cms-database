@@ -1,13 +1,12 @@
 import React from "react";
 import { CollectionModel } from "../../../../src/interfaces/collectionInterfaces";
-import DatabaseModel from "../../../../src/interfaces/databaseInterface";
 import CollectionSidebarButton from "./CollectionSidebarButton";
 import FakeCollectionSidebarButton from "./FakeCollectionSidebarButton";
 
 interface ProjectMainAreaProps {
 	collections: CollectionModel[];
-	setActiveCollection: React.Dispatch<React.SetStateAction<{} | DatabaseModel>>;
-	activeCollection: DatabaseModel | {};
+	setActiveCollection: React.Dispatch<React.SetStateAction<CollectionModel | null>>;
+	activeCollection: CollectionModel | null;
 	loaded: boolean;
 }
 

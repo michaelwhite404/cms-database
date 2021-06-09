@@ -1,12 +1,11 @@
 import { ChevronRightIcon, DatabaseIcon } from "@heroicons/react/solid";
 import { useEffect, useState } from "react";
 import { CollectionModel } from "../../../../src/interfaces/collectionInterfaces";
-import DatabaseModel from "../../../../src/interfaces/databaseInterface";
 
 interface CollectionSidebarButtonProps {
 	collection: CollectionModel;
-	setActiveCollection: React.Dispatch<React.SetStateAction<{} | DatabaseModel>>;
-	activeCollection: DatabaseModel | {};
+	setActiveCollection: React.Dispatch<React.SetStateAction<CollectionModel | null>>;
+	activeCollection: CollectionModel | null;
 }
 
 export default function CollectionSidebarButton({
@@ -20,8 +19,7 @@ export default function CollectionSidebarButton({
 	const [active, setActive] = useState(false);
 
 	useEffect(() => {
-		// @ts-ignore
-		setActive(Object.keys(activeCollection).length > 0 && collection._id === activeCollection._id);
+		setActive(!!activeCollection && collection._id === activeCollection._id);
 	}, [activeCollection, collection._id]);
 
 	return (
