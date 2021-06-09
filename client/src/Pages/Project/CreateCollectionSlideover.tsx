@@ -1,7 +1,9 @@
 import pluralize from "pluralize";
 import React, { useState } from "react";
 import slugify from "slugify";
-import CollectionData from "../../../../src/interfaces/collectionDataInterfaces";
+import CollectionData, {
+	CollectionDataFields,
+} from "../../../../src/interfaces/collectionDataInterfaces";
 import Pane from "../../components/Pane";
 import CountableBadge from "./CountableBadge";
 import FullCollectionURL from "./Slideover/FullCollectionURL";
@@ -24,6 +26,7 @@ export default function CreateCollectionSlideover({ setOpen }: CreateCollectionS
 			{ name: "Slug", type: "PlainText", required: true, primarySlug: true },
 		],
 	});
+	const [activeField, setActiveField] = useState<CollectionDataFields | undefined>(undefined);
 
 	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
@@ -92,8 +95,18 @@ export default function CreateCollectionSlideover({ setOpen }: CreateCollectionS
 						<Pane.Item>
 							<div className="mb-3">Basic Info</div>
 							<div className="block w-full shadow-sm border rounded-md">
-								<CollectionFieldRow name="Name" type="PlainText" />
-								<CollectionFieldRow name="Slug" type="PlainText" />
+								<CollectionFieldRow
+									name="Name"
+									type="PlainText"
+									activeField={activeField}
+									setActiveField={setActiveField}
+								/>
+								<CollectionFieldRow
+									name="Slug"
+									type="PlainText"
+									activeField={activeField}
+									setActiveField={setActiveField}
+								/>
 								{/*<div
 									className="flex items-center border-b py-2.5 px-4 text-xs text-gray-700"
 									style={{ userSelect: "none" }}
