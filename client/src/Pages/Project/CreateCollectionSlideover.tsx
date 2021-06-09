@@ -23,6 +23,14 @@ export default function CreateCollectionSlideover({ setOpen }: CreateCollectionS
 	const basicInfoFields = newCollectionData.fields.slice(0, 2);
 	const customFields = newCollectionData.fields.slice(2);
 
+	const submitField = (tempId: string) => {
+		const copiedFields = [...newCollectionData.fields];
+		const index = copiedFields.findIndex((field) => field.tempId === tempId);
+		copiedFields[index] = activeField!;
+		setNewCollectionData({ ...newCollectionData, fields: copiedFields });
+		setActiveField(null);
+	};
+
 	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 	};
@@ -42,9 +50,9 @@ export default function CreateCollectionSlideover({ setOpen }: CreateCollectionS
 	};
 
 	return (
-		<form
+		<div
 			className="h-full divide-y divide-gray-200 flex flex-col bg-white shadow-xl"
-			onSubmit={handleSubmit}
+			// onSubmit={handleSubmit}
 		>
 			<div className="flex-1 h-0 overflow-y-auto">
 				{/* Slideover heading */}
@@ -96,6 +104,7 @@ export default function CreateCollectionSlideover({ setOpen }: CreateCollectionS
 										field={field}
 										activeField={activeField}
 										setActiveField={setActiveField}
+										submitField={submitField}
 									/>
 								))}
 							</div>
@@ -118,6 +127,6 @@ export default function CreateCollectionSlideover({ setOpen }: CreateCollectionS
 					Save
 				</button>
 			</div>
-		</form>
+		</div>
 	);
 }
