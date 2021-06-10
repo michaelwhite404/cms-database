@@ -1,9 +1,7 @@
 import { ArrowCircleDownIcon, PlusIcon, XIcon } from "@heroicons/react/solid";
 import { useEffect, useRef, useState } from "react";
-import PlainTextButtonIcon from "../../../components/Icons/Buttons/PlainTextButtonIcon";
-import RichTextButtonIcon from "../../../components/Icons/Buttons/RichTextButtonIcon";
-import PlainTextIcon from "../../../components/Icons/PlainTextIcon";
 import FieldTypeButton from "./FieldTypeButton";
+import ButtonIcon from "../../../components/Icons/ButtonIcon";
 
 export default function AddFieldRow() {
 	const [active, setActive] = useState(false);
@@ -21,8 +19,11 @@ export default function AddFieldRow() {
 	}, [active]);
 
 	const fieldButtons = [
-		{ name: "Plain Text", type: "PlainText", icon: PlainTextButtonIcon },
-		{ name: "Rich Text", type: "RichText", icon: RichTextButtonIcon },
+		{ name: "Plain Text", type: "PlainText", icon: ButtonIcon.PlainText },
+		{ name: "Rich Text", type: "RichText", icon: ButtonIcon.RichText },
+		{ name: "Image", type: "Image", icon: ButtonIcon.Image },
+		{ name: "Video Link", type: "Video", icon: ButtonIcon.Video },
+		{ name: "Link", type: "Link", icon: ButtonIcon.Link },
 	];
 
 	return (
