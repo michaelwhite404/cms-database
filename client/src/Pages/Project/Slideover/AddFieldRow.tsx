@@ -1,7 +1,9 @@
 import { ArrowCircleDownIcon, PlusIcon, XIcon } from "@heroicons/react/solid";
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import FieldTypeButton from "./FieldTypeButton";
 import ButtonIcon from "../../../components/Icons/ButtonIcon";
+import PlainTextIcon from "../../../components/Icons/PlainTextIcon";
+import PlainTextForm from "../Forms/PlainTextForm";
 
 export default function AddFieldRow() {
 	const [active, setActive] = useState(false);
@@ -51,27 +53,42 @@ export default function AddFieldRow() {
 						<span className="mr-3">Add Field</span>
 					</span>
 				)}
-				{active && !fieldSelected && (
-					<>
-						<ArrowCircleDownIcon className="mr-3" width={16} />
-						<span className="mr-3">Select Field Type</span>
-						<button
-							className="flex text-gray-400 ml-auto focus:outline-none hover:text-gray-500"
-							onClick={() => setActive(false)}
-						>
-							<XIcon className="mr-1.5 " width={16} />
-							Cancel
-						</button>
-					</>
-				)}
-			</div>
-			{active && (
-				<div className="grid grid-cols-6 gap-4 mt-5 mb-2.5">
-					{fieldButtons.map((field) => (
-						<FieldTypeButton name={field.name} Icon={field.icon} />
+				{active &&
+					(!fieldSelected ? (
+						<>
+							<ArrowCircleDownIcon className="mr-3" width={16} />
+							<span className="mr-3">Select Field Type</span>
+							<button
+								className="flex text-gray-400 ml-auto focus:outline-none hover:text-gray-500"
+								onClick={() => setActive(false)}
+							>
+								<XIcon className="mr-1.5 " width={16} />
+								Cancel
+							</button>
+						</>
+					) : (
+						<>
+							<PlainTextIcon className="mr-3" />
+							<span className="mr-3">New Field</span>
+							<span className="text-gray-400">(Plain Text)</span>
+						</>
 					))}
-				</div>
-			)}
+			</div>
+			{active &&
+				(!fieldSelected ? (
+					<div className="grid grid-cols-6 gap-4 mt-5 mb-2.5">
+						{fieldButtons.map((field) => (
+							<FieldTypeButton
+								key={field.type}
+								name={field.name}
+								Icon={field.icon}
+								setFieldSelected={setFieldSelected}
+							/>
+						))}
+					</div>
+				) : (
+					<PlainTextForm />
+				))}
 		</div>
 	);
 }
