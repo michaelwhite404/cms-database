@@ -24,6 +24,16 @@ export default function AddFieldRow() {
 		{ name: "Image", type: "Image", icon: ButtonIcon.Image },
 		{ name: "Video Link", type: "Video", icon: ButtonIcon.Video },
 		{ name: "Link", type: "Link", icon: ButtonIcon.Link },
+		{ name: "Email", type: "Email", icon: ButtonIcon.Email },
+		{ name: "Phone", type: "Phone", icon: ButtonIcon.Phone },
+		{ name: "Number", type: "Number", icon: ButtonIcon.Number },
+		{ name: "Date", type: "Date", icon: ButtonIcon.Date },
+		{ name: "Switch", type: "Bool", icon: ButtonIcon.Bool },
+		{ name: "Color", type: "Color", icon: ButtonIcon.Color },
+		{ name: "Option", type: "Option", icon: ButtonIcon.Option },
+		// { name: "File", type: "File", icon: ButtonIcon.File },
+		{ name: "Reference", type: "ItemRef", icon: ButtonIcon.Reference },
+		{ name: "Multi Reference", type: "ItemRefMulti", icon: ButtonIcon.MultiReference },
 	];
 
 	return (
@@ -56,7 +66,7 @@ export default function AddFieldRow() {
 				)}
 			</div>
 			{active && (
-				<div className="grid grid-cols-6 gap-4 mt-5">
+				<div className="grid grid-cols-6 gap-4 mt-5 mb-2.5">
 					{fieldButtons.map((field) => (
 						<FieldTypeButton name={field.name} Icon={field.icon} />
 					))}
