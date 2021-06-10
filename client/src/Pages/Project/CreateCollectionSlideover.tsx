@@ -11,12 +11,18 @@ import SlideoverHeading from "./Slideover/SlideoverHeading";
 import StandardInput from "./Slideover/StandardInput";
 import CollectionFieldRow from "./Slideover/CollectionFieldRow";
 import defaultCollectionData from "../../utils/defaultCollectionData";
+import axios from "axios";
+import DatabaseModel from "../../../../src/interfaces/databaseInterface";
 
 interface CreateCollectionSlideoverProps {
+	database: DatabaseModel;
 	setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function CreateCollectionSlideover({ setOpen }: CreateCollectionSlideoverProps) {
+export default function CreateCollectionSlideover({
+	setOpen,
+	database,
+}: CreateCollectionSlideoverProps) {
 	const [newCollectionData, setNewCollectionData] = useState<CollectionData>(defaultCollectionData);
 	const [activeField, setActiveField] = useState<CollectionDataFields | null>(null);
 
@@ -31,8 +37,17 @@ export default function CreateCollectionSlideover({ setOpen }: CreateCollectionS
 		setActiveField(null);
 	};
 
-	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+	const handleSubmit = async (e: React.FormEvent<HTMLFormElement> & React.KeyboardEvent) => {
 		e.preventDefault();
+		try {
+			const res = await axios.post("/api/v1/collections", {
+				database: database._id,
+				...newCollectionData,
+			});
+			console.log(res.data);
+		} catch (err) {
+			console.log(err.response.data);
+		}
 	};
 
 	const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -50,9 +65,9 @@ export default function CreateCollectionSlideover({ setOpen }: CreateCollectionS
 	};
 
 	return (
-		<div
+		<form
 			className="h-full divide-y divide-gray-200 flex flex-col bg-white shadow-xl"
-			// onSubmit={handleSubmit}
+			onSubmit={handleSubmit}
 		>
 			<div className="flex-1 h-0 overflow-y-auto">
 				{/* Slideover heading */}
@@ -109,6 +124,18 @@ export default function CreateCollectionSlideover({ setOpen }: CreateCollectionS
 								))}
 							</div>
 						</Pane.Item>
+						<Pane.Item>
+							<div className="mb-3">Custom Fields</div>
+							{customFields.map((field) => (
+								<CollectionFieldRow
+									key={field.tempId}
+									field={field}
+									activeField={activeField}
+									setActiveField={setActiveField}
+									submitField={submitField}
+								/>
+							))}
+						</Pane.Item>
 					</Pane>
 				</div>
 			</div>
@@ -127,6 +154,6 @@ export default function CreateCollectionSlideover({ setOpen }: CreateCollectionS
 					Save
 				</button>
 			</div>
-		</div>
+		</form>
 	);
 }

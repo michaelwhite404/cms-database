@@ -53,7 +53,7 @@ export default function Project() {
 					loaded={loaded}
 				/>
 				<Slideover size="4xl" open={openSlideover} setOpen={setOpenSlideover}>
-					<CreateCollectionSlideover setOpen={setOpenSlideover} />
+					<CreateCollectionSlideover setOpen={setOpenSlideover} database={currentDatabase!} />
 				</Slideover>
 			</>
 		</AppContainer>
