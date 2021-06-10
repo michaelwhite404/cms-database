@@ -13,6 +13,7 @@ import CollectionFieldRow from "./Slideover/CollectionFieldRow";
 import defaultCollectionData from "../../utils/defaultCollectionData";
 import axios from "axios";
 import DatabaseModel from "../../../../src/interfaces/databaseInterface";
+import AddFieldRow from "./Slideover/AddFieldRow";
 
 interface CreateCollectionSlideoverProps {
 	database: DatabaseModel;
@@ -112,7 +113,7 @@ export default function CreateCollectionSlideover({
 						<Pane.Title>Collection Fields</Pane.Title>
 						<Pane.Item>
 							<div className="mb-3">Basic Info</div>
-							<div className="block w-full shadow-sm border rounded-md">
+							<div className="block w-full shadow-sm border rounded-md overflow-hidden">
 								{basicInfoFields.map((field) => (
 									<CollectionFieldRow
 										key={field.tempId}
@@ -126,15 +127,18 @@ export default function CreateCollectionSlideover({
 						</Pane.Item>
 						<Pane.Item>
 							<div className="mb-3">Custom Fields</div>
-							{customFields.map((field) => (
-								<CollectionFieldRow
-									key={field.tempId}
-									field={field}
-									activeField={activeField}
-									setActiveField={setActiveField}
-									submitField={submitField}
-								/>
-							))}
+							<div className="block w-full shadow-sm border rounded-md overflow-hidden">
+								{customFields.map((field) => (
+									<CollectionFieldRow
+										key={field.tempId}
+										field={field}
+										activeField={activeField}
+										setActiveField={setActiveField}
+										submitField={submitField}
+									/>
+								))}
+								<AddFieldRow />
+							</div>
 						</Pane.Item>
 					</Pane>
 				</div>
