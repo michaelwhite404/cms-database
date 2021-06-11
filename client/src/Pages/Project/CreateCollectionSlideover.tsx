@@ -137,7 +137,11 @@ export default function CreateCollectionSlideover({
 										submitField={submitField}
 									/>
 								))}
-								<AddFieldRow />
+								<AddFieldRow
+									activeField={activeField}
+									setActiveField={setActiveField}
+									submitField={submitField}
+								/>
 							</div>
 						</Pane.Item>
 					</Pane>

@@ -6,6 +6,7 @@ interface StandardInputProps {
 	handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 	handleBlur?: () => void;
 	value: string;
+	id?: string;
 	required?: boolean;
 	className?: string;
 	placeholder?: string;
@@ -16,6 +17,7 @@ export default function StandardInput({
 	title,
 	name,
 	value,
+	id,
 	handleChange,
 	handleBlur,
 	required,
@@ -25,7 +27,7 @@ export default function StandardInput({
 }: StandardInputProps) {
 	return (
 		<div className={className}>
-			<label htmlFor={name} className="flex text-sm font-medium text-gray-900 ">
+			<label htmlFor={id || name} className="flex text-sm font-medium text-gray-900 ">
 				{title}
 				{required && <FaAsterisk color="red" className="w-1.5 ml-1.5 inline" />}
 			</label>
@@ -34,7 +36,7 @@ export default function StandardInput({
 				<input
 					type="text"
 					name={name}
-					id={name}
+					id={id || name}
 					className="block w-full shadow-sm sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md"
 					autoComplete="off"
 					placeholder={placeholder}

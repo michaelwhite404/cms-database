@@ -1,18 +1,43 @@
 import React from "react";
+import { v4 as uuid } from "uuid";
+import { CollectionDataFields } from "../../../../../src/interfaces/collectionDataInterfaces";
+import { CollectionFieldType } from "../../../../../src/interfaces/collectionInterfaces";
 
 interface FieldTypeButtonProps {
 	name: string;
+	type: CollectionFieldType;
 	Icon: (props: React.ComponentProps<"svg">) => JSX.Element;
-	setFieldSelected: React.Dispatch<React.SetStateAction<boolean>>;
+	setFieldSelected: React.Dispatch<React.SetStateAction<CollectionFieldType | undefined>>;
+	setActiveField: React.Dispatch<React.SetStateAction<CollectionDataFields | null>>;
 }
 
-export default function FieldTypeButton({ name, Icon, setFieldSelected }: FieldTypeButtonProps) {
+const inititalFieldTypeState: any = {};
+inititalFieldTypeState.PlainText = {
+	tempId: uuid(),
+	name: "",
+	type: "PlainText",
+	helpText: "",
+	required: false,
+	validations: { minLength: "", maxLength: "" },
+};
+
+export default function FieldTypeButton({
+	name,
+	type,
+	Icon,
+	setFieldSelected,
+	setActiveField,
+}: FieldTypeButtonProps) {
+	const handleClick = () => {
+		setActiveField(inititalFieldTypeState.PlainText);
+	};
+
 	return (
 		<button
 			type="button"
 			className="grid place-items-center p-1 bg-gray-50 rounded-lg shadow-md focus:outline-none hover:bg-gray-100"
 			style={{ gridTemplateRows: "75px 25px" }}
-			onClick={() => setFieldSelected(true)}
+			onClick={handleClick}
 		>
 			<Icon color="#7c3aed" />
 			<div>{name}</div>

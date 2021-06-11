@@ -8,6 +8,7 @@ interface NumberInputProps {
 	value?: string | number;
 	placeholder?: string;
 	required?: boolean;
+	handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 const buttonTrackStyles: React.CSSProperties = {
@@ -25,6 +26,7 @@ export default function NumberInput({
 	value,
 	name,
 	required,
+	handleChange,
 }: NumberInputProps) {
 	return (
 		<div>
@@ -41,7 +43,7 @@ export default function NumberInput({
 					autoComplete="off"
 					placeholder={placeholder}
 					value={value}
-					onChange={() => {}}
+					onChange={handleChange}
 					onBlur={() => {}}
 				/>
 				<div

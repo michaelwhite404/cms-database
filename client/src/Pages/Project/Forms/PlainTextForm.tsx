@@ -1,21 +1,48 @@
 import React from "react";
+import { CollectionDataFields } from "../../../../../src/interfaces/collectionDataInterfaces";
 import NumberInput from "../../../components/Form/NumberInput";
 import StandardRadioGroup from "../../../components/Form/StandardRadioGroup";
 import StandardInput from "../Slideover/StandardInput";
 
-export default function PlainTextForm() {
+interface PlainTextFormProps {
+	activeField: CollectionDataFields | null;
+	setActiveField: React.Dispatch<React.SetStateAction<CollectionDataFields | null>>;
+}
+
+export default function PlainTextForm({ activeField, setActiveField }: PlainTextFormProps) {
+	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		setActiveField({ ...activeField!, [e.target!.name]: e.target!.value });
+	};
+	const handleValidationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		setActiveField({
+			...activeField!,
+			validations: {
+				...activeField?.validations,
+				[e.target!.name]: e.target!.value,
+			},
+		});
+	};
+
 	return (
 		<div className="mt-4">
 			{/* Text input for field name */}
-			<StandardInput title="Label" name="fieldName" value={""} handleChange={() => {}} required />
-			{/* Test input for field helpText */}
+			<StandardInput
+				title="Label"
+				id="fieldName"
+				name="name"
+				value={activeField!.name || ""}
+				handleChange={handleChange}
+				required
+			/>
+			{/* Text input for field helpText */}
 			<StandardInput
 				className="mt-5"
 				title="Help Text"
+				id="fieldHelpText"
 				name="helpText"
-				value={""}
+				value={activeField!.helpText || ""}
 				helpText="Appears below the label to guide Collaborators, just like this help text"
-				handleChange={() => {}}
+				handleChange={handleChange}
 			/>
 			{/* Radio input for single or multiple line */}
 			<StandardRadioGroup className="mt-5" title="Text Field Type" name="singleName">
@@ -29,18 +56,33 @@ export default function PlainTextForm() {
 			{/* Inputs for min and max length */}
 			<div className="mt-5 grid grid-cols-2 gap-x-10">
 				<NumberInput
-					title="Minimum Character Count"
+					title="Minimum Character Count (with spaces)"
 					id="minCount"
 					name="minLength"
-					value={2}
+					value={activeField!.validations!.minLength}
 					placeholder="E.g. 25"
+					handleChange={handleValidationChange}
 				/>
 				<NumberInput
-					title="Maximum Character Count"
+					title="Maximum Character Count (with spaces)"
 					id="maxCount"
 					name="maxLength"
+					value={activeField!.validations!.maxLength}
 					placeholder="E.g. 140"
+					handleChange={handleValidationChange}
 				/>
+			</div>
+			{/* Required Check */}
+			<div className="mt-3 mb-1 font-normal text-sm">
+				<label>
+					<input
+						className="focus:ring-indigo-500 h-4 w-4 mr-3 text-indigo-600 border-gray-300 rounded"
+						type="checkbox"
+						id="fieldRequired"
+						name="required"
+					/>
+					<label htmlFor="fieldRequired">This field is required</label>
+				</label>
 			</div>
 			{/* Save and cancel buttons */}
 			<div className="flex justify-end xs:mt-4 absolute right-3 top-3">

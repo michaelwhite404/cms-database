@@ -1,13 +1,33 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { ArrowCircleDownIcon, PlusIcon, XIcon } from "@heroicons/react/solid";
 import React, { useEffect, useRef, useState } from "react";
 import FieldTypeButton from "./FieldTypeButton";
 import ButtonIcon from "../../../components/Icons/ButtonIcon";
 import PlainTextIcon from "../../../components/Icons/PlainTextIcon";
 import PlainTextForm from "../Forms/PlainTextForm";
+import { CollectionDataFields } from "../../../../../src/interfaces/collectionDataInterfaces";
+import { CollectionFieldType } from "../../../../../src/interfaces/collectionInterfaces";
 
-export default function AddFieldRow() {
+interface AddFieldRowProps {
+	// field: CollectionDataFields;
+	activeField: CollectionDataFields | null;
+	setActiveField: React.Dispatch<React.SetStateAction<CollectionDataFields | null>>;
+	submitField: (tempId: string) => void;
+}
+
+interface FieldButton {
+	name: string;
+	type: CollectionFieldType;
+	icon: (props: React.SVGProps<SVGSVGElement>) => JSX.Element;
+}
+
+export default function AddFieldRow({
+	activeField,
+	setActiveField,
+	submitField,
+}: AddFieldRowProps) {
 	const [active, setActive] = useState(false);
-	const [fieldSelected, setFieldSelected] = useState(false);
+	const [fieldSelected, setFieldSelected] = useState<CollectionFieldType | undefined>(undefined);
 	const myRef = useRef<HTMLDivElement>();
 
 	const handleClick = () => {
@@ -17,13 +37,17 @@ export default function AddFieldRow() {
 	};
 
 	useEffect(() => {
+		activeField && setFieldSelected(activeField.type);
+	}, [activeField]);
+
+	useEffect(() => {
 		active && myRef.current!.scrollIntoView({ behavior: "smooth" });
 	}, [active]);
 
-	const fieldButtons = [
+	const fieldButtons: FieldButton[] = [
 		{ name: "Plain Text", type: "PlainText", icon: ButtonIcon.PlainText },
 		{ name: "Rich Text", type: "RichText", icon: ButtonIcon.RichText },
-		{ name: "Image", type: "Image", icon: ButtonIcon.Image },
+		{ name: "Image", type: "ImageRef", icon: ButtonIcon.Image },
 		{ name: "Video Link", type: "Video", icon: ButtonIcon.Video },
 		{ name: "Link", type: "Link", icon: ButtonIcon.Link },
 		{ name: "Email", type: "Email", icon: ButtonIcon.Email },
@@ -81,13 +105,15 @@ export default function AddFieldRow() {
 							<FieldTypeButton
 								key={field.type}
 								name={field.name}
+								type={field.type}
 								Icon={field.icon}
 								setFieldSelected={setFieldSelected}
+								setActiveField={setActiveField}
 							/>
 						))}
 					</div>
 				) : (
-					<PlainTextForm />
+					<PlainTextForm activeField={activeField} setActiveField={setActiveField} />
 				))}
 		</div>
 	);

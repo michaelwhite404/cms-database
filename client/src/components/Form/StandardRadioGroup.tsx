@@ -58,7 +58,7 @@ StandardRadioGroup.Option = ({
 					/>
 				</div>
 				<div className="pl-7 text-sm">
-					<label htmlFor={`${value}Option`} className="font-medium text-gray-900">
+					<label htmlFor={`${value}Option`} className="font-normal text-gray-900">
 						{children}
 					</label>
 				</div>
