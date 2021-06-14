@@ -18,7 +18,7 @@ inititalFieldTypeState.PlainText = {
 	type: "PlainText",
 	helpText: "",
 	required: false,
-	validations: { minLength: "", maxLength: "" },
+	validations: { singleLine: true, minLength: "", maxLength: "" },
 };
 
 export default function FieldTypeButton({

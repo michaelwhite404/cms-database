@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useRef } from "react";
 import { CollectionDataFields } from "../../../../../src/interfaces/collectionDataInterfaces";
+import { CollectionFieldType } from "../../../../../src/interfaces/collectionInterfaces";
 import NumberInput from "../../../components/Form/NumberInput";
 import StandardRadioGroup from "../../../components/Form/StandardRadioGroup";
 import StandardInput from "../Slideover/StandardInput";
@@ -7,9 +8,20 @@ import StandardInput from "../Slideover/StandardInput";
 interface PlainTextFormProps {
 	activeField: CollectionDataFields | null;
 	setActiveField: React.Dispatch<React.SetStateAction<CollectionDataFields | null>>;
+	setActive: React.Dispatch<React.SetStateAction<boolean>>;
+	setFieldSelected: React.Dispatch<React.SetStateAction<CollectionFieldType | undefined>>;
+	submitNewField: () => void;
 }
 
-export default function PlainTextForm({ activeField, setActiveField }: PlainTextFormProps) {
+export default function PlainTextForm({
+	activeField,
+	setActiveField,
+	setActive,
+	setFieldSelected,
+	submitNewField,
+}: PlainTextFormProps) {
+	const requiredRef = useRef<HTMLInputElement>();
+
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setActiveField({ ...activeField!, [e.target!.name]: e.target!.value });
 	};
@@ -22,6 +34,37 @@ export default function PlainTextForm({ activeField, setActiveField }: PlainText
 			},
 		});
 	};
+	const handleRadioChange = () => {
+		const singleLine =
+			document.querySelector<HTMLInputElement>("input[name='singleLine']:checked")!.value ===
+			"singleLine";
+		setActiveField({
+			...activeField!,
+			validations: {
+				...activeField?.validations,
+				singleLine,
+			},
+		});
+	};
+	const handleRequiredChange = () => {
+		setActiveField({ ...activeField!, required: requiredRef.current?.checked });
+	};
+
+	const handleCancel = () => {
+		setActive(false);
+		setFieldSelected(undefined);
+		setActiveField(null);
+	};
+
+	// const handleIncrement = (e: React.MouseEvent<HTMLInputElement>) => {
+	// 	setActiveField({
+	// 		...activeField!,
+	// 		validations: {
+	// 			...activeField?.validations,
+	// 			[e.target!.name]: +e.target!.value + 1,
+	// 		},
+	// 	});
+	// };
 
 	return (
 		<div className="mt-4">
@@ -45,11 +88,11 @@ export default function PlainTextForm({ activeField, setActiveField }: PlainText
 				handleChange={handleChange}
 			/>
 			{/* Radio input for single or multiple line */}
-			<StandardRadioGroup className="mt-5" title="Text Field Type" name="singleName">
-				<StandardRadioGroup.Option value="singleLine" defaultChecked>
+			<StandardRadioGroup className="mt-5" title="Text Field Type" name="singleLine">
+				<StandardRadioGroup.Option value="singleLine" onChange={handleRadioChange} defaultChecked>
 					Single Line - {<span className="text-gray-400">For short text</span>}
 				</StandardRadioGroup.Option>
-				<StandardRadioGroup.Option value="multipleLine">
+				<StandardRadioGroup.Option value="multipleLine" onChange={handleRadioChange}>
 					Multiple Line - {<span className="text-gray-400">For long text</span>}
 				</StandardRadioGroup.Option>
 			</StandardRadioGroup>
@@ -80,6 +123,9 @@ export default function PlainTextForm({ activeField, setActiveField }: PlainText
 						type="checkbox"
 						id="fieldRequired"
 						name="required"
+						//@ts-ignore
+						ref={requiredRef!}
+						onChange={handleRequiredChange}
 					/>
 					<label htmlFor="fieldRequired">This field is required</label>
 				</label>
@@ -89,14 +135,14 @@ export default function PlainTextForm({ activeField, setActiveField }: PlainText
 				<button
 					type="button"
 					className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-					onClick={() => {}}
+					onClick={handleCancel}
 				>
 					Cancel
 				</button>
 				<button
 					type="button"
 					className="ml-3 inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md shadow-sm text-white bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-					onClick={() => {}}
+					onClick={submitNewField}
 				>
 					Save Field
 				</button>

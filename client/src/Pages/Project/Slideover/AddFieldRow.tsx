@@ -13,6 +13,7 @@ interface AddFieldRowProps {
 	activeField: CollectionDataFields | null;
 	setActiveField: React.Dispatch<React.SetStateAction<CollectionDataFields | null>>;
 	submitField: (tempId: string) => void;
+	submitNewField: () => void;
 }
 
 interface FieldButton {
@@ -25,6 +26,7 @@ export default function AddFieldRow({
 	activeField,
 	setActiveField,
 	submitField,
+	submitNewField,
 }: AddFieldRowProps) {
 	const [active, setActive] = useState(false);
 	const [fieldSelected, setFieldSelected] = useState<CollectionFieldType | undefined>(undefined);
@@ -113,7 +115,13 @@ export default function AddFieldRow({
 						))}
 					</div>
 				) : (
-					<PlainTextForm activeField={activeField} setActiveField={setActiveField} />
+					<PlainTextForm
+						activeField={activeField}
+						setActiveField={setActiveField}
+						setActive={setActive}
+						setFieldSelected={setFieldSelected}
+						submitNewField={submitNewField}
+					/>
 				))}
 		</div>
 	);

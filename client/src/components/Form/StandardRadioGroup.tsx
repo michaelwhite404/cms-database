@@ -15,7 +15,6 @@ export default function StandardRadioGroup({
 	children,
 }: StandardRadioGroupProps): JSX.Element {
 	const newChildren = React.Children.map(children, (child) => {
-		// checking isValidElement is the safe way and avoids a typescript error too
 		if (React.isValidElement(child)) {
 			return React.cloneElement(child, { name });
 		}
@@ -36,6 +35,7 @@ interface StandardRadioGroupOptionProps {
 	// id?: string;
 	defaultChecked?: boolean;
 	children: React.ReactNode;
+	onChange: () => void;
 }
 
 StandardRadioGroup.Option = ({
@@ -43,6 +43,7 @@ StandardRadioGroup.Option = ({
 	value,
 	defaultChecked,
 	children,
+	onChange,
 }: StandardRadioGroupOptionProps) => {
 	return (
 		<div className="relative flex items-start" style={{ minHeight: 20 }}>
@@ -55,6 +56,7 @@ StandardRadioGroup.Option = ({
 						className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300"
 						defaultChecked={defaultChecked}
 						value={value}
+						onChange={onChange}
 					/>
 				</div>
 				<div className="pl-7 text-sm">

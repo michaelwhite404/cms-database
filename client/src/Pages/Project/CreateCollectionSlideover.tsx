@@ -38,6 +38,13 @@ export default function CreateCollectionSlideover({
 		setActiveField(null);
 	};
 
+	const submitNewField = () => {
+		const copiedFields = [...newCollectionData.fields];
+		copiedFields.push(activeField!);
+		setNewCollectionData({ ...newCollectionData, fields: copiedFields });
+		setActiveField(null);
+	};
+
 	const handleSubmit = async (e: React.FormEvent<HTMLFormElement> & React.KeyboardEvent) => {
 		e.preventDefault();
 		try {
@@ -141,6 +148,7 @@ export default function CreateCollectionSlideover({
 									activeField={activeField}
 									setActiveField={setActiveField}
 									submitField={submitField}
+									submitNewField={submitNewField}
 								/>
 							</div>
 						</Pane.Item>
