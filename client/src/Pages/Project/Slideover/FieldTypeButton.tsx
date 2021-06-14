@@ -7,29 +7,29 @@ interface FieldTypeButtonProps {
 	name: string;
 	type: CollectionFieldType;
 	Icon: (props: React.ComponentProps<"svg">) => JSX.Element;
-	setFieldSelected: React.Dispatch<React.SetStateAction<CollectionFieldType | undefined>>;
+	activeField: CollectionDataFields | null;
 	setActiveField: React.Dispatch<React.SetStateAction<CollectionDataFields | null>>;
 }
 
-const inititalFieldTypeState: any = {};
-inititalFieldTypeState.PlainText = {
-	tempId: uuid(),
-	name: "",
-	type: "PlainText",
-	helpText: "",
-	required: false,
-	validations: { singleLine: true, minLength: "", maxLength: "" },
-};
+// const inititalFieldTypeState: any = {};
+// inititalFieldTypeState.PlainText = {
+// 	tempId: uuid(),
+// 	name: "",
+// 	type: "PlainText",
+// 	helpText: "",
+// 	required: false,
+// 	validations: { singleLine: true, minLength: "", maxLength: "" },
+// };
 
 export default function FieldTypeButton({
 	name,
 	type,
 	Icon,
-	setFieldSelected,
+	activeField,
 	setActiveField,
 }: FieldTypeButtonProps) {
 	const handleClick = () => {
-		setActiveField(inititalFieldTypeState.PlainText);
+		setActiveField({ ...activeField!, type });
 	};
 
 	return (

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import { CollectionDataFields } from "../../../../../src/interfaces/collectionDataInterfaces";
 import PlainTextIcon from "../../../components/Icons/PlainTextIcon";
 import fieldTypeToText from "../../../utils/fieldTypeToText";
@@ -6,6 +6,7 @@ import StandardInput from "./StandardInput";
 
 interface CollectionFieldRowProps {
 	field: CollectionDataFields;
+	active: boolean;
 	activeField: CollectionDataFields | null;
 	setActiveField: React.Dispatch<React.SetStateAction<CollectionDataFields | null>>;
 	submitField: (tempId: string) => void;
@@ -13,18 +14,18 @@ interface CollectionFieldRowProps {
 
 export default function CollectionFieldRow({
 	field,
+	active,
 	activeField,
 	setActiveField,
 	submitField,
 }: CollectionFieldRowProps) {
-	const [active, setActive] = useState(false);
 	const myRef = useRef<HTMLDivElement>();
-	const { tempId, name, type, required } = field;
+	const { name, type, required } = field;
 
 	const handleSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
 		e.preventDefault();
 		submitField(field.tempId);
-		setActive(false);
+		setActiveField(null);
 	};
 
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -33,19 +34,13 @@ export default function CollectionFieldRow({
 
 	const handleClick = () => {
 		if (!active) {
-			setActive(true);
 			setActiveField(field);
 		}
 	};
 
 	const handleCancel = () => {
-		setActive(false);
 		setActiveField(null);
 	};
-
-	useEffect(() => {
-		setActive(!!activeField && activeField.tempId === tempId);
-	}, [activeField, tempId]);
 
 	useEffect(() => {
 		active && myRef.current!.scrollIntoView({ behavior: "smooth" });

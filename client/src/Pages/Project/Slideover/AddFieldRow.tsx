@@ -11,6 +11,8 @@ import { CollectionFieldType } from "../../../../../src/interfaces/collectionInt
 interface AddFieldRowProps {
 	// field: CollectionDataFields;
 	activeField: CollectionDataFields | null;
+	active: boolean;
+	field: Omit<CollectionDataFields, "type"> & { type?: CollectionFieldType };
 	setActiveField: React.Dispatch<React.SetStateAction<CollectionDataFields | null>>;
 	submitField: (tempId: string) => void;
 	submitNewField: () => void;
@@ -24,17 +26,19 @@ interface FieldButton {
 
 export default function AddFieldRow({
 	activeField,
+	active,
+	field,
 	setActiveField,
 	submitField,
 	submitNewField,
 }: AddFieldRowProps) {
-	const [active, setActive] = useState(false);
 	const [fieldSelected, setFieldSelected] = useState<CollectionFieldType | undefined>(undefined);
 	const myRef = useRef<HTMLDivElement>();
 
 	const handleClick = () => {
 		if (!active) {
-			setActive(true);
+			// @ts-ignore
+			setActiveField(field);
 		}
 	};
 
@@ -86,7 +90,7 @@ export default function AddFieldRow({
 							<span className="mr-3">Select Field Type</span>
 							<button
 								className="flex text-gray-400 ml-auto focus:outline-none hover:text-gray-500"
-								onClick={() => setActive(false)}
+								onClick={() => setActiveField(null)}
 							>
 								<XIcon className="mr-1.5 " width={16} />
 								Cancel
@@ -101,15 +105,15 @@ export default function AddFieldRow({
 					))}
 			</div>
 			{active &&
-				(!fieldSelected ? (
+				(!activeField?.type ? (
 					<div className="grid grid-cols-6 gap-4 mt-5 mb-2.5">
 						{fieldButtons.map((field) => (
 							<FieldTypeButton
+								activeField={activeField}
 								key={field.type}
 								name={field.name}
 								type={field.type}
 								Icon={field.icon}
-								setFieldSelected={setFieldSelected}
 								setActiveField={setActiveField}
 							/>
 						))}
@@ -118,7 +122,6 @@ export default function AddFieldRow({
 					<PlainTextForm
 						activeField={activeField}
 						setActiveField={setActiveField}
-						setActive={setActive}
 						setFieldSelected={setFieldSelected}
 						submitNewField={submitNewField}
 					/>

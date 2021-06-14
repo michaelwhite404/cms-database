@@ -8,7 +8,6 @@ import StandardInput from "../Slideover/StandardInput";
 interface PlainTextFormProps {
 	activeField: CollectionDataFields | null;
 	setActiveField: React.Dispatch<React.SetStateAction<CollectionDataFields | null>>;
-	setActive: React.Dispatch<React.SetStateAction<boolean>>;
 	setFieldSelected: React.Dispatch<React.SetStateAction<CollectionFieldType | undefined>>;
 	submitNewField: () => void;
 }
@@ -16,7 +15,6 @@ interface PlainTextFormProps {
 export default function PlainTextForm({
 	activeField,
 	setActiveField,
-	setActive,
 	setFieldSelected,
 	submitNewField,
 }: PlainTextFormProps) {
@@ -51,7 +49,6 @@ export default function PlainTextForm({
 	};
 
 	const handleCancel = () => {
-		setActive(false);
 		setFieldSelected(undefined);
 		setActiveField(null);
 	};

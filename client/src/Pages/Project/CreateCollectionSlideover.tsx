@@ -1,6 +1,7 @@
 import pluralize from "pluralize";
 import React, { useState } from "react";
 import slugify from "slugify";
+import { v4 as uuid } from "uuid";
 import CollectionData, {
 	CollectionDataFields,
 } from "../../../../src/interfaces/collectionDataInterfaces";
@@ -26,6 +27,14 @@ export default function CreateCollectionSlideover({
 }: CreateCollectionSlideoverProps) {
 	const [newCollectionData, setNewCollectionData] = useState<CollectionData>(defaultCollectionData);
 	const [activeField, setActiveField] = useState<CollectionDataFields | null>(null);
+	const [addField, setAddField] = useState({
+		tempId: uuid(),
+		name: "",
+		type: undefined,
+		helpText: "",
+		required: false,
+		validations: { singleLine: true, minLength: undefined, maxLength: undefined },
+	});
 
 	const basicInfoFields = newCollectionData.fields.slice(0, 2);
 	const customFields = newCollectionData.fields.slice(2);
@@ -125,6 +134,7 @@ export default function CreateCollectionSlideover({
 									<CollectionFieldRow
 										key={field.tempId}
 										field={field}
+										active={field.tempId === activeField?.tempId}
 										activeField={activeField}
 										setActiveField={setActiveField}
 										submitField={submitField}
@@ -139,12 +149,15 @@ export default function CreateCollectionSlideover({
 									<CollectionFieldRow
 										key={field.tempId}
 										field={field}
+										active={field.tempId === activeField?.tempId}
 										activeField={activeField}
 										setActiveField={setActiveField}
 										submitField={submitField}
 									/>
 								))}
 								<AddFieldRow
+									field={addField}
+									active={addField.tempId === activeField?.tempId}
 									activeField={activeField}
 									setActiveField={setActiveField}
 									submitField={submitField}
