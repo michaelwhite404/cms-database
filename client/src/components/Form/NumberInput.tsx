@@ -9,6 +9,9 @@ interface NumberInputProps {
 	placeholder?: string;
 	required?: boolean;
 	handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+	arrows?: boolean;
+	increment: () => void;
+	decrement: () => void;
 }
 
 const buttonTrackStyles: React.CSSProperties = {
@@ -27,6 +30,9 @@ export default function NumberInput({
 	name,
 	required,
 	handleChange,
+	arrows,
+	increment,
+	decrement,
 }: NumberInputProps) {
 	return (
 		<div>
@@ -47,13 +53,21 @@ export default function NumberInput({
 					onBlur={() => {}}
 				/>
 				<div
-					className="absolute grid grid-rows-2 grid-cols-1 right-0.5 top-0.5 bottom-0.5 h-full w-6 border-l"
+					className={`${
+						!arrows && "hidden"
+					} absolute grid grid-rows-2 grid-cols-1 right-0.5 top-0.5 bottom-0.5 h-full w-6 border-l`}
 					style={buttonTrackStyles}
 				>
-					<div className="flex items-center justify-center hover:bg-gray-200 cursor-pointer">
+					<div
+						className="flex items-center justify-center hover:bg-gray-200 cursor-pointer"
+						onClick={increment}
+					>
 						<AiFillCaretUp color="#6b6b6b" />
 					</div>
-					<div className="flex items-center justify-center border-t border-gray-300 hover:bg-gray-200 cursor-pointer">
+					<div
+						className="flex items-center justify-center border-t border-gray-300 hover:bg-gray-200 cursor-pointer"
+						onClick={decrement}
+					>
 						<AiFillCaretDown color="#6b6b6b" />
 					</div>
 				</div>

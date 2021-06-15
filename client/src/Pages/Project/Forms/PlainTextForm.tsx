@@ -53,15 +53,22 @@ export default function PlainTextForm({
 		setActiveField(null);
 	};
 
-	// const handleIncrement = (e: React.MouseEvent<HTMLInputElement>) => {
-	// 	setActiveField({
-	// 		...activeField!,
-	// 		validations: {
-	// 			...activeField?.validations,
-	// 			[e.target!.name]: +e.target!.value + 1,
-	// 		},
-	// 	});
-	// };
+	const handleNumberChange = (
+		operator: "increment" | "decrement",
+		name: string,
+		currentValue: string
+	) => {
+		const choice = { increment: 1, decrement: -1 };
+		let newValue = operator === "increment" ? 1 : 0;
+		if (!isNaN(Number(currentValue))) newValue = Number(currentValue) + choice[operator];
+		setActiveField({
+			...activeField!,
+			validations: {
+				...activeField?.validations,
+				[name]: Number(newValue),
+			},
+		});
+	};
 
 	return (
 		<div className="mt-4">
@@ -102,6 +109,13 @@ export default function PlainTextForm({
 					value={activeField!.validations!.minLength}
 					placeholder="E.g. 25"
 					handleChange={handleValidationChange}
+					arrows
+					increment={() =>
+						handleNumberChange("increment", "minLength", `${activeField!.validations!.minLength}`)
+					}
+					decrement={() =>
+						handleNumberChange("decrement", "minLength", `${activeField!.validations!.minLength}`)
+					}
 				/>
 				<NumberInput
 					title="Maximum Character Count (with spaces)"
@@ -110,6 +124,13 @@ export default function PlainTextForm({
 					value={activeField!.validations!.maxLength}
 					placeholder="E.g. 140"
 					handleChange={handleValidationChange}
+					arrows
+					increment={() =>
+						handleNumberChange("increment", "maxLength", `${activeField!.validations!.maxLength}`)
+					}
+					decrement={() =>
+						handleNumberChange("decrement", "maxLength", `${activeField!.validations!.maxLength}`)
+					}
 				/>
 			</div>
 			{/* Required Check */}

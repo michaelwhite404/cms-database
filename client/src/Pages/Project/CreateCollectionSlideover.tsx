@@ -52,6 +52,7 @@ export default function CreateCollectionSlideover({
 		copiedFields.push(activeField!);
 		setNewCollectionData({ ...newCollectionData, fields: copiedFields });
 		setActiveField(null);
+		setAddField({ ...addField, tempId: uuid() });
 	};
 
 	const handleSubmit = async (e: React.FormEvent<HTMLFormElement> & React.KeyboardEvent) => {

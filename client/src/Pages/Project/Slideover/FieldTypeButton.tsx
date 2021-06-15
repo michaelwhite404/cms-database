@@ -1,5 +1,4 @@
 import React from "react";
-import { v4 as uuid } from "uuid";
 import { CollectionDataFields } from "../../../../../src/interfaces/collectionDataInterfaces";
 import { CollectionFieldType } from "../../../../../src/interfaces/collectionInterfaces";
 
