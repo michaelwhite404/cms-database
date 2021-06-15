@@ -12,10 +12,12 @@ interface AddFieldRowProps {
 	// field: CollectionDataFields;
 	activeField: CollectionDataFields | null;
 	active: boolean;
-	field: Omit<CollectionDataFields, "type"> & { type?: CollectionFieldType };
+	// field: Omit<CollectionDataFields, "type"> & { type?: CollectionFieldType };
+	field: { tempId: string };
 	setActiveField: React.Dispatch<React.SetStateAction<CollectionDataFields | null>>;
 	submitField: (tempId: string) => void;
 	submitNewField: () => void;
+	changeValidationField: (name: string, value: any) => void;
 }
 
 interface FieldButton {
@@ -31,6 +33,7 @@ export default function AddFieldRow({
 	setActiveField,
 	submitField,
 	submitNewField,
+	changeValidationField,
 }: AddFieldRowProps) {
 	const [fieldSelected, setFieldSelected] = useState<CollectionFieldType | undefined>(undefined);
 	const myRef = useRef<HTMLDivElement>();
@@ -124,6 +127,7 @@ export default function AddFieldRow({
 						setActiveField={setActiveField}
 						setFieldSelected={setFieldSelected}
 						submitNewField={submitNewField}
+						changeValidationField={changeValidationField}
 					/>
 				))}
 		</div>

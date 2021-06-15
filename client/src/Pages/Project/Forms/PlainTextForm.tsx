@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { CollectionDataFields } from "../../../../../src/interfaces/collectionDataInterfaces";
 import { CollectionFieldType } from "../../../../../src/interfaces/collectionInterfaces";
 import NumberInput from "../../../components/Form/NumberInput";
@@ -10,6 +10,7 @@ interface PlainTextFormProps {
 	setActiveField: React.Dispatch<React.SetStateAction<CollectionDataFields | null>>;
 	setFieldSelected: React.Dispatch<React.SetStateAction<CollectionFieldType | undefined>>;
 	submitNewField: () => void;
+	changeValidationField?: (name: string, value: any) => void;
 }
 
 export default function PlainTextForm({
@@ -17,21 +18,32 @@ export default function PlainTextForm({
 	setActiveField,
 	setFieldSelected,
 	submitNewField,
+	changeValidationField,
 }: PlainTextFormProps) {
+	const [errors, setErrors] = useState({
+		label: "",
+		minLength: "",
+		maxLength: "",
+	});
 	const requiredRef = useRef<HTMLInputElement>();
 
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const { name, value } = e.target;
+		name === "name" && value.length === 0
+			? setErrors({ ...errors, label: "This field is required" })
+			: setErrors({ ...errors, label: "" });
 		setActiveField({ ...activeField!, [e.target!.name]: e.target!.value });
 	};
 	const handleValidationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		setActiveField({
-			...activeField!,
-			validations: {
-				...activeField?.validations,
-				[e.target!.name]: e.target!.value,
-			},
-		});
+		changeValidationField && changeValidationField(e.target.name, e.target.value);
 	};
+
+	const handleNumberValidationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		let value: any = e.target.value;
+		if (value !== "" && !isNaN(Number(e.target.value))) value = Number(value);
+		changeValidationField && changeValidationField(e.target.name, value);
+	};
+
 	const handleRadioChange = () => {
 		const singleLine =
 			document.querySelector<HTMLInputElement>("input[name='singleLine']:checked")!.value ===
@@ -79,6 +91,7 @@ export default function PlainTextForm({
 				name="name"
 				value={activeField!.name || ""}
 				handleChange={handleChange}
+				errorMessage={errors.label}
 				required
 			/>
 			{/* Text input for field helpText */}
@@ -108,7 +121,7 @@ export default function PlainTextForm({
 					name="minLength"
 					value={activeField!.validations!.minLength}
 					placeholder="E.g. 25"
-					handleChange={handleValidationChange}
+					handleChange={handleNumberValidationChange}
 					arrows
 					increment={() =>
 						handleNumberChange("increment", "minLength", `${activeField!.validations!.minLength}`)
@@ -123,7 +136,7 @@ export default function PlainTextForm({
 					name="maxLength"
 					value={activeField!.validations!.maxLength}
 					placeholder="E.g. 140"
-					handleChange={handleValidationChange}
+					handleChange={handleNumberValidationChange}
 					arrows
 					increment={() =>
 						handleNumberChange("increment", "maxLength", `${activeField!.validations!.maxLength}`)

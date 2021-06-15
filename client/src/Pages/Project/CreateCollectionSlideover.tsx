@@ -33,7 +33,7 @@ export default function CreateCollectionSlideover({
 		type: undefined,
 		helpText: "",
 		required: false,
-		validations: { singleLine: true, minLength: undefined, maxLength: undefined },
+		validations: { singleLine: true, minLength: "", maxLength: "" },
 	});
 
 	const basicInfoFields = newCollectionData.fields.slice(0, 2);
@@ -80,6 +80,21 @@ export default function CreateCollectionSlideover({
 	};
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement & HTMLSpanElement>) => {
 		setNewCollectionData({ ...newCollectionData, [e.target!.name]: e.target!.value });
+	};
+
+	/**
+	 * Manually change the validation field
+	 * @param name The name of the validation field
+	 * @param value The new value of the validation
+	 */
+	const changeValidationField = (name: string, value: any) => {
+		setActiveField({
+			...activeField!,
+			validations: {
+				...activeField?.validations,
+				[name]: value,
+			},
+		});
 	};
 
 	return (
@@ -163,6 +178,7 @@ export default function CreateCollectionSlideover({
 									setActiveField={setActiveField}
 									submitField={submitField}
 									submitNewField={submitNewField}
+									changeValidationField={changeValidationField}
 								/>
 							</div>
 						</Pane.Item>
