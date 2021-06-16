@@ -16,6 +16,7 @@ import axios from "axios";
 import DatabaseModel from "../../../../src/interfaces/databaseInterface";
 import AddFieldRow from "./Slideover/AddFieldRow";
 import BasicFieldRow from "./Slideover/BasicFieldRow";
+import { CollectionValidations } from "../../../../src/interfaces/collectionInterfaces";
 
 interface CreateCollectionSlideoverProps {
 	database: DatabaseModel;
@@ -56,12 +57,30 @@ export default function CreateCollectionSlideover({
 		setAddField({ ...addField, tempId: uuid() });
 	};
 
+	/**
+	 * Remove any validations that have empty string
+	 * @param fields - Array of collection fields
+	 * @returns Collection fields with removed validations
+	 */
+	const removeEmptyValidations = (fields: CollectionDataFields[]) => {
+		return fields.map((field) => {
+			const validations: CollectionValidations<any> = {};
+			for (const val in field.validations!) {
+				// @ts-ignore
+				validations[val] = field.validations[val] === "" ? undefined : field.validations[val];
+			}
+			field.validations = validations;
+			return field;
+		});
+	};
+
 	const handleSubmit = async (e: React.FormEvent<HTMLFormElement> & React.KeyboardEvent) => {
 		e.preventDefault();
 		try {
 			const res = await axios.post("/api/v1/collections", {
 				database: database._id,
 				...newCollectionData,
+				fields: removeEmptyValidations(newCollectionData.fields),
 			});
 			console.log(res.data);
 		} catch (err) {
