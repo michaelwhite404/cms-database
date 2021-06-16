@@ -33,7 +33,7 @@ export default function PlainTextForm({
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [activeField?.validations?.minLength, activeField?.validations?.maxLength]);
 
-	const requiredRef = useRef<HTMLInputElement>();
+	const requiredRef = useRef<HTMLInputElement>(null);
 
 	const submittable =
 		!!!errors.minLength.length && !!!errors.maxLength.length && !!activeField!.name;
@@ -56,12 +56,15 @@ export default function PlainTextForm({
 	};
 
 	const handleNumberValidationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		let { value, name }: { value: any; name: string } = e.target;
+		let { name, value }: { value: any; name: string } = e.target;
 		if (value !== "" && !isNaN(Number(value))) value = Number(value);
-		else setErrors({ ...errors, [name]: "This field must be a number" });
-		changeValidationField && changeValidationField!(e.target.name, value);
+		changeValidationField?.(name, value);
 	};
 
+	/**
+	 * Validates if the minLength property is valid
+	 * @returns {string} The error message if minLength not valid. Empty string if valid.
+	 */
 	const validateMinLength = (): string => {
 		const { minLength, maxLength } = activeField?.validations!;
 		if (!minLength) return "";
@@ -72,6 +75,10 @@ export default function PlainTextForm({
 		return "";
 	};
 
+	/**
+	 * Validates if the maxLength property is valid
+	 * @returns {string} The error message if maxLength not valid. Empty string if valid.
+	 */
 	const validateMaxLength = (): string => {
 		const { minLength, maxLength } = activeField?.validations!;
 		if (typeof maxLength === "number" && maxLength < 1) return "Enter a number greater than 1";
@@ -86,7 +93,7 @@ export default function PlainTextForm({
 		const singleLine =
 			document.querySelector<HTMLInputElement>("input[name='singleLine']:checked")!.value ===
 			"singleLine";
-		changeValidationField && changeValidationField!("singleLine", singleLine);
+		changeValidationField?.("singleLine", singleLine);
 	};
 	const handleRequiredChange = () => {
 		setActiveField({ ...activeField!, required: requiredRef.current?.checked });
@@ -107,7 +114,7 @@ export default function PlainTextForm({
 		if (!isNaN(Number(currentValue))) {
 			newValue = Number(currentValue) + choice[operator];
 		}
-		changeValidationField && changeValidationField!(name, Number(newValue));
+		changeValidationField?.(name, Number(newValue));
 	};
 
 	const handleSubmit = () => {
@@ -188,7 +195,6 @@ export default function PlainTextForm({
 						type="checkbox"
 						id="fieldRequired"
 						name="required"
-						//@ts-ignore
 						ref={requiredRef!}
 						onChange={handleRequiredChange}
 					/>

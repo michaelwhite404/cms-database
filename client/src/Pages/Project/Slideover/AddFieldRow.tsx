@@ -7,6 +7,7 @@ import PlainTextIcon from "../../../components/Icons/PlainTextIcon";
 import PlainTextForm from "../Forms/PlainTextForm";
 import { CollectionDataFields } from "../../../../../src/interfaces/collectionDataInterfaces";
 import { CollectionFieldType } from "../../../../../src/interfaces/collectionInterfaces";
+import BasicForm from "../Forms/BasicForm";
 
 interface AddFieldRowProps {
 	// field: CollectionDataFields;
@@ -122,7 +123,7 @@ export default function AddFieldRow({
 						))}
 					</div>
 				) : (
-					<PlainTextForm
+					<BasicForm
 						activeField={activeField}
 						setActiveField={setActiveField}
 						setFieldSelected={setFieldSelected}
