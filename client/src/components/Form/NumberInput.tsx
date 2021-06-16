@@ -1,6 +1,7 @@
 import React from "react";
 import { FaAsterisk } from "react-icons/fa";
 import { AiFillCaretDown, AiFillCaretUp } from "react-icons/ai";
+import ErrorTooltip from "../ErrorTooltip";
 interface NumberInputProps {
 	title: string;
 	id: string;
@@ -8,6 +9,7 @@ interface NumberInputProps {
 	value?: string | number;
 	placeholder?: string;
 	required?: boolean;
+	errorMessage?: string;
 	handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 	arrows?: boolean;
 	increment: () => void;
@@ -29,6 +31,7 @@ export default function NumberInput({
 	value,
 	name,
 	required,
+	errorMessage,
 	handleChange,
 	arrows,
 	increment,
@@ -45,13 +48,18 @@ export default function NumberInput({
 					type="text"
 					name={name}
 					id={id}
-					className="block w-full shadow-sm pr-10 sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md"
+					className={`${
+						errorMessage
+							? "border-red-500 focus:ring-red-500 focus:border-red-500"
+							: "focus:ring-indigo-500 focus:border-indigo-500"
+					} block w-full shadow-sm pr-10 sm:text-sm border-gray-300 rounded-md`}
 					autoComplete="off"
 					placeholder={placeholder}
 					value={value}
 					onChange={handleChange}
 					onBlur={() => {}}
 				/>
+				{errorMessage && <ErrorTooltip>{errorMessage}</ErrorTooltip>}
 				<div
 					className={`${
 						!arrows && "hidden"

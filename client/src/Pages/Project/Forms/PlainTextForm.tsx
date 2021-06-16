@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { CollectionDataFields } from "../../../../../src/interfaces/collectionDataInterfaces";
 import { CollectionFieldType } from "../../../../../src/interfaces/collectionInterfaces";
 import NumberInput from "../../../components/Form/NumberInput";
@@ -21,40 +21,72 @@ export default function PlainTextForm({
 	changeValidationField,
 }: PlainTextFormProps) {
 	const [errors, setErrors] = useState({
-		label: "",
+		name: "",
 		minLength: "",
 		maxLength: "",
 	});
+
+	useEffect(() => {
+		const minErr = validateMinLength();
+		const maxErr = validateMaxLength();
+		setErrors({ ...errors, minLength: minErr, maxLength: maxErr });
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [activeField?.validations?.minLength, activeField?.validations?.maxLength]);
+
 	const requiredRef = useRef<HTMLInputElement>();
+
+	const submittable =
+		!!!errors.minLength.length && !!!errors.maxLength.length && !!activeField!.name;
+
+	/**
+	 * Validates the necessary PlainText Fields
+	 * @returns If the field can be submitted
+	 */
+	const validate = () => {
+		if (!activeField!.name) setErrors({ ...errors, name: "This field is required" });
+		return submittable;
+	};
 
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const { name, value } = e.target;
 		name === "name" && value.length === 0
-			? setErrors({ ...errors, label: "This field is required" })
-			: setErrors({ ...errors, label: "" });
+			? setErrors({ ...errors, name: "This field is required" })
+			: setErrors({ ...errors, name: "" });
 		setActiveField({ ...activeField!, [e.target!.name]: e.target!.value });
-	};
-	const handleValidationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		changeValidationField && changeValidationField(e.target.name, e.target.value);
 	};
 
 	const handleNumberValidationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		let value: any = e.target.value;
-		if (value !== "" && !isNaN(Number(e.target.value))) value = Number(value);
-		changeValidationField && changeValidationField(e.target.name, value);
+		let { value, name }: { value: any; name: string } = e.target;
+		if (value !== "" && !isNaN(Number(value))) value = Number(value);
+		else setErrors({ ...errors, [name]: "This field must be a number" });
+		changeValidationField && changeValidationField!(e.target.name, value);
+	};
+
+	const validateMinLength = (): string => {
+		const { minLength, maxLength } = activeField?.validations!;
+		if (!minLength) return "";
+		if (typeof minLength === "string") return "This field must be a number";
+		if (minLength < 0) return "Enter a number greater than 0";
+		if (maxLength && maxLength > 0 && !isNaN(Number(maxLength)) && minLength > maxLength)
+			return `Enter a number less than ${maxLength}`;
+		return "";
+	};
+
+	const validateMaxLength = (): string => {
+		const { minLength, maxLength } = activeField?.validations!;
+		if (typeof maxLength === "number" && maxLength < 1) return "Enter a number greater than 1";
+		if (!maxLength) return "";
+		if (typeof maxLength === "string") return "This field must be a number";
+		if (minLength && minLength > 1 && !isNaN(Number(minLength)) && minLength > maxLength)
+			return `Enter a number greater than ${minLength}`;
+		return "";
 	};
 
 	const handleRadioChange = () => {
 		const singleLine =
 			document.querySelector<HTMLInputElement>("input[name='singleLine']:checked")!.value ===
 			"singleLine";
-		setActiveField({
-			...activeField!,
-			validations: {
-				...activeField?.validations,
-				singleLine,
-			},
-		});
+		changeValidationField && changeValidationField!("singleLine", singleLine);
 	};
 	const handleRequiredChange = () => {
 		setActiveField({ ...activeField!, required: requiredRef.current?.checked });
@@ -65,21 +97,21 @@ export default function PlainTextForm({
 		setActiveField(null);
 	};
 
-	const handleNumberChange = (
+	const handleArrowChange = (
 		operator: "increment" | "decrement",
 		name: string,
 		currentValue: string
 	) => {
 		const choice = { increment: 1, decrement: -1 };
 		let newValue = operator === "increment" ? 1 : 0;
-		if (!isNaN(Number(currentValue))) newValue = Number(currentValue) + choice[operator];
-		setActiveField({
-			...activeField!,
-			validations: {
-				...activeField?.validations,
-				[name]: Number(newValue),
-			},
-		});
+		if (!isNaN(Number(currentValue))) {
+			newValue = Number(currentValue) + choice[operator];
+		}
+		changeValidationField && changeValidationField!(name, Number(newValue));
+	};
+
+	const handleSubmit = () => {
+		if (validate()) submitNewField();
 	};
 
 	return (
@@ -91,7 +123,7 @@ export default function PlainTextForm({
 				name="name"
 				value={activeField!.name || ""}
 				handleChange={handleChange}
-				errorMessage={errors.label}
+				errorMessage={errors.name}
 				required
 			/>
 			{/* Text input for field helpText */}
@@ -124,11 +156,12 @@ export default function PlainTextForm({
 					handleChange={handleNumberValidationChange}
 					arrows
 					increment={() =>
-						handleNumberChange("increment", "minLength", `${activeField!.validations!.minLength}`)
+						handleArrowChange("increment", "minLength", `${activeField!.validations!.minLength}`)
 					}
 					decrement={() =>
-						handleNumberChange("decrement", "minLength", `${activeField!.validations!.minLength}`)
+						handleArrowChange("decrement", "minLength", `${activeField!.validations!.minLength}`)
 					}
+					errorMessage={errors.minLength}
 				/>
 				<NumberInput
 					title="Maximum Character Count (with spaces)"
@@ -139,11 +172,12 @@ export default function PlainTextForm({
 					handleChange={handleNumberValidationChange}
 					arrows
 					increment={() =>
-						handleNumberChange("increment", "maxLength", `${activeField!.validations!.maxLength}`)
+						handleArrowChange("increment", "maxLength", `${activeField!.validations!.maxLength}`)
 					}
 					decrement={() =>
-						handleNumberChange("decrement", "maxLength", `${activeField!.validations!.maxLength}`)
+						handleArrowChange("decrement", "maxLength", `${activeField!.validations!.maxLength}`)
 					}
+					errorMessage={errors.maxLength}
 				/>
 			</div>
 			{/* Required Check */}
@@ -172,8 +206,12 @@ export default function PlainTextForm({
 				</button>
 				<button
 					type="button"
-					className="ml-3 inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md shadow-sm text-white bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-					onClick={submitNewField}
+					className={`${
+						submittable
+							? "bg-blue-500 hover:bg-blue-600 focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+							: "bg-blue-400 cursor-not-allowed"
+					} ml-3 inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md shadow-sm text-white focus:outline-none`}
+					onClick={handleSubmit}
 				>
 					Save Field
 				</button>

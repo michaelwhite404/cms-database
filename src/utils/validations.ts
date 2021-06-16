@@ -360,10 +360,10 @@ export const testCollectionValidations = async (
 				const maxLengthTest = typeCheck(maxLength, "maxLength", "number", name);
 				if (!maxLengthTest[0]) return Promise.resolve(maxLengthTest);
 				//If maxLength exists but is less than zero
-				if (maxLengthTest[1] === "passed" && lessThanZero(maxLength!))
+				if (maxLengthTest[1] === "passed" && maxLength! < 1)
 					return Promise.resolve([
 						false,
-						`The validation 'maxLength' cannot be less than zero for the field '${name}'`,
+						`The validation 'maxLength' cannot be less than one for the field '${name}'`,
 					]);
 				// Min Length must be a number
 				const minLengthTest = typeCheck(minLength, "minLength", "number", name);

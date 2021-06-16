@@ -1,4 +1,3 @@
-import { ExclamationIcon } from "@heroicons/react/solid";
 import { FaAsterisk } from "react-icons/fa";
 import ErrorTooltip from "../../../components/ErrorTooltip";
 
