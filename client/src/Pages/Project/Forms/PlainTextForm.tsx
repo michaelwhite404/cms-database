@@ -8,7 +8,7 @@ import StandardInput from "../Slideover/StandardInput";
 interface PlainTextFormProps {
 	activeField: CollectionDataFields | null;
 	setActiveField: React.Dispatch<React.SetStateAction<CollectionDataFields | null>>;
-	setFieldSelected: React.Dispatch<React.SetStateAction<CollectionFieldType | undefined>>;
+	setFieldSelected?: React.Dispatch<React.SetStateAction<CollectionFieldType | undefined>>;
 	submitNewField: () => void;
 	changeValidationField?: (name: string, value: any) => void;
 }
@@ -100,7 +100,7 @@ export default function PlainTextForm({
 	};
 
 	const handleCancel = () => {
-		setFieldSelected(undefined);
+		setFieldSelected?.(undefined);
 		setActiveField(null);
 	};
 
@@ -197,6 +197,7 @@ export default function PlainTextForm({
 						name="required"
 						ref={requiredRef!}
 						onChange={handleRequiredChange}
+						checked={activeField?.required}
 					/>
 					<label htmlFor="fieldRequired">This field is required</label>
 				</label>

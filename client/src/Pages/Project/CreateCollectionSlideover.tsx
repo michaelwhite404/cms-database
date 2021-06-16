@@ -15,6 +15,7 @@ import defaultCollectionData from "../../utils/defaultCollectionData";
 import axios from "axios";
 import DatabaseModel from "../../../../src/interfaces/databaseInterface";
 import AddFieldRow from "./Slideover/AddFieldRow";
+import BasicFieldRow from "./Slideover/BasicFieldRow";
 
 interface CreateCollectionSlideoverProps {
 	database: DatabaseModel;
@@ -147,13 +148,14 @@ export default function CreateCollectionSlideover({
 							<div className="mb-3">Basic Info</div>
 							<div className="block w-full shadow-sm border rounded-md overflow-hidden">
 								{basicInfoFields.map((field) => (
-									<CollectionFieldRow
+									<BasicFieldRow
 										key={field.tempId}
 										field={field}
 										active={field.tempId === activeField?.tempId}
 										activeField={activeField}
 										setActiveField={setActiveField}
 										submitField={submitField}
+										changeValidationField={changeValidationField}
 									/>
 								))}
 							</div>
@@ -169,6 +171,7 @@ export default function CreateCollectionSlideover({
 										activeField={activeField}
 										setActiveField={setActiveField}
 										submitField={submitField}
+										changeValidationField={changeValidationField}
 									/>
 								))}
 								<AddFieldRow

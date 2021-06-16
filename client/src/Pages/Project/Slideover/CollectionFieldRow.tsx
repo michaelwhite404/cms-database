@@ -1,8 +1,8 @@
 import React, { useEffect, useRef } from "react";
 import { CollectionDataFields } from "../../../../../src/interfaces/collectionDataInterfaces";
-import PlainTextIcon from "../../../components/Icons/PlainTextIcon";
+import PlainTextIcon from "../../../components/Icons/FieldMiniIcons/PlainTextIcon";
 import fieldTypeToText from "../../../utils/fieldTypeToText";
-import StandardInput from "./StandardInput";
+import fieldTypeToForm from "../../../utils/fieldTypeToForm";
 
 interface CollectionFieldRowProps {
 	field: CollectionDataFields;
@@ -10,6 +10,7 @@ interface CollectionFieldRowProps {
 	activeField: CollectionDataFields | null;
 	setActiveField: React.Dispatch<React.SetStateAction<CollectionDataFields | null>>;
 	submitField: (tempId: string) => void;
+	changeValidationField: (name: string, value: any) => void;
 }
 
 export default function CollectionFieldRow({
@@ -18,19 +19,10 @@ export default function CollectionFieldRow({
 	activeField,
 	setActiveField,
 	submitField,
+	changeValidationField,
 }: CollectionFieldRowProps) {
-	const myRef = useRef<HTMLDivElement>();
+	const myRef = useRef<HTMLDivElement>(null);
 	const { name, type, required } = field;
-
-	const handleSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
-		e.preventDefault();
-		submitField(field.tempId);
-		setActiveField(null);
-	};
-
-	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		setActiveField({ ...activeField!, [e.target!.name]: e.target!.value });
-	};
 
 	const handleClick = () => {
 		if (!active) {
@@ -38,19 +30,17 @@ export default function CollectionFieldRow({
 		}
 	};
 
-	const handleCancel = () => {
-		setActiveField(null);
-	};
-
 	useEffect(() => {
 		active && myRef.current!.scrollIntoView({ behavior: "smooth" });
 	}, [active]);
+
+	//@ts-ignore
+	const Form = fieldTypeToForm[type];
 
 	return (
 		<div
 			className="border-b py-2.5 px-4 text-xs text-gray-700 relative"
 			style={{ userSelect: "none" }}
-			// @ts-ignore
 			ref={myRef}
 			onClick={handleClick}
 		>
@@ -62,37 +52,13 @@ export default function CollectionFieldRow({
 			</div>
 			{active && (
 				<div className="mt-4">
-					<StandardInput
-						title="Label"
-						name="name"
-						value={activeField!.name}
-						handleChange={handleChange}
-						required
+					<Form
+						activeField={activeField}
+						setActiveField={setActiveField}
+						// setFieldSelected={setFieldSelected}
+						// submitNewField={submitNewField}
+						changeValidationField={changeValidationField}
 					/>
-					<StandardInput
-						className="mt-5"
-						title="Help Text"
-						name="helpText"
-						value={activeField!.helpText || ""}
-						helpText="Appears below the label to guide Collaborators, just like this help text"
-						handleChange={handleChange}
-					/>
-					<div className="flex justify-end xs:mt-4 absolute right-3 top-3">
-						<button
-							type="button"
-							className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-							onClick={handleCancel}
-						>
-							Cancel
-						</button>
-						<button
-							type="button"
-							className="ml-3 inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md shadow-sm text-white bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-							onClick={handleSubmit}
-						>
-							Save Field
-						</button>
-					</div>
 				</div>
 			)}
 		</div>

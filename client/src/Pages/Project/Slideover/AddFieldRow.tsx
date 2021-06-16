@@ -3,11 +3,11 @@ import { ArrowCircleDownIcon, PlusIcon, XIcon } from "@heroicons/react/solid";
 import React, { useEffect, useRef, useState } from "react";
 import FieldTypeButton from "./FieldTypeButton";
 import ButtonIcon from "../../../components/Icons/ButtonIcon";
-import PlainTextIcon from "../../../components/Icons/PlainTextIcon";
-import PlainTextForm from "../Forms/PlainTextForm";
+import PlainTextIcon from "../../../components/Icons/FieldMiniIcons/PlainTextIcon";
 import { CollectionDataFields } from "../../../../../src/interfaces/collectionDataInterfaces";
 import { CollectionFieldType } from "../../../../../src/interfaces/collectionInterfaces";
-import BasicForm from "../Forms/BasicForm";
+import fieldTypeToText from "../../../utils/fieldTypeToText";
+import fieldTypeToForm from "../../../utils/fieldTypeToForm";
 
 interface AddFieldRowProps {
 	// field: CollectionDataFields;
@@ -37,7 +37,7 @@ export default function AddFieldRow({
 	changeValidationField,
 }: AddFieldRowProps) {
 	const [fieldSelected, setFieldSelected] = useState<CollectionFieldType | undefined>(undefined);
-	const myRef = useRef<HTMLDivElement>();
+	const myRef = useRef<HTMLDivElement>(null);
 
 	const handleClick = () => {
 		if (!active) {
@@ -72,11 +72,13 @@ export default function AddFieldRow({
 		{ name: "Multi Reference", type: "ItemRefMulti", icon: ButtonIcon.MultiReference },
 	];
 
+	// @ts-ignore
+	const Form = activeField?.type && fieldTypeToForm[activeField.type];
+
 	return (
 		<div
 			className={`py-2.5 px-4 text-xs text-gray-700 relative ${!active && "hover:bg-gray-50"}`}
 			style={{ userSelect: "none" }}
-			// @ts-ignore
 			ref={myRef}
 			onClick={handleClick}
 		>
@@ -104,7 +106,7 @@ export default function AddFieldRow({
 						<>
 							<PlainTextIcon className="mr-3" />
 							<span className="mr-3">New Field</span>
-							<span className="text-gray-400">(Plain Text)</span>
+							<span className="text-gray-400">({fieldTypeToText[activeField!.type]})</span>
 						</>
 					))}
 			</div>
@@ -123,7 +125,7 @@ export default function AddFieldRow({
 						))}
 					</div>
 				) : (
-					<BasicForm
+					<Form
 						activeField={activeField}
 						setActiveField={setActiveField}
 						setFieldSelected={setFieldSelected}
