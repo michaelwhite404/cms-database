@@ -1,23 +1,13 @@
 import React, { useRef } from "react";
-import { CollectionDataFields } from "../../../../../src/interfaces/collectionDataInterfaces";
-import { CollectionFieldType } from "../../../../../src/interfaces/collectionInterfaces";
+import FormProps from "../../../interfaces/FormProps";
 import StandardInput from "../Slideover/StandardInput";
-
-interface BasicFormProps {
-	activeField: CollectionDataFields | null;
-	setActiveField: React.Dispatch<React.SetStateAction<CollectionDataFields | null>>;
-	setFieldSelected: React.Dispatch<React.SetStateAction<CollectionFieldType | undefined>>;
-	submitNewField: () => void;
-	changeValidationField?: (name: string, value: any) => void;
-}
 
 export default function BasicForm({
 	activeField,
 	setActiveField,
-	setFieldSelected,
 	submitNewField,
 	changeValidationField,
-}: BasicFormProps) {
+}: FormProps) {
 	const requiredRef = useRef<HTMLInputElement>(null);
 
 	const handleSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -41,6 +31,7 @@ export default function BasicForm({
 		<div className="mt-4">
 			<StandardInput
 				title="Label"
+				id="fieldName"
 				name="name"
 				value={activeField!.name}
 				handleChange={handleChange}
@@ -49,6 +40,7 @@ export default function BasicForm({
 			<StandardInput
 				className="mt-5"
 				title="Help Text"
+				id="fieldHelpText"
 				name="helpText"
 				value={activeField!.helpText || ""}
 				helpText="Appears below the label to guide Collaborators, just like this help text"

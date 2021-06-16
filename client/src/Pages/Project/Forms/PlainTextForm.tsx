@@ -1,25 +1,15 @@
 import React, { useEffect, useRef, useState } from "react";
-import { CollectionDataFields } from "../../../../../src/interfaces/collectionDataInterfaces";
-import { CollectionFieldType } from "../../../../../src/interfaces/collectionInterfaces";
 import NumberInput from "../../../components/Form/NumberInput";
 import StandardRadioGroup from "../../../components/Form/StandardRadioGroup";
+import FormProps from "../../../interfaces/FormProps";
 import StandardInput from "../Slideover/StandardInput";
-
-interface PlainTextFormProps {
-	activeField: CollectionDataFields | null;
-	setActiveField: React.Dispatch<React.SetStateAction<CollectionDataFields | null>>;
-	setFieldSelected?: React.Dispatch<React.SetStateAction<CollectionFieldType | undefined>>;
-	submitNewField: () => void;
-	changeValidationField?: (name: string, value: any) => void;
-}
 
 export default function PlainTextForm({
 	activeField,
 	setActiveField,
-	setFieldSelected,
 	submitNewField,
 	changeValidationField,
-}: PlainTextFormProps) {
+}: FormProps) {
 	const [errors, setErrors] = useState({
 		name: "",
 		minLength: "",
@@ -100,7 +90,6 @@ export default function PlainTextForm({
 	};
 
 	const handleCancel = () => {
-		setFieldSelected?.(undefined);
 		setActiveField(null);
 	};
 

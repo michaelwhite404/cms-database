@@ -3,6 +3,7 @@ import { CollectionDataFields } from "../../../../../src/interfaces/collectionDa
 import PlainTextIcon from "../../../components/Icons/FieldMiniIcons/PlainTextIcon";
 import fieldTypeToText from "../../../utils/fieldTypeToText";
 import fieldTypeToForm from "../../../utils/fieldTypeToForm";
+import FormProps from "../../../interfaces/FormProps";
 
 interface CollectionFieldRowProps {
 	field: CollectionDataFields;
@@ -34,8 +35,9 @@ export default function CollectionFieldRow({
 		active && myRef.current!.scrollIntoView({ behavior: "smooth" });
 	}, [active]);
 
-	//@ts-ignore
-	const Form = fieldTypeToForm[type];
+	const Form: (props: FormProps) => JSX.Element =
+		// @ts-ignore
+		activeField?.type && fieldTypeToForm[activeField.type];
 
 	return (
 		<div
@@ -55,8 +57,8 @@ export default function CollectionFieldRow({
 					<Form
 						activeField={activeField}
 						setActiveField={setActiveField}
-						// setFieldSelected={setFieldSelected}
-						// submitNewField={submitNewField}
+						// @ts-ignore
+						submitNewField={() => submitField(field.tempId)}
 						changeValidationField={changeValidationField}
 					/>
 				</div>

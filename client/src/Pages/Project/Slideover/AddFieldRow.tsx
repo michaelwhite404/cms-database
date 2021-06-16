@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { ArrowCircleDownIcon, PlusIcon, XIcon } from "@heroicons/react/solid";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import FieldTypeButton from "./FieldTypeButton";
 import ButtonIcon from "../../../components/Icons/ButtonIcon";
 import PlainTextIcon from "../../../components/Icons/FieldMiniIcons/PlainTextIcon";
@@ -8,6 +8,7 @@ import { CollectionDataFields } from "../../../../../src/interfaces/collectionDa
 import { CollectionFieldType } from "../../../../../src/interfaces/collectionInterfaces";
 import fieldTypeToText from "../../../utils/fieldTypeToText";
 import fieldTypeToForm from "../../../utils/fieldTypeToForm";
+import FormProps from "../../../interfaces/FormProps";
 
 interface AddFieldRowProps {
 	// field: CollectionDataFields;
@@ -36,7 +37,6 @@ export default function AddFieldRow({
 	submitNewField,
 	changeValidationField,
 }: AddFieldRowProps) {
-	const [fieldSelected, setFieldSelected] = useState<CollectionFieldType | undefined>(undefined);
 	const myRef = useRef<HTMLDivElement>(null);
 
 	const handleClick = () => {
@@ -45,10 +45,6 @@ export default function AddFieldRow({
 			setActiveField(field);
 		}
 	};
-
-	useEffect(() => {
-		activeField && setFieldSelected(activeField.type);
-	}, [activeField]);
 
 	useEffect(() => {
 		active && myRef.current!.scrollIntoView({ behavior: "smooth" });
@@ -72,8 +68,9 @@ export default function AddFieldRow({
 		{ name: "Multi Reference", type: "ItemRefMulti", icon: ButtonIcon.MultiReference },
 	];
 
-	// @ts-ignore
-	const Form = activeField?.type && fieldTypeToForm[activeField.type];
+	const Form: (props: FormProps) => JSX.Element =
+		// @ts-ignore
+		activeField?.type && fieldTypeToForm[activeField.type];
 
 	return (
 		<div
@@ -90,7 +87,7 @@ export default function AddFieldRow({
 					</span>
 				)}
 				{active &&
-					(!fieldSelected ? (
+					(!activeField?.type ? (
 						<>
 							<ArrowCircleDownIcon className="mr-3" width={16} />
 							<span className="mr-3">Select Field Type</span>
@@ -128,7 +125,6 @@ export default function AddFieldRow({
 					<Form
 						activeField={activeField}
 						setActiveField={setActiveField}
-						setFieldSelected={setFieldSelected}
 						submitNewField={submitNewField}
 						changeValidationField={changeValidationField}
 					/>

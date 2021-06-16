@@ -59,6 +59,7 @@ export default function BasicFieldRow({
 				<div className="mt-4">
 					<StandardInput
 						title="Label"
+						id="fieldName"
 						name="name"
 						value={activeField!.name}
 						handleChange={handleChange}
@@ -67,6 +68,7 @@ export default function BasicFieldRow({
 					<StandardInput
 						className="mt-5"
 						title="Help Text"
+						id="fieldHelpText"
 						name="helpText"
 						value={activeField!.helpText || ""}
 						helpText="Appears below the label to guide Collaborators, just like this help text"
