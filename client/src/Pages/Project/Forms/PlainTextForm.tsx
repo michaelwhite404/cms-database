@@ -13,8 +13,6 @@ export default function PlainTextForm({
 }: FormProps) {
 	const [newCollectionData] = useContext(NewCollectionContext);
 	const currentFields = newCollectionData.fields;
-	console.log(currentFields);
-	console.log(activeField);
 	const [errors, setErrors] = useState({
 		name: "",
 		minLength: "",
@@ -30,8 +28,8 @@ export default function PlainTextForm({
 
 	const requiredRef = useRef<HTMLInputElement>(null);
 
-	const submittable =
-		!!!errors.minLength.length && !!!errors.maxLength.length && !!activeField!.name;
+	/** Value stores if the form can be submitted */
+	const submittable = Object.values(errors).join("").length === 0;
 
 	/**
 	 * Validates the necessary PlainText Fields
@@ -44,10 +42,15 @@ export default function PlainTextForm({
 
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const { name, value } = e.target;
-		name === "name" && value.length === 0
-			? setErrors({ ...errors, name: "This field is required" })
-			: setErrors({ ...errors, name: "" });
-		setActiveField({ ...activeField!, [e.target!.name]: e.target!.value });
+		const duplicate = currentFields
+			.filter((f) => f.tempId !== activeField!.tempId)
+			.map((f) => f.name)
+			.includes(value);
+		if (name === "name")
+			if (value.length === 0) setErrors({ ...errors, name: "This field is required" });
+			else if (duplicate) setErrors({ ...errors, name: "Already Exists" });
+			else setErrors({ ...errors, name: "" });
+		setActiveField({ ...activeField!, [name]: value });
 	};
 
 	const handleNumberValidationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
