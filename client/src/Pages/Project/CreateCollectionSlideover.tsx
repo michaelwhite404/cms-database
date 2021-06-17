@@ -1,5 +1,5 @@
 import pluralize from "pluralize";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import slugify from "slugify";
 import { v4 as uuid } from "uuid";
 import CollectionData, {
@@ -16,16 +16,21 @@ import axios from "axios";
 import DatabaseModel from "../../../../src/interfaces/databaseInterface";
 import AddFieldRow from "./Slideover/AddFieldRow";
 import BasicFieldRow from "./Slideover/BasicFieldRow";
-import { CollectionValidations } from "../../../../src/interfaces/collectionInterfaces";
+import {
+	CollectionModel,
+	CollectionValidations,
+} from "../../../../src/interfaces/collectionInterfaces";
 
 interface CreateCollectionSlideoverProps {
 	database: DatabaseModel;
+	collections: CollectionModel[];
 	setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export default function CreateCollectionSlideover({
 	setOpen,
 	database,
+	collections,
 }: CreateCollectionSlideoverProps) {
 	const [newCollectionData, setNewCollectionData] = useState<CollectionData>(defaultCollectionData);
 	const [activeField, setActiveField] = useState<CollectionDataFields | null>(null);
@@ -37,9 +42,24 @@ export default function CreateCollectionSlideover({
 		required: false,
 		validations: { singleLine: true, minLength: "", maxLength: "" },
 	});
+	const [errors, setErrors] = useState({ name: "", slug: "" });
 
 	const basicInfoFields = newCollectionData.fields.slice(0, 2);
 	const customFields = newCollectionData.fields.slice(2);
+
+	useEffect(() => {
+		const slugLow = (value: string) => slugify(value, { lower: true });
+		const name = collections.map((c) => slugLow(c.name)).includes(slugLow(newCollectionData.name))
+			? "Already Exists"
+			: "";
+		const slug = collections.map((c) => c.slug).includes(newCollectionData.slug)
+			? " Collection with this URL Already Exists"
+			: "";
+		setErrors({ name, slug });
+	}, [collections, newCollectionData.name, newCollectionData.slug]);
+
+	/** Value stores if the form can be submitted */
+	const submittable = Object.values(errors).join("").length === 0;
 
 	const submitField = (tempId: string) => {
 		const copiedFields = [...newCollectionData.fields];
@@ -76,6 +96,7 @@ export default function CreateCollectionSlideover({
 
 	const handleSubmit = async (e: React.FormEvent<HTMLFormElement> & React.KeyboardEvent) => {
 		e.preventDefault();
+		if (!submittable) return;
 		try {
 			const res = await axios.post("/api/v1/collections", {
 				database: database._id,
@@ -135,6 +156,7 @@ export default function CreateCollectionSlideover({
 								handleChange={handleNameChange}
 								value={newCollectionData.name}
 								placeholder="E.g. Blog Posts"
+								errorMessage={errors.name}
 								required
 							/>
 							{/* Singular and plural badges */}
@@ -151,6 +173,7 @@ export default function CreateCollectionSlideover({
 								value={newCollectionData.slug}
 								required
 								placeholder="E.g. posts"
+								errorMessage={errors.slug}
 								handleBlur={() =>
 									setNewCollectionData({
 										...newCollectionData,
@@ -217,7 +240,11 @@ export default function CreateCollectionSlideover({
 				</button>
 				<button
 					type="submit"
-					className="ml-4 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+					className={`${
+						submittable
+							? "bg-indigo-600 hover:bg-indigo-700 focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+							: "bg-indigo-400 cursor-not-allowed"
+					} ml-4 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white focus:outline-none `}
 				>
 					Save
 				</button>
