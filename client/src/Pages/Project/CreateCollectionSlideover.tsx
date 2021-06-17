@@ -1,5 +1,5 @@
 import pluralize from "pluralize";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, createContext, ReactNode, useContext } from "react";
 import slugify from "slugify";
 import { v4 as uuid } from "uuid";
 import CollectionData, {
@@ -20,6 +20,7 @@ import {
 	CollectionModel,
 	CollectionValidations,
 } from "../../../../src/interfaces/collectionInterfaces";
+import NewCollectionContext from "../../context/NewCollectionContext";
 
 interface CreateCollectionSlideoverProps {
 	database: DatabaseModel;
@@ -32,7 +33,8 @@ export default function CreateCollectionSlideover({
 	database,
 	collections,
 }: CreateCollectionSlideoverProps) {
-	const [newCollectionData, setNewCollectionData] = useState<CollectionData>(defaultCollectionData);
+	const [newCollectionData, setNewCollectionData] = useContext(NewCollectionContext);
+	// const [newCollectionData, setNewCollectionData] = useState<CollectionData>(defaultCollectionData);
 	const [activeField, setActiveField] = useState<CollectionDataFields | null>(null);
 	const [addField, setAddField] = useState({
 		tempId: uuid(),

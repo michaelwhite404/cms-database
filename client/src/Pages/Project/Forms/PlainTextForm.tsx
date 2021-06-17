@@ -1,6 +1,7 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import NumberInput from "../../../components/Form/NumberInput";
 import StandardRadioGroup from "../../../components/Form/StandardRadioGroup";
+import NewCollectionContext from "../../../context/NewCollectionContext";
 import FormProps from "../../../interfaces/FormProps";
 import StandardInput from "../Slideover/StandardInput";
 
@@ -10,6 +11,10 @@ export default function PlainTextForm({
 	submitNewField,
 	changeValidationField,
 }: FormProps) {
+	const [newCollectionData] = useContext(NewCollectionContext);
+	const currentFields = newCollectionData.fields;
+	console.log(currentFields);
+	console.log(activeField);
 	const [errors, setErrors] = useState({
 		name: "",
 		minLength: "",

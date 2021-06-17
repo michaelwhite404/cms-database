@@ -11,6 +11,7 @@ import HeadingButtons from "./HeadingButtons";
 import DatabaseModel from "../../../../src/interfaces/databaseInterface";
 import Slideover from "../../components/Slideover";
 import CreateCollectionSlideover from "./CreateCollectionSlideover";
+import { NewCollectionProvider } from "../../context/NewCollectionContext";
 
 export default function Project() {
 	const [openSlideover, setOpenSlideover] = useState(false);
@@ -52,12 +53,15 @@ export default function Project() {
 					collections={collections}
 					loaded={loaded}
 				/>
+
 				<Slideover size="4xl" open={openSlideover} setOpen={setOpenSlideover}>
-					<CreateCollectionSlideover
-						setOpen={setOpenSlideover}
-						database={currentDatabase!}
-						collections={collections}
-					/>
+					<NewCollectionProvider>
+						<CreateCollectionSlideover
+							setOpen={setOpenSlideover}
+							database={currentDatabase!}
+							collections={collections}
+						/>
+					</NewCollectionProvider>
 				</Slideover>
 			</>
 		</AppContainer>
