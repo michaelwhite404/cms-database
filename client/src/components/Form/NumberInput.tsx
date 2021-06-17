@@ -43,7 +43,7 @@ export default function NumberInput({
 				{title}
 				{required && <FaAsterisk color="red" className="w-1.5 ml-1.5 inline" />}
 			</label>
-			<div className="mt-2 mb-2.5 relative rounded-md">
+			<div className="mt-2 relative rounded-md">
 				<input
 					type="text"
 					name={name}

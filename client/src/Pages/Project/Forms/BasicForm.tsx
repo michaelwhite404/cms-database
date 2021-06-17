@@ -1,6 +1,6 @@
 import React, { useRef } from "react";
 import FormProps from "../../../interfaces/FormProps";
-import StandardInput from "../Slideover/StandardInput";
+import StandardInput from "../../../components/Form/StandardInput";
 
 export default function BasicForm({
 	activeField,

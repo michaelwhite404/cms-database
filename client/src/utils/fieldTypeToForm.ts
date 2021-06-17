@@ -1,5 +1,6 @@
 import FormProps from "../interfaces/FormProps";
 import BasicForm from "../Pages/Project/Forms/BasicForm";
+import NumberForm from "../Pages/Project/Forms/NumberForm";
 import PlainTextForm from "../Pages/Project/Forms/PlainTextForm";
 
 interface TypeData {
@@ -10,7 +11,7 @@ interface TypeData {
 	Link: (props: FormProps) => JSX.Element;
 	Email: (props: FormProps) => JSX.Element;
 	Phone: (props: FormProps) => JSX.Element;
-	// Number:
+	Number: (props: FormProps) => JSX.Element;
 	// Date:
 	// Bool:
 	Color: (props: FormProps) => JSX.Element;
@@ -28,7 +29,7 @@ const forms: TypeData = {
 	Link: BasicForm,
 	Email: BasicForm,
 	Phone: BasicForm,
-	// Number: NumberForm,
+	Number: NumberForm,
 	// Date: DateForm,
 	// Bool: BasicForm (Not exactly),
 	Color: BasicForm,

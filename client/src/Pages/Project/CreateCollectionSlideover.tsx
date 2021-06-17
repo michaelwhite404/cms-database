@@ -1,17 +1,14 @@
 import pluralize from "pluralize";
-import React, { useState, useEffect, createContext, ReactNode, useContext } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import slugify from "slugify";
 import { v4 as uuid } from "uuid";
-import CollectionData, {
-	CollectionDataFields,
-} from "../../../../src/interfaces/collectionDataInterfaces";
+import { CollectionDataFields } from "../../../../src/interfaces/collectionDataInterfaces";
 import Pane from "../../components/Pane";
 import CountableBadge from "./CountableBadge";
 import FullCollectionURL from "./Slideover/FullCollectionURL";
 import SlideoverHeading from "./Slideover/SlideoverHeading";
-import StandardInput from "./Slideover/StandardInput";
+import StandardInput from "../../components/Form/StandardInput";
 import CollectionFieldRow from "./Slideover/CollectionFieldRow";
-import defaultCollectionData from "../../utils/defaultCollectionData";
 import axios from "axios";
 import DatabaseModel from "../../../../src/interfaces/databaseInterface";
 import AddFieldRow from "./Slideover/AddFieldRow";

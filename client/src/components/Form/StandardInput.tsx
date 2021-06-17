@@ -1,5 +1,5 @@
 import { FaAsterisk } from "react-icons/fa";
-import ErrorTooltip from "../../../components/ErrorTooltip";
+import ErrorTooltip from "../ErrorTooltip";
 
 interface StandardInputProps {
 	title: string;

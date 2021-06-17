@@ -1,7 +1,7 @@
 import React, { useRef } from "react";
 import { CollectionDataFields } from "../../../../../src/interfaces/collectionDataInterfaces";
 import PlainTextIcon from "../../../components/Icons/FieldMiniIcons/PlainTextIcon";
-import StandardInput from "./StandardInput";
+import StandardInput from "../../../components/Form/StandardInput";
 
 interface BasicFieldRowProps {
 	field: CollectionDataFields;

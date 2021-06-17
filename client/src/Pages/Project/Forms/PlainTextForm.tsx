@@ -3,7 +3,7 @@ import NumberInput from "../../../components/Form/NumberInput";
 import StandardRadioGroup from "../../../components/Form/StandardRadioGroup";
 import NewCollectionContext from "../../../context/NewCollectionContext";
 import FormProps from "../../../interfaces/FormProps";
-import StandardInput from "../Slideover/StandardInput";
+import StandardInput from "../../../components/Form/StandardInput";
 
 export default function PlainTextForm({
 	activeField,
