@@ -3,15 +3,12 @@ import { ArrowCircleDownIcon, PlusIcon, XIcon } from "@heroicons/react/solid";
 import React, { useEffect, useRef } from "react";
 import FieldTypeButton from "./FieldTypeButton";
 import ButtonIcon from "../../../components/Icons/ButtonIcon";
-import PlainTextIcon from "../../../components/Icons/FieldMiniIcons/PlainTextIcon";
 import { CollectionDataFields } from "../../../../../src/interfaces/collectionDataInterfaces";
-import {
-	CollectionFieldType,
-	CollectionValidations,
-} from "../../../../../src/interfaces/collectionInterfaces";
+import { CollectionFieldType } from "../../../../../src/interfaces/collectionInterfaces";
 import fieldTypeToText from "../../../utils/fieldTypeToText";
 import fieldTypeToForm from "../../../utils/fieldTypeToForm";
 import FormProps from "../../../interfaces/FormProps";
+import { getFieldDataByType } from "../../../utils/fieldTypeData";
 
 interface AddFieldRowProps {
 	// field: CollectionDataFields;
@@ -102,6 +99,8 @@ export default function AddFieldRow({
 		// @ts-ignore
 		activeField?.type && fieldTypeToForm[activeField.type];
 
+	const SmallIcon = activeField?.type! && getFieldDataByType(activeField?.type!, "SmallIcon");
+
 	return (
 		<div
 			className={`py-2.5 px-4 text-xs text-gray-700 relative ${!active && "hover:bg-gray-50"}`}
@@ -131,7 +130,7 @@ export default function AddFieldRow({
 						</>
 					) : (
 						<>
-							<PlainTextIcon className="mr-3" />
+							{active && activeField?.type && <SmallIcon className="mr-3" />}
 							<span className="mr-3">New Field</span>
 							<span className="text-gray-400">({fieldTypeToText[activeField!.type]})</span>
 						</>

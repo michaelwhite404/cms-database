@@ -1,9 +1,9 @@
 import React, { useEffect, useRef } from "react";
 import { CollectionDataFields } from "../../../../../src/interfaces/collectionDataInterfaces";
-import PlainTextIcon from "../../../components/Icons/FieldMiniIcons/PlainTextIcon";
 import fieldTypeToText from "../../../utils/fieldTypeToText";
 import fieldTypeToForm from "../../../utils/fieldTypeToForm";
 import FormProps from "../../../interfaces/FormProps";
+import { getFieldDataByType } from "../../../utils/fieldTypeData";
 
 interface CollectionFieldRowProps {
 	field: CollectionDataFields;
@@ -39,6 +39,8 @@ export default function CollectionFieldRow({
 		// @ts-ignore
 		activeField?.type && fieldTypeToForm[activeField.type];
 
+	const SmallIcon = getFieldDataByType(type, "SmallIcon");
+
 	return (
 		<div
 			className="border-b py-2.5 px-4 text-xs text-gray-700 relative"
@@ -47,7 +49,7 @@ export default function CollectionFieldRow({
 			onClick={handleClick}
 		>
 			<div className="flex items-center">
-				<PlainTextIcon className="mr-3" />
+				<SmallIcon className="mr-3" />
 				<span className="mr-3">{name}</span>
 				<span className="text-gray-400">({fieldTypeToText[type]})</span>
 				{required && <span className="text-gray-400 ml-auto">Required Field</span>}

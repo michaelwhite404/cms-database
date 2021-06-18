@@ -59,7 +59,7 @@ export default function CreateCollectionSlideover({
 	}, [collections, newCollectionData.name, newCollectionData.slug]);
 
 	/** Value stores if the form can be submitted */
-	const submittable = Object.values(errors).join("").length === 0;
+	const submittable = Object.values(errors).join("").length === 0 && activeField === null;
 
 	const submitField = (tempId: string) => {
 		const copiedFields = [...newCollectionData.fields];
