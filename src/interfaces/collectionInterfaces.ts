@@ -42,7 +42,10 @@ export interface CollectionValidations<Format> {
 	singleLine?: boolean;
 	/** Array of options in a collection a user can pick from */
 	options?: CollectionValidationOption[] | string[];
-	/** Whether the format of the number is an integer or decimal */
+	/**
+	 * If NumberFormat, the format is an integer or decimal.
+	 * If DateFormat, the format is a date or date-time
+	 */
 	format?: CollectionFormat<Format>;
 	precision?: number;
 	/** Can the number be a negative number */

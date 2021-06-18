@@ -29,7 +29,8 @@ export default function PlainTextForm({
 	const requiredRef = useRef<HTMLInputElement>(null);
 
 	/** Value stores if the form can be submitted */
-	const submittable = Object.values(errors).join("").length === 0;
+	const submittable =
+		!!!errors.minLength.length && !!!errors.maxLength.length && !!activeField!.name;
 
 	/**
 	 * Validates the necessary PlainText Fields

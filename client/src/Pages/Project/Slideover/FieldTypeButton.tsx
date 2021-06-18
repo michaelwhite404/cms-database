@@ -1,24 +1,29 @@
 import React from "react";
 import { CollectionDataFields } from "../../../../../src/interfaces/collectionDataInterfaces";
-import { CollectionFieldType } from "../../../../../src/interfaces/collectionInterfaces";
+import {
+	CollectionFieldType,
+	CollectionValidations,
+} from "../../../../../src/interfaces/collectionInterfaces";
 
 interface FieldTypeButtonProps {
-	name: string;
-	type: CollectionFieldType;
-	Icon: (props: React.ComponentProps<"svg">) => JSX.Element;
+	field: {
+		name: string;
+		type: CollectionFieldType;
+		Icon: (props: React.ComponentProps<"svg">) => JSX.Element;
+		validations?: CollectionValidations<any>;
+	};
 	activeField: CollectionDataFields | null;
 	setActiveField: React.Dispatch<React.SetStateAction<CollectionDataFields | null>>;
 }
 
 export default function FieldTypeButton({
-	name,
-	type,
-	Icon,
+	field,
 	activeField,
 	setActiveField,
 }: FieldTypeButtonProps) {
+	const { name, type, Icon, validations } = field;
 	const handleClick = () => {
-		setActiveField({ ...activeField!, type });
+		setActiveField({ ...activeField!, validations, type });
 	};
 
 	return (

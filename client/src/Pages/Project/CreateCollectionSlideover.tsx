@@ -39,8 +39,9 @@ export default function CreateCollectionSlideover({
 		type: undefined,
 		helpText: "",
 		required: false,
-		validations: { singleLine: true, minLength: "", maxLength: "" },
+		validations: {},
 	});
+
 	const [errors, setErrors] = useState({ name: "", slug: "" });
 
 	const basicInfoFields = newCollectionData.fields.slice(0, 2);

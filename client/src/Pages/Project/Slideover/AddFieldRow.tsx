@@ -5,7 +5,10 @@ import FieldTypeButton from "./FieldTypeButton";
 import ButtonIcon from "../../../components/Icons/ButtonIcon";
 import PlainTextIcon from "../../../components/Icons/FieldMiniIcons/PlainTextIcon";
 import { CollectionDataFields } from "../../../../../src/interfaces/collectionDataInterfaces";
-import { CollectionFieldType } from "../../../../../src/interfaces/collectionInterfaces";
+import {
+	CollectionFieldType,
+	CollectionValidations,
+} from "../../../../../src/interfaces/collectionInterfaces";
 import fieldTypeToText from "../../../utils/fieldTypeToText";
 import fieldTypeToForm from "../../../utils/fieldTypeToForm";
 import FormProps from "../../../interfaces/FormProps";
@@ -25,7 +28,8 @@ interface AddFieldRowProps {
 interface FieldButton {
 	name: string;
 	type: CollectionFieldType;
-	icon: (props: React.SVGProps<SVGSVGElement>) => JSX.Element;
+	Icon: (props: React.SVGProps<SVGSVGElement>) => JSX.Element;
+	validations?: any;
 }
 
 export default function AddFieldRow({
@@ -51,21 +55,47 @@ export default function AddFieldRow({
 	}, [active]);
 
 	const fieldButtons: FieldButton[] = [
-		{ name: "Plain Text", type: "PlainText", icon: ButtonIcon.PlainText },
-		{ name: "Rich Text", type: "RichText", icon: ButtonIcon.RichText },
-		{ name: "Image", type: "ImageRef", icon: ButtonIcon.Image },
-		{ name: "Video Link", type: "Video", icon: ButtonIcon.Video },
-		{ name: "Link", type: "Link", icon: ButtonIcon.Link },
-		{ name: "Email", type: "Email", icon: ButtonIcon.Email },
-		{ name: "Phone", type: "Phone", icon: ButtonIcon.Phone },
-		{ name: "Number", type: "Number", icon: ButtonIcon.Number },
-		{ name: "Date", type: "Date", icon: ButtonIcon.Date },
-		{ name: "Switch", type: "Bool", icon: ButtonIcon.Bool },
-		{ name: "Color", type: "Color", icon: ButtonIcon.Color },
-		{ name: "Option", type: "Option", icon: ButtonIcon.Option },
-		// { name: "File", type: "File", icon: ButtonIcon.File },
-		{ name: "Reference", type: "ItemRef", icon: ButtonIcon.Reference },
-		{ name: "Multi Reference", type: "ItemRefMulti", icon: ButtonIcon.MultiReference },
+		{
+			name: "Plain Text",
+			type: "PlainText",
+			Icon: ButtonIcon.PlainText,
+			validations: { singleLine: true, minLength: "", maxLength: "" },
+		},
+		{
+			name: "Rich Text",
+			type: "RichText",
+			Icon: ButtonIcon.RichText,
+			validations: { singleLine: true, minLength: "", maxLength: "" },
+		},
+		{ name: "Image", type: "ImageRef", Icon: ButtonIcon.Image, validations: { singleLine: true } },
+		{
+			name: "Video Link",
+			type: "Video",
+			Icon: ButtonIcon.Video,
+			validations: { singleLine: true },
+		},
+		{ name: "Link", type: "Link", Icon: ButtonIcon.Link, validations: { singleLine: true } },
+		{ name: "Email", type: "Email", Icon: ButtonIcon.Email, validations: { singleLine: true } },
+		{ name: "Phone", type: "Phone", Icon: ButtonIcon.Phone, validations: { singleLine: true } },
+		{
+			name: "Number",
+			type: "Number",
+			Icon: ButtonIcon.Number,
+			validations: {
+				format: "integer",
+				maximum: "",
+				minimum: "",
+				decimalPlaces: 0,
+				allowNegative: false,
+			},
+		},
+		{ name: "Date", type: "Date", Icon: ButtonIcon.Date },
+		{ name: "Switch", type: "Bool", Icon: ButtonIcon.Bool },
+		{ name: "Color", type: "Color", Icon: ButtonIcon.Color, validations: { singleLine: true } },
+		{ name: "Option", type: "Option", Icon: ButtonIcon.Option },
+		// { name: "File", type: "File", Icon: ButtonIcon.File },
+		{ name: "Reference", type: "ItemRef", Icon: ButtonIcon.Reference },
+		{ name: "Multi Reference", type: "ItemRefMulti", Icon: ButtonIcon.MultiReference },
 	];
 
 	const Form: (props: FormProps) => JSX.Element =
@@ -112,11 +142,9 @@ export default function AddFieldRow({
 					<div className="grid grid-cols-6 gap-4 mt-5 mb-2.5">
 						{fieldButtons.map((field) => (
 							<FieldTypeButton
-								activeField={activeField}
 								key={field.type}
-								name={field.name}
-								type={field.type}
-								Icon={field.icon}
+								field={field}
+								activeField={activeField}
 								setActiveField={setActiveField}
 							/>
 						))}

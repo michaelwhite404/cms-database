@@ -4,6 +4,10 @@ import FormProps from "../../../interfaces/FormProps";
 import StandardInput from "../../../components/Form/StandardInput";
 import SelectGroup from "../../../components/Form/SelectGroup";
 import Checkbox from "../../../components/Form/Checkbox";
+import {
+	CollectionValidations,
+	NumberFormat,
+} from "../../../../../src/interfaces/collectionInterfaces";
 
 const precisionOptions = [
 	{ text: "1.0", value: "1" },
@@ -35,6 +39,8 @@ export default function NumberForm({
 
 	/** Value stores if the form can be submitted */
 	const submittable = Object.values(errors).join("").length === 0;
+
+	const validations = activeField?.validations as CollectionValidations<NumberFormat>;
 
 	const handleSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
 		e.preventDefault();
@@ -106,27 +112,19 @@ export default function NumberForm({
 					value={activeField!.validations!.minimum}
 					handleChange={handleNumberValidationChange}
 					arrows
-					increment={() =>
-						handleArrowChange("increment", "minimum", `${activeField!.validations!.minimum}`)
-					}
-					decrement={() =>
-						handleArrowChange("decrement", "minimum", `${activeField!.validations!.minimum}`)
-					}
+					increment={() => handleArrowChange("increment", "minimum", `${validations.minimum}`)}
+					decrement={() => handleArrowChange("decrement", "minimum", `${validations.minimum}`)}
 					errorMessage={errors.minimum}
 				/>
 				<NumberInput
 					title="Maximum Number"
 					id="maxNumber"
 					name="maximum"
-					value={activeField!.validations!.maximum}
+					value={validations.maximum}
 					handleChange={handleNumberValidationChange}
 					arrows
-					increment={() =>
-						handleArrowChange("increment", "maximum", `${activeField!.validations!.maximum}`)
-					}
-					decrement={() =>
-						handleArrowChange("decrement", "maximum", `${activeField!.validations!.maximum}`)
-					}
+					increment={() => handleArrowChange("increment", "maximum", `${validations.maximum}`)}
+					decrement={() => handleArrowChange("decrement", "maximum", `${validations.maximum}`)}
 					errorMessage={errors.maximum}
 				/>
 			</div>
@@ -142,7 +140,13 @@ export default function NumberForm({
 			</div>
 			{/** Precision Option Dropdown */}
 			<div className="mt-4">
-				<SelectGroup title="Precision" name="decimalPlaces" id="decimalPlaces" refer={precisionRef}>
+				<SelectGroup
+					title="Precision"
+					name="decimalPlaces"
+					id="decimalPlaces"
+					refer={precisionRef}
+					required={validations.format === "decimal"}
+				>
 					{precisionOptions.map((opt) => (
 						<SelectGroup.Option key={opt.value} value={opt.value}>
 							{opt.text}
@@ -154,7 +158,7 @@ export default function NumberForm({
 					id="fieldValidationAllowNegative"
 					name="allowNegative"
 					onChange={handleValidationCheckboxChange}
-					checked={activeField?.validations?.allowNegative}
+					checked={validations.allowNegative}
 				>
 					Allow negative numbers
 				</Checkbox>
