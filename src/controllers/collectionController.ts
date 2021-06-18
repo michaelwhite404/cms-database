@@ -155,9 +155,13 @@ export const createCollection = catchAsync(
 		// If there are collection fields in the body
 		if (bodyFields.length > 0) {
 			// If there are any duplicates, throw error
-			if (uniqBy(bodyFields, "name").length < bodyFields.length)
+			if (
+				uniqBy(
+					bodyFields.map((f) => ({ name: slugify(f.name, { lower: true }) })),
+					"name"
+				).length < bodyFields.length
+			)
 				return next(new AppError("All fields must have diffferent names", 400));
-
 			// Test primary Fields
 			// Primary Name
 			let pNameChecker = await primaryChecker(bodyFields, "Name");
