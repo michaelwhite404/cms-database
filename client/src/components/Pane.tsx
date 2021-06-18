@@ -1,5 +1,5 @@
 export default function Pane({ children }: { children: React.ReactNode }) {
-	return <div className="px-4 sm:px-6 pb-6">{children}</div>;
+	return <div className="relative px-4 sm:px-6 pb-6">{children}</div>;
 }
 
 Pane.Title = ({ children }: { children: string }) => (

@@ -5,6 +5,7 @@ import NewCollectionContext from "../../../context/NewCollectionContext";
 import FormProps from "../../../interfaces/FormProps";
 import StandardInput from "../../../components/Form/StandardInput";
 import Checkbox from "../../../components/Form/Checkbox";
+import { CollectionValidationsKeys } from "../../../../../src/interfaces/collectionInterfaces";
 
 export default function PlainTextForm({
 	activeField,
@@ -59,7 +60,7 @@ export default function PlainTextForm({
 	};
 
 	const handleNumberValidationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		let { name, value }: { value: any; name: string } = e.target;
+		let { name, value } = e.target as { name: CollectionValidationsKeys; value: any };
 		if (value !== "" && !isNaN(Number(value))) value = Number(value);
 		changeValidationField?.(name, value);
 	};
@@ -105,7 +106,7 @@ export default function PlainTextForm({
 
 	const handleArrowChange = (
 		operator: "increment" | "decrement",
-		name: string,
+		name: CollectionValidationsKeys,
 		currentValue: string
 	) => {
 		const choice = { increment: 1, decrement: -1 };

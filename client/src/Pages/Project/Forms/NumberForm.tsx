@@ -1,13 +1,16 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import NumberInput from "../../../components/Form/NumberInput";
 import FormProps from "../../../interfaces/FormProps";
 import StandardInput from "../../../components/Form/StandardInput";
 import SelectGroup from "../../../components/Form/SelectGroup";
 import Checkbox from "../../../components/Form/Checkbox";
 import {
+	CollectionFormat,
 	CollectionValidations,
+	CollectionValidationsKeys,
 	NumberFormat,
 } from "../../../../../src/interfaces/collectionInterfaces";
+import countDecimals from "../../../utils/countDecimals";
 
 const precisionOptions = [
 	{ text: "1.0", value: "1" },
@@ -20,8 +23,16 @@ const precisionOptions = [
 const formatOptions = [
 	{ text: "Integer (1)", value: "integer" },
 	{ text: "Decimal (1.0)", value: "decimal" },
-	{ text: "Any Format", value: "any" },
+	// { text: "Any Format", value: "any" },
 ];
+
+interface InputValidations {
+	minimum: number | string;
+	maximum: number | string;
+	allowNegative: boolean;
+	format: CollectionFormat<NumberFormat>;
+	decimalPlaces: number;
+}
 
 export default function NumberForm({
 	activeField,
@@ -35,12 +46,25 @@ export default function NumberForm({
 		maximum: "",
 	});
 
+	const validations = activeField?.validations as CollectionValidations<NumberFormat>;
+
+	useEffect(() => {
+		const minErr = validateMinimum();
+		const maxErr = validateMaximum();
+		setErrors({ ...errors, minimum: minErr, maximum: maxErr });
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [
+		validations.minimum,
+		validations.maximum,
+		validations.allowNegative,
+		validations.format,
+		validations.decimalPlaces,
+	]);
+
 	const precisionRef = useRef<HTMLSelectElement>(null);
 
 	/** Value stores if the form can be submitted */
-	const submittable = Object.values(errors).join("").length === 0;
-
-	const validations = activeField?.validations as CollectionValidations<NumberFormat>;
+	const submittable = !!!errors.minimum.length && !!!errors.maximum.length && !!activeField!.name;
 
 	const handleSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
 		e.preventDefault();
@@ -52,19 +76,40 @@ export default function NumberForm({
 		setActiveField({ ...activeField!, [e.target!.name]: e.target!.value });
 	};
 
+	const handleFormatChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+		const { value } = e.target as { name: CollectionValidationsKeys; value: NumberFormat };
+		if (value === "integer")
+			return setActiveField({
+				...activeField!,
+				validations: {
+					...activeField?.validations,
+					format: "integer",
+					decimalPlaces: 0,
+				},
+			});
+		setActiveField({
+			...activeField!,
+			validations: {
+				...activeField?.validations,
+				format: "decimal",
+				decimalPlaces: 1,
+			},
+		});
+	};
+
 	const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const { name, checked } = e.target;
 		setActiveField({ ...activeField!, [name]: checked });
 	};
 
 	const handleValidationCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const { name, checked } = e.target;
+		const { name, checked } = e.target as { name: CollectionValidationsKeys; checked: boolean };
 		changeValidationField?.(name, checked);
 	};
 
 	const handleArrowChange = (
 		operator: "increment" | "decrement",
-		name: string,
+		name: CollectionValidationsKeys,
 		currentValue: string
 	) => {
 		const choice = { increment: 1, decrement: -1 };
@@ -79,10 +124,49 @@ export default function NumberForm({
 		setActiveField(null);
 	};
 
-	const handleNumberValidationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		let { name, value }: { value: any; name: string } = e.target;
-		if (value !== "" && !isNaN(Number(value))) value = Number(value);
+	const handleNumberValidationChange = (
+		e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+	) => {
+		let { name, value } = e.target as { name: CollectionValidationsKeys; value: any };
+		if (value !== "" && (value as string).substr(-1) !== "." && !isNaN(Number(value)))
+			value = Number(value);
 		changeValidationField?.(name, value);
+	};
+
+	/**
+	 * Validates if the minimum property is valid
+	 * @returns {string} The error message if minimum not valid. Empty string if valid.
+	 */
+	const validateMinimum = (): string => {
+		const { minimum, maximum, allowNegative, format, decimalPlaces } =
+			validations as InputValidations;
+		if (minimum === "") return "";
+		if (typeof minimum === "string") return "This field must be a number";
+		if (format === "integer" && countDecimals(minimum) > 0) return "Must be an integer";
+		if (format === "decimal" && countDecimals(minimum) > decimalPlaces)
+			return `Must have at most ${decimalPlaces} decimal places`;
+		if (!allowNegative && minimum < 0) return "Enter a number greater than or equal to 0";
+		if (typeof maximum === "number" && minimum > maximum)
+			return `Enter a number less than or equal to ${maximum}`;
+		return "";
+	};
+
+	/**
+	 * Validates if the maximum property is valid
+	 * @returns {string} The error message if maximum not valid. Empty string if valid.
+	 */
+	const validateMaximum = (): string => {
+		const { minimum, maximum, allowNegative, format, decimalPlaces } =
+			validations as InputValidations;
+		if (maximum === "") return "";
+		if (typeof maximum === "string") return "This field must be a number";
+		if (format === "integer" && countDecimals(maximum) > 0) return "Must be an integer";
+		if (format === "decimal" && countDecimals(maximum) > decimalPlaces)
+			return `Must have at most ${decimalPlaces} decimal places`;
+		if (!allowNegative && maximum < 0) return "Enter a number greater than or equal to 0";
+		if (typeof minimum === "number" && minimum > maximum)
+			return `Enter a number greater than or equal to ${minimum}`;
+		return "";
 	};
 
 	return (
@@ -93,7 +177,9 @@ export default function NumberForm({
 				name="name"
 				value={activeField!.name}
 				handleChange={handleChange}
+				errorMessage={errors.name}
 				required
+				focus
 			/>
 			<StandardInput
 				className="mt-5"
@@ -130,7 +216,14 @@ export default function NumberForm({
 			</div>
 			{/** Format Option Dropdown */}
 			<div className="mt-4">
-				<SelectGroup title="Format" name="format" id="numberFormat" required>
+				<SelectGroup
+					title="Format"
+					name="format"
+					id="numberFormat"
+					onChange={handleFormatChange}
+					value={validations.format}
+					required
+				>
 					{formatOptions.map((opt) => (
 						<SelectGroup.Option key={opt.value} value={opt.value}>
 							{opt.text}
@@ -140,19 +233,23 @@ export default function NumberForm({
 			</div>
 			{/** Precision Option Dropdown */}
 			<div className="mt-4">
-				<SelectGroup
-					title="Precision"
-					name="decimalPlaces"
-					id="decimalPlaces"
-					refer={precisionRef}
-					required={validations.format === "decimal"}
-				>
-					{precisionOptions.map((opt) => (
-						<SelectGroup.Option key={opt.value} value={opt.value}>
-							{opt.text}
-						</SelectGroup.Option>
-					))}
-				</SelectGroup>
+				{validations.format === "decimal" && (
+					<SelectGroup
+						title="Precision"
+						name="decimalPlaces"
+						id="decimalPlaces"
+						refer={precisionRef}
+						required
+						onChange={handleNumberValidationChange}
+						value={`${validations.decimalPlaces}`}
+					>
+						{precisionOptions.map((opt) => (
+							<SelectGroup.Option key={opt.value} value={opt.value}>
+								{opt.text}
+							</SelectGroup.Option>
+						))}
+					</SelectGroup>
+				)}
 				{/* Allow Negative Check */}
 				<Checkbox
 					id="fieldValidationAllowNegative"

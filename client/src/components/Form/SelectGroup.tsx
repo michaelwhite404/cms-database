@@ -8,6 +8,8 @@ interface SelectInputProps {
 	children: React.ReactNode;
 	required?: boolean;
 	refer?: React.RefObject<HTMLSelectElement>;
+	onChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+	value?: string;
 }
 
 export default function SelectGroup({
@@ -17,6 +19,8 @@ export default function SelectGroup({
 	children,
 	required,
 	refer,
+	onChange,
+	value,
 }: SelectInputProps) {
 	return (
 		<>
@@ -30,6 +34,8 @@ export default function SelectGroup({
 					name={name}
 					id={id}
 					ref={refer}
+					onChange={onChange}
+					value={value}
 				>
 					{children}
 				</select>

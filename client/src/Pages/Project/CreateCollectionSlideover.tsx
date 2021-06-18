@@ -2,6 +2,7 @@ import pluralize from "pluralize";
 import React, { useState, useEffect, useContext } from "react";
 import slugify from "slugify";
 import { v4 as uuid } from "uuid";
+import { PlusIcon } from "@heroicons/react/solid";
 import { CollectionDataFields } from "../../../../src/interfaces/collectionDataInterfaces";
 import Pane from "../../components/Pane";
 import CountableBadge from "./CountableBadge";
@@ -227,6 +228,21 @@ export default function CreateCollectionSlideover({
 								/>
 							</div>
 						</Pane.Item>
+						<div className="flex justify-end xs:mt-4 absolute right-6 top-5">
+							<button
+								type="button"
+								className={`${
+									!activeField
+										? "bg-blue-500 hover:bg-blue-600 focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+										: "bg-blue-400 cursor-not-allowed"
+								} ml-3 inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md shadow-sm text-white focus:outline-none`}
+								// @ts-ignore
+								onClick={() => !activeField && setActiveField(addField)}
+							>
+								<PlusIcon className="mr-1.5" width={16} />
+								Add New Field
+							</button>
+						</div>
 					</Pane>
 				</div>
 			</div>
