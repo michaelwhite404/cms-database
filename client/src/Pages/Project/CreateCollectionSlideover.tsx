@@ -1,5 +1,5 @@
 import pluralize from "pluralize";
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import slugify from "slugify";
 import { v4 as uuid } from "uuid";
 import { PlusIcon } from "@heroicons/react/solid";
@@ -42,7 +42,7 @@ export default function CreateCollectionSlideover({
 		required: false,
 		validations: {},
 	});
-
+	const editted = useRef(false);
 	const [errors, setErrors] = useState({ name: "", slug: "" });
 
 	const basicInfoFields = newCollectionData.fields.slice(0, 2);
@@ -50,17 +50,23 @@ export default function CreateCollectionSlideover({
 
 	useEffect(() => {
 		const slugLow = (value: string) => slugify(value, { lower: true });
-		const name = collections.map((c) => slugLow(c.name)).includes(slugLow(newCollectionData.name))
+		let name = collections.map((c) => slugLow(c.name)).includes(slugLow(newCollectionData.name))
 			? "Already Exists"
 			: "";
-		const slug = collections.map((c) => c.slug).includes(newCollectionData.slug)
+		if (editted.current && !newCollectionData.name) name = "This field is required";
+		let slug = collections.map((c) => c.slug).includes(newCollectionData.slug)
 			? " Collection with this URL Already Exists"
 			: "";
+		if (editted.current && !newCollectionData.slug) slug = "This field is required";
 		setErrors({ name, slug });
 	}, [collections, newCollectionData.name, newCollectionData.slug]);
 
 	/** Value stores if the form can be submitted */
-	const submittable = Object.values(errors).join("").length === 0 && activeField === null;
+	const submittable =
+		Object.values(errors).join("").length === 0 &&
+		newCollectionData.name.length &&
+		newCollectionData.slug.length &&
+		activeField === null;
 
 	const submitField = (tempId: string) => {
 		const copiedFields = [...newCollectionData.fields];
@@ -119,6 +125,7 @@ export default function CreateCollectionSlideover({
 			pluralName: pluralize(name) || "Items",
 			singularName: pluralize.singular(name) || "Item",
 		});
+		if (!editted.current) editted.current = true;
 	};
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement & HTMLSpanElement>) => {
 		setNewCollectionData({ ...newCollectionData, [e.target!.name]: e.target!.value });

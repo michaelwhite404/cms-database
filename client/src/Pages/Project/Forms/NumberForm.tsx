@@ -78,21 +78,12 @@ export default function NumberForm({
 
 	const handleFormatChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
 		const { value } = e.target as { name: CollectionValidationsKeys; value: NumberFormat };
-		if (value === "integer")
-			return setActiveField({
-				...activeField!,
-				validations: {
-					...activeField?.validations,
-					format: "integer",
-					decimalPlaces: 0,
-				},
-			});
 		setActiveField({
 			...activeField!,
 			validations: {
 				...activeField?.validations,
-				format: "decimal",
-				decimalPlaces: 1,
+				format: value,
+				decimalPlaces: value === "integer" ? 0 : 1,
 			},
 		});
 	};
