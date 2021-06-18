@@ -1,18 +1,28 @@
 import React from "react";
+import { FaAsterisk } from "react-icons/fa";
 
 interface SelectInputProps {
 	title: string;
 	name: string;
 	id: string;
 	children: React.ReactNode;
+	required?: boolean;
 	refer?: React.RefObject<HTMLSelectElement>;
 }
 
-export default function SelectGroup({ title, name, id, children, refer }: SelectInputProps) {
+export default function SelectGroup({
+	title,
+	name,
+	id,
+	children,
+	required,
+	refer,
+}: SelectInputProps) {
 	return (
 		<>
 			<label htmlFor={id} className="flex text-sm font-medium text-gray-900">
 				{title}
+				{required && <FaAsterisk color="red" className="w-1.5 ml-1.5 inline" />}
 			</label>
 			<div className="mt-2 mb-2.5 relative rounded-md">
 				<select

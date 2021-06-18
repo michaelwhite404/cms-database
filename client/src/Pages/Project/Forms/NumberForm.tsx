@@ -3,6 +3,21 @@ import NumberInput from "../../../components/Form/NumberInput";
 import FormProps from "../../../interfaces/FormProps";
 import StandardInput from "../../../components/Form/StandardInput";
 import SelectGroup from "../../../components/Form/SelectGroup";
+import Checkbox from "../../../components/Form/Checkbox";
+
+const precisionOptions = [
+	{ text: "1.0", value: "1" },
+	{ text: "1.00", value: "2" },
+	{ text: "1.000", value: "3" },
+	{ text: "1.0000", value: "4" },
+	{ text: "1.00000", value: "5" },
+];
+
+const formatOptions = [
+	{ text: "Integer (1)", value: "integer" },
+	{ text: "Decimal (1.0)", value: "decimal" },
+	{ text: "Any Format", value: "any" },
+];
 
 export default function NumberForm({
 	activeField,
@@ -10,22 +25,35 @@ export default function NumberForm({
 	submitNewField,
 	changeValidationField,
 }: FormProps) {
-	const [errors /* setErrors */] = useState({
+	const [errors, setErrors] = useState({
 		name: "",
 		minimum: "",
 		maximum: "",
 	});
-	const requiredRef = useRef<HTMLInputElement>(null);
-	const precisonRef = useRef<HTMLSelectElement>(null);
 
-	/*const handleSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
+	const precisionRef = useRef<HTMLSelectElement>(null);
+
+	/** Value stores if the form can be submitted */
+	const submittable = Object.values(errors).join("").length === 0;
+
+	const handleSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
 		e.preventDefault();
 		submitNewField();
 		setActiveField(null);
-	}; */
+	};
 
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setActiveField({ ...activeField!, [e.target!.name]: e.target!.value });
+	};
+
+	const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const { name, checked } = e.target;
+		setActiveField({ ...activeField!, [name]: checked });
+	};
+
+	const handleValidationCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const { name, checked } = e.target;
+		changeValidationField?.(name, checked);
 	};
 
 	const handleArrowChange = (
@@ -39,6 +67,10 @@ export default function NumberForm({
 			newValue = Number(currentValue) + choice[operator];
 		}
 		changeValidationField?.(name, Number(newValue));
+	};
+
+	const handleCancel = () => {
+		setActiveField(null);
 	};
 
 	const handleNumberValidationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -100,21 +132,62 @@ export default function NumberForm({
 			</div>
 			{/** Format Option Dropdown */}
 			<div className="mt-4">
-				<SelectGroup title="Format" name="format" id="numberFormat">
-					<SelectGroup.Option value="integer">Integer (1)</SelectGroup.Option>
-					<SelectGroup.Option value="decimal">Decimal (1.0)</SelectGroup.Option>
-					<SelectGroup.Option>Any Format</SelectGroup.Option>
+				<SelectGroup title="Format" name="format" id="numberFormat" required>
+					{formatOptions.map((opt) => (
+						<SelectGroup.Option key={opt.value} value={opt.value}>
+							{opt.text}
+						</SelectGroup.Option>
+					))}
 				</SelectGroup>
 			</div>
 			{/** Precision Option Dropdown */}
 			<div className="mt-4">
-				<SelectGroup title="Precision" name="decimalPlaces" id="decimalPlaces" refer={precisonRef}>
-					<SelectGroup.Option value="1">1.0</SelectGroup.Option>
-					<SelectGroup.Option value="2">1.00</SelectGroup.Option>
-					<SelectGroup.Option value="3">1.000</SelectGroup.Option>
-					<SelectGroup.Option value="4">1.0000</SelectGroup.Option>
-					<SelectGroup.Option value="5">1.00000</SelectGroup.Option>
+				<SelectGroup title="Precision" name="decimalPlaces" id="decimalPlaces" refer={precisionRef}>
+					{precisionOptions.map((opt) => (
+						<SelectGroup.Option key={opt.value} value={opt.value}>
+							{opt.text}
+						</SelectGroup.Option>
+					))}
 				</SelectGroup>
+				{/* Allow Negative Check */}
+				<Checkbox
+					id="fieldValidationAllowNegative"
+					name="allowNegative"
+					onChange={handleValidationCheckboxChange}
+					checked={activeField?.validations?.allowNegative}
+				>
+					Allow negative numbers
+				</Checkbox>
+			</div>
+			{/* Required Check */}
+			<Checkbox
+				id="fieldRequired"
+				name="required"
+				onChange={handleCheckboxChange}
+				checked={activeField?.required}
+			>
+				This field is required
+			</Checkbox>
+			{/* Save and cancel buttons */}
+			<div className="flex justify-end xs:mt-4 absolute right-3 top-3">
+				<button
+					type="button"
+					className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+					onClick={handleCancel}
+				>
+					Cancel
+				</button>
+				<button
+					type="button"
+					className={`${
+						submittable
+							? "bg-blue-500 hover:bg-blue-600 focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+							: "bg-blue-400 cursor-not-allowed"
+					} ml-3 inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md shadow-sm text-white focus:outline-none`}
+					onClick={handleSubmit}
+				>
+					Save Field
+				</button>
 			</div>
 		</div>
 	);
