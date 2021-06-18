@@ -64,6 +64,7 @@ export default function BasicFieldRow({
 						value={activeField!.name}
 						handleChange={handleChange}
 						required
+						focus
 					/>
 					<StandardInput
 						className="mt-5"

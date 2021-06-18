@@ -1,8 +1,5 @@
 import React, { useEffect, useRef } from "react";
 import { CollectionDataFields } from "../../../../../src/interfaces/collectionDataInterfaces";
-import fieldTypeToText from "../../../utils/fieldTypeToText";
-import fieldTypeToForm from "../../../utils/fieldTypeToForm";
-import FormProps from "../../../interfaces/FormProps";
 import { getFieldDataByType } from "../../../utils/fieldTypeData";
 
 interface CollectionFieldRowProps {
@@ -35,10 +32,7 @@ export default function CollectionFieldRow({
 		active && myRef.current!.scrollIntoView({ behavior: "smooth" });
 	}, [active]);
 
-	const Form: (props: FormProps) => JSX.Element =
-		// @ts-ignore
-		activeField?.type && fieldTypeToForm[activeField.type];
-
+	const Form = getFieldDataByType(type, "Form");
 	const SmallIcon = getFieldDataByType(type, "SmallIcon");
 
 	return (
@@ -51,7 +45,7 @@ export default function CollectionFieldRow({
 			<div className="flex items-center">
 				<SmallIcon className="mr-3" />
 				<span className="mr-3">{name}</span>
-				<span className="text-gray-400">({fieldTypeToText[type]})</span>
+				<span className="text-gray-400">({getFieldDataByType(type, "name")})</span>
 				{required && <span className="text-gray-400 ml-auto">Required Field</span>}
 			</div>
 			{active && (

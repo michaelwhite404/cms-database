@@ -1,6 +1,6 @@
-import React, { useRef } from "react";
 import FormProps from "../../../interfaces/FormProps";
 import StandardInput from "../../../components/Form/StandardInput";
+import Checkbox from "../../../components/Form/Checkbox";
 
 export default function BasicForm({
 	activeField,
@@ -8,8 +8,6 @@ export default function BasicForm({
 	submitNewField,
 	changeValidationField,
 }: FormProps) {
-	const requiredRef = useRef<HTMLInputElement>(null);
-
 	const handleSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
 		e.preventDefault();
 		submitNewField();
@@ -20,8 +18,9 @@ export default function BasicForm({
 		setActiveField({ ...activeField!, [e.target!.name]: e.target!.value });
 	};
 
-	const handleRequiredChange = () => {
-		setActiveField({ ...activeField!, required: requiredRef.current?.checked });
+	const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const { name, checked } = e.target;
+		setActiveField({ ...activeField!, [name]: checked });
 	};
 
 	const handleCancel = () => {
@@ -36,6 +35,7 @@ export default function BasicForm({
 				value={activeField!.name}
 				handleChange={handleChange}
 				required
+				focus
 			/>
 			<StandardInput
 				className="mt-5"
@@ -47,19 +47,14 @@ export default function BasicForm({
 				handleChange={handleChange}
 			/>
 			{/* Required Check */}
-			<div className="mt-3 mb-1 font-normal text-sm">
-				<label>
-					<input
-						className="focus:ring-indigo-500 h-4 w-4 mr-3 text-indigo-600 border-gray-300 rounded"
-						type="checkbox"
-						id="fieldRequired"
-						name="required"
-						ref={requiredRef!}
-						onChange={handleRequiredChange}
-					/>
-					<label htmlFor="fieldRequired">This field is required</label>
-				</label>
-			</div>
+			<Checkbox
+				id="fieldRequired"
+				name="required"
+				onChange={handleCheckboxChange}
+				checked={activeField?.required}
+			>
+				This field is required
+			</Checkbox>
 			<div className="flex justify-end xs:mt-4 absolute right-3 top-3">
 				<button
 					type="button"

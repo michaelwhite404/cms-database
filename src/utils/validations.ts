@@ -280,6 +280,9 @@ export const testItemValidations = async (
 		Video: (): Promise<[boolean, string]> => {
 			return Promise.resolve([false, "Not Implemented"]);
 		},
+		File: (): Promise<[boolean, string]> => {
+			return Promise.resolve([false, "Not Implemented"]);
+		},
 		User: (): Promise<[boolean, string]> => {
 			return Promise.resolve([false, "Not Implemented"]);
 		},

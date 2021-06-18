@@ -31,6 +31,7 @@ export interface ItemValidationMethods {
 	Date: () => Promise<[boolean, string, string?]>;
 	ImageRef: () => Promise<[boolean, string]>;
 	RichText: () => Promise<[boolean, string]>;
+	File: () => Promise<[boolean, string]>;
 	Video: () => Promise<[boolean, string]>;
 	User: () => Promise<[boolean, string]>;
 }

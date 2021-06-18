@@ -2,13 +2,8 @@
 import { ArrowCircleDownIcon, PlusIcon, XIcon } from "@heroicons/react/solid";
 import React, { useEffect, useRef } from "react";
 import FieldTypeButton from "./FieldTypeButton";
-import ButtonIcon from "../../../components/Icons/ButtonIcon";
 import { CollectionDataFields } from "../../../../../src/interfaces/collectionDataInterfaces";
-import { CollectionFieldType } from "../../../../../src/interfaces/collectionInterfaces";
-import fieldTypeToText from "../../../utils/fieldTypeToText";
-import fieldTypeToForm from "../../../utils/fieldTypeToForm";
-import FormProps from "../../../interfaces/FormProps";
-import { getFieldDataByType } from "../../../utils/fieldTypeData";
+import { fieldData, getFieldDataByType } from "../../../utils/fieldTypeData";
 
 interface AddFieldRowProps {
 	// field: CollectionDataFields;
@@ -20,13 +15,6 @@ interface AddFieldRowProps {
 	submitField: (tempId: string) => void;
 	submitNewField: () => void;
 	changeValidationField: (name: string, value: any) => void;
-}
-
-interface FieldButton {
-	name: string;
-	type: CollectionFieldType;
-	Icon: (props: React.SVGProps<SVGSVGElement>) => JSX.Element;
-	validations?: any;
 }
 
 export default function AddFieldRow({
@@ -51,54 +39,7 @@ export default function AddFieldRow({
 		active && myRef.current!.scrollIntoView({ behavior: "smooth" });
 	}, [active]);
 
-	const fieldButtons: FieldButton[] = [
-		{
-			name: "Plain Text",
-			type: "PlainText",
-			Icon: ButtonIcon.PlainText,
-			validations: { singleLine: true, minLength: "", maxLength: "" },
-		},
-		{
-			name: "Rich Text",
-			type: "RichText",
-			Icon: ButtonIcon.RichText,
-			validations: { singleLine: true, minLength: "", maxLength: "" },
-		},
-		{ name: "Image", type: "ImageRef", Icon: ButtonIcon.Image, validations: { singleLine: true } },
-		{
-			name: "Video Link",
-			type: "Video",
-			Icon: ButtonIcon.Video,
-			validations: { singleLine: true },
-		},
-		{ name: "Link", type: "Link", Icon: ButtonIcon.Link, validations: { singleLine: true } },
-		{ name: "Email", type: "Email", Icon: ButtonIcon.Email, validations: { singleLine: true } },
-		{ name: "Phone", type: "Phone", Icon: ButtonIcon.Phone, validations: { singleLine: true } },
-		{
-			name: "Number",
-			type: "Number",
-			Icon: ButtonIcon.Number,
-			validations: {
-				format: "integer",
-				maximum: "",
-				minimum: "",
-				decimalPlaces: 0,
-				allowNegative: false,
-			},
-		},
-		{ name: "Date", type: "Date", Icon: ButtonIcon.Date },
-		{ name: "Switch", type: "Bool", Icon: ButtonIcon.Bool },
-		{ name: "Color", type: "Color", Icon: ButtonIcon.Color, validations: { singleLine: true } },
-		{ name: "Option", type: "Option", Icon: ButtonIcon.Option },
-		// { name: "File", type: "File", Icon: ButtonIcon.File },
-		{ name: "Reference", type: "ItemRef", Icon: ButtonIcon.Reference },
-		{ name: "Multi Reference", type: "ItemRefMulti", Icon: ButtonIcon.MultiReference },
-	];
-
-	const Form: (props: FormProps) => JSX.Element =
-		// @ts-ignore
-		activeField?.type && fieldTypeToForm[activeField.type];
-
+	const Form = activeField?.type! && getFieldDataByType(activeField.type, "Form");
 	const SmallIcon = activeField?.type! && getFieldDataByType(activeField?.type!, "SmallIcon");
 
 	return (
@@ -132,14 +73,16 @@ export default function AddFieldRow({
 						<>
 							{active && activeField?.type && <SmallIcon className="mr-3" />}
 							<span className="mr-3">New Field</span>
-							<span className="text-gray-400">({fieldTypeToText[activeField!.type]})</span>
+							<span className="text-gray-400">
+								({getFieldDataByType(activeField.type, "name")})
+							</span>
 						</>
 					))}
 			</div>
 			{active &&
 				(!activeField?.type ? (
 					<div className="grid grid-cols-6 gap-4 mt-5 mb-2.5">
-						{fieldButtons.map((field) => (
+						{fieldData.map((field) => (
 							<FieldTypeButton
 								key={field.type}
 								field={field}

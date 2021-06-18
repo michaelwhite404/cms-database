@@ -13,6 +13,7 @@ interface StandardInputProps {
 	className?: string;
 	placeholder?: string;
 	helpText?: string;
+	focus?: boolean;
 }
 
 export default function StandardInput({
@@ -27,6 +28,7 @@ export default function StandardInput({
 	className,
 	placeholder,
 	helpText,
+	focus,
 }: StandardInputProps) {
 	return (
 		<div className={className}>
@@ -50,6 +52,7 @@ export default function StandardInput({
 					value={value}
 					onChange={handleChange}
 					onBlur={handleBlur}
+					autoFocus={focus}
 				/>
 				{errorMessage && <ErrorTooltip>{errorMessage}</ErrorTooltip>}
 			</div>

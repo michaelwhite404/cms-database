@@ -1,9 +1,10 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import NumberInput from "../../../components/Form/NumberInput";
 import StandardRadioGroup from "../../../components/Form/StandardRadioGroup";
 import NewCollectionContext from "../../../context/NewCollectionContext";
 import FormProps from "../../../interfaces/FormProps";
 import StandardInput from "../../../components/Form/StandardInput";
+import Checkbox from "../../../components/Form/Checkbox";
 
 export default function PlainTextForm({
 	activeField,
@@ -25,8 +26,6 @@ export default function PlainTextForm({
 		setErrors({ ...errors, minLength: minErr, maxLength: maxErr });
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [activeField?.validations?.minLength, activeField?.validations?.maxLength]);
-
-	const requiredRef = useRef<HTMLInputElement>(null);
 
 	/** Value stores if the form can be submitted */
 	const submittable =
@@ -52,6 +51,11 @@ export default function PlainTextForm({
 			else if (duplicate) setErrors({ ...errors, name: "Already Exists" });
 			else setErrors({ ...errors, name: "" });
 		setActiveField({ ...activeField!, [name]: value });
+	};
+
+	const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const { name, checked } = e.target;
+		setActiveField({ ...activeField!, [name]: checked });
 	};
 
 	const handleNumberValidationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -94,9 +98,6 @@ export default function PlainTextForm({
 			"singleLine";
 		changeValidationField?.("singleLine", singleLine);
 	};
-	const handleRequiredChange = () => {
-		setActiveField({ ...activeField!, required: requiredRef.current?.checked });
-	};
 
 	const handleCancel = () => {
 		setActiveField(null);
@@ -130,6 +131,7 @@ export default function PlainTextForm({
 				handleChange={handleChange}
 				errorMessage={errors.name}
 				required
+				focus
 			/>
 			{/* Text input for field helpText */}
 			<StandardInput
@@ -186,20 +188,14 @@ export default function PlainTextForm({
 				/>
 			</div>
 			{/* Required Check */}
-			<div className="mt-3 mb-1 font-normal text-sm">
-				<label>
-					<input
-						className="focus:ring-indigo-500 h-4 w-4 mr-3 text-indigo-600 border-gray-300 rounded"
-						type="checkbox"
-						id="fieldRequired"
-						name="required"
-						ref={requiredRef!}
-						onChange={handleRequiredChange}
-						checked={activeField?.required}
-					/>
-					<label htmlFor="fieldRequired">This field is required</label>
-				</label>
-			</div>
+			<Checkbox
+				id="fieldRequired"
+				name="required"
+				onChange={handleCheckboxChange}
+				checked={activeField?.required}
+			>
+				This field is required
+			</Checkbox>
 			{/* Save and cancel buttons */}
 			<div className="flex justify-end xs:mt-4 absolute right-3 top-3">
 				<button

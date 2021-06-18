@@ -14,6 +14,7 @@ const fieldTypes = [
 	"PlainText",
 	"RichText",
 	"Video",
+	"File",
 	"User",
 ] as const;
 

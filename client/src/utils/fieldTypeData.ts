@@ -1,27 +1,27 @@
 import { CollectionFieldType } from "../../../src/interfaces/collectionInterfaces";
 import ButtonIcon from "../components/Icons/ButtonIcon";
-import ImageIcon from "../components/Icons/FieldMiniIcons/ImageIcon";
-import PlainTextIcon from "../components/Icons/FieldMiniIcons/PlainTextIcon";
+import MiniIcon from "../components/Icons/MiniIcon";
 import FormProps from "../interfaces/FormProps";
 import BasicForm from "../Pages/Project/Forms/BasicForm";
+import NumberForm from "../Pages/Project/Forms/NumberForm";
 import PlainTextForm from "../Pages/Project/Forms/PlainTextForm";
 
 interface FieldData {
 	name: string;
 	type: CollectionFieldType;
-	form: (props: FormProps) => JSX.Element;
+	Form: (props: FormProps) => JSX.Element;
 	Icon: (props: React.SVGProps<SVGSVGElement>) => JSX.Element;
 	SmallIcon: (props: React.SVGProps<SVGSVGElement>) => JSX.Element;
 	validations?: any;
 }
 
-const fieldData: FieldData[] = [
+export const fieldData: FieldData[] = [
 	{
 		name: "Plain Text",
 		type: "PlainText",
-		form: PlainTextForm,
+		Form: PlainTextForm,
 		Icon: ButtonIcon.PlainText,
-		SmallIcon: PlainTextIcon,
+		SmallIcon: MiniIcon.PlainText,
 		validations: { singleLine: true, minLength: "", maxLength: "" },
 	},
 	// {
@@ -33,11 +33,77 @@ const fieldData: FieldData[] = [
 	{
 		name: "Image",
 		type: "ImageRef",
-		form: BasicForm,
+		Form: BasicForm,
 		Icon: ButtonIcon.Image,
-		SmallIcon: ImageIcon,
+		SmallIcon: MiniIcon.Image,
 		validations: { singleLine: true },
 	},
+	{
+		name: "Video Link",
+		type: "Video",
+		Form: BasicForm,
+		Icon: ButtonIcon.Video,
+		SmallIcon: MiniIcon.Video,
+		validations: { singleLine: true },
+	},
+	{
+		name: "Link",
+		type: "Link",
+		Form: BasicForm,
+		Icon: ButtonIcon.Link,
+		SmallIcon: MiniIcon.Link,
+		validations: { singleLine: true },
+	},
+	{
+		name: "Email",
+		type: "Email",
+		Form: BasicForm,
+		Icon: ButtonIcon.Email,
+		SmallIcon: MiniIcon.Email,
+		validations: { singleLine: true },
+	},
+	{
+		name: "Phone",
+		type: "Phone",
+		Form: BasicForm,
+		Icon: ButtonIcon.Phone,
+		SmallIcon: MiniIcon.Phone,
+		validations: { singleLine: true },
+	},
+	{
+		name: "Number",
+		type: "Number",
+		Form: NumberForm,
+		Icon: ButtonIcon.Number,
+		SmallIcon: MiniIcon.Number,
+		validations: {
+			format: "integer",
+			maximum: "",
+			minimum: "",
+			decimalPlaces: 0,
+			allowNegative: false,
+		},
+	},
+	// { name: "Date", type: "Date", Icon: ButtonIcon.Date },
+	// { name: "Switch", type: "Bool", Icon: ButtonIcon.Bool },
+	{
+		name: "Color",
+		type: "Color",
+		Form: BasicForm,
+		Icon: ButtonIcon.Color,
+		SmallIcon: MiniIcon.Color,
+		validations: { singleLine: true },
+	},
+	// { name: "Option", type: "Option", Icon: ButtonIcon.Option },
+	{
+		name: "File",
+		type: "File",
+		Form: BasicForm,
+		Icon: ButtonIcon.File,
+		SmallIcon: MiniIcon.File,
+	},
+	// { name: "Reference", type: "ItemRef", Icon: ButtonIcon.Reference },
+	// { name: "Multi Reference", type: "ItemRefMulti", Icon: ButtonIcon.MultiReference },
 ];
 
 export const getFieldDataByType = <T extends keyof FieldData>(
