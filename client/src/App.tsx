@@ -8,6 +8,7 @@ import AppError from "../../src/utils/appError";
 import Login from "./components/Login";
 import Project from "./Pages/Project/Project";
 import Dashboard from "./Pages/Dashboard/Dashboard";
+import { ProjectCollectionsProvider } from "./context/ProjectCollectionsContext";
 
 function App() {
 	return (
@@ -32,8 +33,9 @@ function App() {
 						<Login />
 					</Route>
 					<Route path="/dashboard" component={Dashboard} />
-
-					<Route path="/databases/:database" component={Project} />
+					<ProjectCollectionsProvider>
+						<Route path="/databases/:database" component={Project} />
+					</ProjectCollectionsProvider>
 					<Route path="/collections/:collection" component={Collection} />
 					<Route path="/">
 						<Home />

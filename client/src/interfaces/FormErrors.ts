@@ -5,4 +5,5 @@ export default interface FormErrors {
 	minimum?: string;
 	maximum?: string;
 	format?: string;
+	collection?: string;
 }

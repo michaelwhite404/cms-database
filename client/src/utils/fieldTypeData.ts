@@ -7,6 +7,7 @@ import BoolForm from "../Pages/Project/Forms/BoolForm";
 import DateForm from "../Pages/Project/Forms/DateForm";
 import NumberForm from "../Pages/Project/Forms/NumberForm";
 import PlainTextForm from "../Pages/Project/Forms/PlainTextForm";
+import ReferenceForm from "../Pages/Project/Forms/ReferenceForm";
 import RichTextForm from "../Pages/Project/Forms/RichTextForm";
 
 interface FieldData {
@@ -120,8 +121,22 @@ export const fieldData: FieldData[] = [
 		Icon: ButtonIcon.File,
 		SmallIcon: MiniIcon.File,
 	},
-	// { name: "Reference", type: "ItemRef", Icon: ButtonIcon.Reference },
-	// { name: "Multi Reference", type: "ItemRefMulti", Icon: ButtonIcon.MultiReference },
+	{
+		name: "Reference",
+		type: "ItemRef",
+		Form: ReferenceForm,
+		Icon: ButtonIcon.Reference,
+		SmallIcon: MiniIcon.Reference,
+		validations: { collectionId: "" },
+	},
+	{
+		name: "Multi Reference",
+		type: "ItemRefMulti",
+		Form: ReferenceForm,
+		Icon: ButtonIcon.MultiReference,
+		SmallIcon: MiniIcon.MultiReference,
+		validations: { collectionId: "" },
+	},
 ];
 
 export const getFieldDataByType = <T extends keyof FieldData>(

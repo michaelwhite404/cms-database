@@ -9,7 +9,6 @@ const NewCollectionContext = createContext<CollectionState>([defaultCollectionDa
 export const NewCollectionProvider = ({ children }: { children: ReactNode }) => {
 	const [newCollectionData, setNewCollectionData] = useState<CollectionData>(defaultCollectionData);
 	return (
-		// @ts-ignore
 		<NewCollectionContext.Provider value={[newCollectionData, setNewCollectionData]}>
 			{children}
 		</NewCollectionContext.Provider>

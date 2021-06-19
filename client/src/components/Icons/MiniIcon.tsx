@@ -5,9 +5,11 @@ import EmailIcon from "./FieldMiniIcons/EmailIcon";
 import FileIcon from "./FieldMiniIcons/FileIcon";
 import ImageIcon from "./FieldMiniIcons/ImageIcon";
 import LinkIcon from "./FieldMiniIcons/LinkIcon";
+import MultiReferenceIcon from "./FieldMiniIcons/MultiReferenceIcon";
 import NumberIcon from "./FieldMiniIcons/NumberIcon";
 import PhoneIcon from "./FieldMiniIcons/PhoneIcon";
 import PlainTextIcon from "./FieldMiniIcons/PlainTextIcon";
+import ReferenceIcon from "./FieldMiniIcons/ReferenceIcon";
 import RichTextIcon from "./FieldMiniIcons/RichTextIcon";
 import VideoIcon from "./FieldMiniIcons/VideoIcon";
 
@@ -25,5 +27,7 @@ MiniIcon.Date = DateIcon;
 MiniIcon.Bool = BoolIcon;
 MiniIcon.Color = ColorIcon;
 MiniIcon.File = FileIcon;
+MiniIcon.Reference = ReferenceIcon;
+MiniIcon.MultiReference = MultiReferenceIcon;
 
 export default MiniIcon;

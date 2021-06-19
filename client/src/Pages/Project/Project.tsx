@@ -1,5 +1,5 @@
 import axios, { AxiosError } from "axios";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import ProjectMainArea from "./ProjectMainArea";
 import { CollectionModel } from "../../../../src/interfaces/collectionInterfaces";
@@ -12,12 +12,13 @@ import DatabaseModel from "../../../../src/interfaces/databaseInterface";
 import Slideover from "../../components/Slideover";
 import CreateCollectionSlideover from "./CreateCollectionSlideover";
 import { NewCollectionProvider } from "../../context/NewCollectionContext";
+import ProjectCollectionsContext from "../../context/ProjectCollectionsContext";
 
 export default function Project() {
 	const [openSlideover, setOpenSlideover] = useState(false);
 	const [loaded, setLoaded] = useState(false);
 	const [currentDatabase, setCurrentDatabase] = useState<DatabaseModel | null>(null);
-	const [collections, setCollections] = useState<CollectionModel[]>([]);
+	const [collections, setCollections] = useContext(ProjectCollectionsContext);
 	const [activeCollection, setActiveCollection] = useState<CollectionModel | null>(null);
 	const params = useParams<{ database: string }>();
 

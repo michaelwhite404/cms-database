@@ -59,7 +59,7 @@ export default function NumberForm({
 	]);
 
 	const handleFormatChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-		const { value } = e.target as { name: CollectionValidationsKeys; value: NumberFormat };
+		const { value } = e.target as { value: NumberFormat };
 		setActiveField({
 			...activeField!,
 			validations: {
