@@ -31,8 +31,8 @@ export default function CreateCollectionSlideover({
 	database,
 	collections,
 }: CreateCollectionSlideoverProps) {
+	// const NewCollectionContext = createContext<>([defaultCollectionData, dispatch]);
 	const [newCollectionData, setNewCollectionData] = useContext(NewCollectionContext);
-	// const [newCollectionData, setNewCollectionData] = useState<CollectionData>(defaultCollectionData);
 	const [activeField, setActiveField] = useState<CollectionDataFields | null>(null);
 	const [addField, setAddField] = useState({
 		tempId: uuid(),
@@ -205,7 +205,6 @@ export default function CreateCollectionSlideover({
 										activeField={activeField}
 										setActiveField={setActiveField}
 										submitField={submitField}
-										changeValidationField={changeValidationField}
 									/>
 								))}
 							</div>

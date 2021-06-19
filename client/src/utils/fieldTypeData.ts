@@ -5,6 +5,7 @@ import FormProps from "../interfaces/FormProps";
 import BasicForm from "../Pages/Project/Forms/BasicForm";
 import NumberForm from "../Pages/Project/Forms/NumberForm";
 import PlainTextForm from "../Pages/Project/Forms/PlainTextForm";
+import RichTextForm from "../Pages/Project/Forms/RichTextForm";
 
 interface FieldData {
 	name: string;
@@ -24,12 +25,14 @@ export const fieldData: FieldData[] = [
 		SmallIcon: MiniIcon.PlainText,
 		validations: { singleLine: true, minLength: "", maxLength: "" },
 	},
-	// {
-	// 	name: "Rich Text",
-	// 	type: "RichText",
-	// 	Icon: ButtonIcon.RichText,
-	// 	validations: { singleLine: true, minLength: "", maxLength: "" },
-	// },
+	{
+		name: "Rich Text",
+		type: "RichText",
+		Form: RichTextForm,
+		Icon: ButtonIcon.RichText,
+		SmallIcon: MiniIcon.RichText,
+		validations: { singleLine: true, minLength: "", maxLength: "" },
+	},
 	{
 		name: "Image",
 		type: "ImageRef",

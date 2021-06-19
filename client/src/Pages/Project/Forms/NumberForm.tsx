@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import NumberInput from "../../../components/Form/NumberInput";
 import FormProps from "../../../interfaces/FormProps";
 import StandardInput from "../../../components/Form/StandardInput";
@@ -11,6 +11,8 @@ import {
 	NumberFormat,
 } from "../../../../../src/interfaces/collectionInterfaces";
 import countDecimals from "../../../utils/countDecimals";
+import NewCollectionContext from "../../../context/NewCollectionContext";
+import slugify from "slugify";
 
 const precisionOptions = [
 	{ text: "1.0", value: "1" },
@@ -40,6 +42,8 @@ export default function NumberForm({
 	submitNewField,
 	changeValidationField,
 }: FormProps) {
+	const [newCollectionData] = useContext(NewCollectionContext);
+	const currentFields = newCollectionData.fields;
 	const [errors, setErrors] = useState({
 		name: "",
 		minimum: "",
@@ -64,16 +68,27 @@ export default function NumberForm({
 	const precisionRef = useRef<HTMLSelectElement>(null);
 
 	/** Value stores if the form can be submitted */
-	const submittable = !!!errors.minimum.length && !!!errors.maximum.length && !!activeField!.name;
+	const submittable = !Object.values(errors).join("").length && activeField!.name;
 
 	const handleSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
 		e.preventDefault();
+		if (!submittable) return;
 		submitNewField();
 		setActiveField(null);
 	};
 
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		setActiveField({ ...activeField!, [e.target!.name]: e.target!.value });
+		const { name, value } = e.target;
+		const slugLow = (value: string) => slugify(value, { lower: true });
+		const duplicate = currentFields
+			.filter((f) => f.tempId !== activeField!.tempId)
+			.map((f) => slugLow(f.name))
+			.includes(slugLow(value));
+		if (name === "name")
+			if (value.length === 0) setErrors({ ...errors, name: "This field is required" });
+			else if (duplicate) setErrors({ ...errors, name: "Already Exists" });
+			else setErrors({ ...errors, name: "" });
+		setActiveField({ ...activeField!, [name]: value });
 	};
 
 	const handleFormatChange = (e: React.ChangeEvent<HTMLSelectElement>) => {

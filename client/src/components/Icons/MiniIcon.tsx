@@ -6,12 +6,13 @@ import LinkIcon from "./FieldMiniIcons/LinkIcon";
 import NumberIcon from "./FieldMiniIcons/NumberIcon";
 import PhoneIcon from "./FieldMiniIcons/PhoneIcon";
 import PlainTextIcon from "./FieldMiniIcons/PlainTextIcon";
+import RichTextIcon from "./FieldMiniIcons/RichTextIcon";
 import VideoIcon from "./FieldMiniIcons/VideoIcon";
 
 const MiniIcon: { [x: string]: (props: React.ComponentProps<"svg">) => JSX.Element } = {};
 
 MiniIcon.PlainText = PlainTextIcon;
-// MiniIcon.RichText = RichTextButtonIcon;
+MiniIcon.RichText = RichTextIcon;
 MiniIcon.Image = ImageIcon;
 MiniIcon.Video = VideoIcon;
 MiniIcon.Link = LinkIcon;

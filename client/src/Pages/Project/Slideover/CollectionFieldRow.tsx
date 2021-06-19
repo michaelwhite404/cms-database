@@ -22,11 +22,7 @@ export default function CollectionFieldRow({
 	const myRef = useRef<HTMLDivElement>(null);
 	const { name, type, required } = field;
 
-	const handleClick = () => {
-		if (!active) {
-			setActiveField(field);
-		}
-	};
+	const handleClick = () => !active && setActiveField(field);
 
 	useEffect(() => {
 		active && myRef.current!.scrollIntoView({ behavior: "smooth" });

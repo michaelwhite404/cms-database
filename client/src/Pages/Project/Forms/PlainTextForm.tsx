@@ -6,6 +6,7 @@ import FormProps from "../../../interfaces/FormProps";
 import StandardInput from "../../../components/Form/StandardInput";
 import Checkbox from "../../../components/Form/Checkbox";
 import { CollectionValidationsKeys } from "../../../../../src/interfaces/collectionInterfaces";
+import slugify from "slugify";
 
 export default function PlainTextForm({
 	activeField,
@@ -43,10 +44,11 @@ export default function PlainTextForm({
 
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const { name, value } = e.target;
+		const slugLow = (value: string) => slugify(value, { lower: true });
 		const duplicate = currentFields
 			.filter((f) => f.tempId !== activeField!.tempId)
-			.map((f) => f.name)
-			.includes(value);
+			.map((f) => slugLow(f.name))
+			.includes(slugLow(value));
 		if (name === "name")
 			if (value.length === 0) setErrors({ ...errors, name: "This field is required" });
 			else if (duplicate) setErrors({ ...errors, name: "Already Exists" });
