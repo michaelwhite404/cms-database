@@ -1,7 +1,6 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import NumberInput from "../../../components/Form/NumberInput";
 import FormProps from "../../../interfaces/FormProps";
-import StandardInput from "../../../components/Form/StandardInput";
 import SelectGroup from "../../../components/Form/SelectGroup";
 import Checkbox from "../../../components/Form/Checkbox";
 import {
@@ -11,8 +10,8 @@ import {
 	NumberFormat,
 } from "../../../../../src/interfaces/collectionInterfaces";
 import countDecimals from "../../../utils/countDecimals";
-import NewCollectionContext from "../../../context/NewCollectionContext";
-import slugify from "slugify";
+import StandardForm from "../StandardForm";
+import FormErrors from "../../../interfaces/FormErrors";
 
 const precisionOptions = [
 	{ text: "1.0", value: "1" },
@@ -42,13 +41,7 @@ export default function NumberForm({
 	submitNewField,
 	changeValidationField,
 }: FormProps) {
-	const [newCollectionData] = useContext(NewCollectionContext);
-	const currentFields = newCollectionData.fields;
-	const [errors, setErrors] = useState({
-		name: "",
-		minimum: "",
-		maximum: "",
-	});
+	const [errors, setErrors] = useState<FormErrors>({ name: "", minimum: "", maximum: "" });
 
 	const validations = activeField?.validations as CollectionValidations<NumberFormat>;
 
@@ -65,32 +58,6 @@ export default function NumberForm({
 		validations.decimalPlaces,
 	]);
 
-	const precisionRef = useRef<HTMLSelectElement>(null);
-
-	/** Value stores if the form can be submitted */
-	const submittable = !Object.values(errors).join("").length && activeField!.name;
-
-	const handleSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
-		e.preventDefault();
-		if (!submittable) return;
-		submitNewField();
-		setActiveField(null);
-	};
-
-	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const { name, value } = e.target;
-		const slugLow = (value: string) => slugify(value, { lower: true });
-		const duplicate = currentFields
-			.filter((f) => f.tempId !== activeField!.tempId)
-			.map((f) => slugLow(f.name))
-			.includes(slugLow(value));
-		if (name === "name")
-			if (value.length === 0) setErrors({ ...errors, name: "This field is required" });
-			else if (duplicate) setErrors({ ...errors, name: "Already Exists" });
-			else setErrors({ ...errors, name: "" });
-		setActiveField({ ...activeField!, [name]: value });
-	};
-
 	const handleFormatChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
 		const { value } = e.target as { name: CollectionValidationsKeys; value: NumberFormat };
 		setActiveField({
@@ -101,11 +68,6 @@ export default function NumberForm({
 				decimalPlaces: value === "integer" ? 0 : 1,
 			},
 		});
-	};
-
-	const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const { name, checked } = e.target;
-		setActiveField({ ...activeField!, [name]: checked });
 	};
 
 	const handleValidationCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -124,10 +86,6 @@ export default function NumberForm({
 			newValue = Number(currentValue) + choice[operator];
 		}
 		changeValidationField?.(name, Number(newValue));
-	};
-
-	const handleCancel = () => {
-		setActiveField(null);
 	};
 
 	const handleNumberValidationChange = (
@@ -177,125 +135,83 @@ export default function NumberForm({
 
 	return (
 		<div className="mt-4">
-			<StandardInput
-				title="Label"
-				id="fieldName"
-				name="name"
-				value={activeField!.name}
-				handleChange={handleChange}
-				errorMessage={errors.name}
-				required
-				focus
-			/>
-			<StandardInput
-				className="mt-5"
-				title="Help Text"
-				id="fieldHelpText"
-				name="helpText"
-				value={activeField!.helpText || ""}
-				helpText="Appears below the label to guide Collaborators, just like this help text"
-				handleChange={handleChange}
-			/>
-			<div className="mt-5 grid grid-cols-2 gap-x-10">
-				<NumberInput
-					title="Minimum Number"
-					id="minNumber"
-					name="minimum"
-					value={activeField!.validations!.minimum}
-					handleChange={handleNumberValidationChange}
-					arrows
-					increment={() => handleArrowChange("increment", "minimum", `${validations.minimum}`)}
-					decrement={() => handleArrowChange("decrement", "minimum", `${validations.minimum}`)}
-					errorMessage={errors.minimum}
-				/>
-				<NumberInput
-					title="Maximum Number"
-					id="maxNumber"
-					name="maximum"
-					value={validations.maximum}
-					handleChange={handleNumberValidationChange}
-					arrows
-					increment={() => handleArrowChange("increment", "maximum", `${validations.maximum}`)}
-					decrement={() => handleArrowChange("decrement", "maximum", `${validations.maximum}`)}
-					errorMessage={errors.maximum}
-				/>
-			</div>
-			{/** Format Option Dropdown */}
-			<div className="mt-4">
-				<SelectGroup
-					title="Format"
-					name="format"
-					id="numberFormat"
-					onChange={handleFormatChange}
-					value={validations.format}
-					required
-				>
-					{formatOptions.map((opt) => (
-						<SelectGroup.Option key={opt.value} value={opt.value}>
-							{opt.text}
-						</SelectGroup.Option>
-					))}
-				</SelectGroup>
-			</div>
-			{/** Precision Option Dropdown */}
-			<div className="mt-4">
-				{validations.format === "decimal" && (
+			<StandardForm
+				activeField={activeField}
+				setActiveField={setActiveField}
+				errors={errors}
+				setErrors={setErrors}
+				submitNewField={submitNewField}
+			>
+				<div className="mt-5 grid grid-cols-2 gap-x-10">
+					<NumberInput
+						title="Minimum Number"
+						id="minNumber"
+						name="minimum"
+						value={activeField!.validations!.minimum}
+						handleChange={handleNumberValidationChange}
+						arrows
+						increment={() => handleArrowChange("increment", "minimum", `${validations.minimum}`)}
+						decrement={() => handleArrowChange("decrement", "minimum", `${validations.minimum}`)}
+						errorMessage={errors.minimum}
+					/>
+					<NumberInput
+						title="Maximum Number"
+						id="maxNumber"
+						name="maximum"
+						value={validations.maximum}
+						handleChange={handleNumberValidationChange}
+						arrows
+						increment={() => handleArrowChange("increment", "maximum", `${validations.maximum}`)}
+						decrement={() => handleArrowChange("decrement", "maximum", `${validations.maximum}`)}
+						errorMessage={errors.maximum}
+					/>
+				</div>
+				{/** Format Option Dropdown */}
+				<div className="mt-4">
 					<SelectGroup
-						title="Precision"
-						name="decimalPlaces"
-						id="decimalPlaces"
-						refer={precisionRef}
+						title="Format"
+						name="format"
+						id="numberFormat"
+						onChange={handleFormatChange}
+						value={validations.format}
 						required
-						onChange={handleNumberValidationChange}
-						value={`${validations.decimalPlaces}`}
 					>
-						{precisionOptions.map((opt) => (
+						{formatOptions.map((opt) => (
 							<SelectGroup.Option key={opt.value} value={opt.value}>
 								{opt.text}
 							</SelectGroup.Option>
 						))}
 					</SelectGroup>
-				)}
-				{/* Allow Negative Check */}
-				<Checkbox
-					id="fieldValidationAllowNegative"
-					name="allowNegative"
-					onChange={handleValidationCheckboxChange}
-					checked={validations.allowNegative}
-				>
-					Allow negative numbers
-				</Checkbox>
-			</div>
-			{/* Required Check */}
-			<Checkbox
-				id="fieldRequired"
-				name="required"
-				onChange={handleCheckboxChange}
-				checked={activeField?.required}
-			>
-				This field is required
-			</Checkbox>
-			{/* Save and cancel buttons */}
-			<div className="flex justify-end xs:mt-4 absolute right-3 top-3">
-				<button
-					type="button"
-					className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-					onClick={handleCancel}
-				>
-					Cancel
-				</button>
-				<button
-					type="button"
-					className={`${
-						submittable
-							? "bg-blue-500 hover:bg-blue-600 focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-							: "bg-blue-400 cursor-not-allowed"
-					} ml-3 inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md shadow-sm text-white focus:outline-none`}
-					onClick={handleSubmit}
-				>
-					Save Field
-				</button>
-			</div>
+				</div>
+				{/** Precision Option Dropdown */}
+				<div className="mt-4">
+					{validations.format === "decimal" && (
+						<SelectGroup
+							title="Precision"
+							name="decimalPlaces"
+							id="decimalPlaces"
+							required
+							onChange={handleNumberValidationChange}
+							value={`${validations.decimalPlaces}`}
+						>
+							{precisionOptions.map((opt) => (
+								<SelectGroup.Option key={opt.value} value={opt.value}>
+									{opt.text}
+								</SelectGroup.Option>
+							))}
+						</SelectGroup>
+					)}
+					{/* Allow Negative Check */}
+					<Checkbox
+						id="fieldValidationAllowNegative"
+						name="allowNegative"
+						onChange={handleValidationCheckboxChange}
+						checked={validations.allowNegative}
+					>
+						Allow negative numbers
+					</Checkbox>
+				</div>
+			</StandardForm>
 		</div>
 	);
 }

@@ -1,12 +1,10 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import NumberInput from "../../../components/Form/NumberInput";
 import StandardRadioGroup from "../../../components/Form/StandardRadioGroup";
-import NewCollectionContext from "../../../context/NewCollectionContext";
 import FormProps from "../../../interfaces/FormProps";
-import StandardInput from "../../../components/Form/StandardInput";
-import Checkbox from "../../../components/Form/Checkbox";
 import { CollectionValidationsKeys } from "../../../../../src/interfaces/collectionInterfaces";
-import slugify from "slugify";
+import FormErrors from "../../../interfaces/FormErrors";
+import StandardForm from "../StandardForm";
 
 export default function PlainTextForm({
 	activeField,
@@ -14,13 +12,7 @@ export default function PlainTextForm({
 	submitNewField,
 	changeValidationField,
 }: FormProps) {
-	const [newCollectionData] = useContext(NewCollectionContext);
-	const currentFields = newCollectionData.fields;
-	const [errors, setErrors] = useState({
-		name: "",
-		minLength: "",
-		maxLength: "",
-	});
+	const [errors, setErrors] = useState<FormErrors>({ name: "", minLength: "", maxLength: "" });
 
 	useEffect(() => {
 		const minErr = validateMinLength();
@@ -28,38 +20,6 @@ export default function PlainTextForm({
 		setErrors({ ...errors, minLength: minErr, maxLength: maxErr });
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [activeField?.validations?.minLength, activeField?.validations?.maxLength]);
-
-	/** Value stores if the form can be submitted */
-	const submittable =
-		!!!errors.minLength.length && !!!errors.maxLength.length && !!activeField!.name;
-
-	/**
-	 * Validates the necessary PlainText Fields
-	 * @returns If the field can be submitted
-	 */
-	const validate = () => {
-		if (!activeField!.name) setErrors({ ...errors, name: "This field is required" });
-		return submittable;
-	};
-
-	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const { name, value } = e.target;
-		const slugLow = (value: string) => slugify(value, { lower: true });
-		const duplicate = currentFields
-			.filter((f) => f.tempId !== activeField!.tempId)
-			.map((f) => slugLow(f.name))
-			.includes(slugLow(value));
-		if (name === "name")
-			if (value.length === 0) setErrors({ ...errors, name: "This field is required" });
-			else if (duplicate) setErrors({ ...errors, name: "Already Exists" });
-			else setErrors({ ...errors, name: "" });
-		setActiveField({ ...activeField!, [name]: value });
-	};
-
-	const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const { name, checked } = e.target;
-		setActiveField({ ...activeField!, [name]: checked });
-	};
 
 	const handleNumberValidationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		let { name, value } = e.target as { name: CollectionValidationsKeys; value: any };
@@ -102,10 +62,6 @@ export default function PlainTextForm({
 		changeValidationField?.("singleLine", singleLine);
 	};
 
-	const handleCancel = () => {
-		setActiveField(null);
-	};
-
 	const handleArrowChange = (
 		operator: "increment" | "decrement",
 		name: CollectionValidationsKeys,
@@ -119,107 +75,68 @@ export default function PlainTextForm({
 		changeValidationField?.(name, Number(newValue));
 	};
 
-	const handleSubmit = () => {
-		if (validate()) submitNewField();
-	};
-
 	return (
 		<div className="mt-4">
-			{/* Text input for field name */}
-			<StandardInput
-				title="Label"
-				id="fieldName"
-				name="name"
-				value={activeField!.name || ""}
-				handleChange={handleChange}
-				errorMessage={errors.name}
-				required
-				focus
-			/>
-			{/* Text input for field helpText */}
-			<StandardInput
-				className="mt-5"
-				title="Help Text"
-				id="fieldHelpText"
-				name="helpText"
-				value={activeField!.helpText || ""}
-				helpText="Appears below the label to guide Collaborators, just like this help text"
-				handleChange={handleChange}
-			/>
-			{/* Radio input for single or multiple line */}
-			<StandardRadioGroup className="mt-5" title="Text Field Type" name="singleLine">
-				<StandardRadioGroup.Option value="singleLine" onChange={handleRadioChange} defaultChecked>
-					Single Line - {<span className="text-gray-400">For short text</span>}
-				</StandardRadioGroup.Option>
-				<StandardRadioGroup.Option value="multipleLine" onChange={handleRadioChange}>
-					Multiple Line - {<span className="text-gray-400">For long text</span>}
-				</StandardRadioGroup.Option>
-			</StandardRadioGroup>
-			{/* Inputs for min and max length */}
-			<div className="mt-5 grid grid-cols-2 gap-x-10">
-				<NumberInput
-					title="Minimum Character Count (with spaces)"
-					id="minCount"
-					name="minLength"
-					value={activeField!.validations!.minLength}
-					placeholder="E.g. 25"
-					handleChange={handleNumberValidationChange}
-					arrows
-					increment={() =>
-						handleArrowChange("increment", "minLength", `${activeField!.validations!.minLength}`)
-					}
-					decrement={() =>
-						handleArrowChange("decrement", "minLength", `${activeField!.validations!.minLength}`)
-					}
-					errorMessage={errors.minLength}
-				/>
-				<NumberInput
-					title="Maximum Character Count (with spaces)"
-					id="maxCount"
-					name="maxLength"
-					value={activeField!.validations!.maxLength}
-					placeholder="E.g. 140"
-					handleChange={handleNumberValidationChange}
-					arrows
-					increment={() =>
-						handleArrowChange("increment", "maxLength", `${activeField!.validations!.maxLength}`)
-					}
-					decrement={() =>
-						handleArrowChange("decrement", "maxLength", `${activeField!.validations!.maxLength}`)
-					}
-					errorMessage={errors.maxLength}
-				/>
-			</div>
-			{/* Required Check */}
-			<Checkbox
-				id="fieldRequired"
-				name="required"
-				onChange={handleCheckboxChange}
-				checked={activeField?.required}
+			<StandardForm
+				activeField={activeField}
+				setActiveField={setActiveField}
+				errors={errors}
+				setErrors={setErrors}
+				submitNewField={submitNewField}
 			>
-				This field is required
-			</Checkbox>
-			{/* Save and cancel buttons */}
-			<div className="flex justify-end xs:mt-4 absolute right-3 top-3">
-				<button
-					type="button"
-					className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-					onClick={handleCancel}
-				>
-					Cancel
-				</button>
-				<button
-					type="button"
-					className={`${
-						submittable
-							? "bg-blue-500 hover:bg-blue-600 focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-							: "bg-blue-400 cursor-not-allowed"
-					} ml-3 inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md shadow-sm text-white focus:outline-none`}
-					onClick={handleSubmit}
-				>
-					Save Field
-				</button>
-			</div>
+				{/* Radio input for single or multiple line */}
+				<StandardRadioGroup className="mt-5" title="Text Field Type" name="singleLine">
+					<StandardRadioGroup.Option
+						value="singleLine"
+						onChange={handleRadioChange}
+						defaultChecked={activeField?.validations?.singleLine === true}
+					>
+						Single Line - {<span className="text-gray-400">For short text</span>}
+					</StandardRadioGroup.Option>
+					<StandardRadioGroup.Option
+						value="multipleLine"
+						onChange={handleRadioChange}
+						defaultChecked={activeField?.validations?.singleLine === false}
+					>
+						Multiple Line - {<span className="text-gray-400">For long text</span>}
+					</StandardRadioGroup.Option>
+				</StandardRadioGroup>
+				{/* Inputs for min and max length */}
+				<div className="mt-5 grid grid-cols-2 gap-x-10">
+					<NumberInput
+						title="Minimum Character Count (with spaces)"
+						id="minCount"
+						name="minLength"
+						value={activeField!.validations!.minLength}
+						placeholder="E.g. 25"
+						handleChange={handleNumberValidationChange}
+						arrows
+						increment={() =>
+							handleArrowChange("increment", "minLength", `${activeField!.validations!.minLength}`)
+						}
+						decrement={() =>
+							handleArrowChange("decrement", "minLength", `${activeField!.validations!.minLength}`)
+						}
+						errorMessage={errors.minLength}
+					/>
+					<NumberInput
+						title="Maximum Character Count (with spaces)"
+						id="maxCount"
+						name="maxLength"
+						value={activeField!.validations!.maxLength}
+						placeholder="E.g. 140"
+						handleChange={handleNumberValidationChange}
+						arrows
+						increment={() =>
+							handleArrowChange("increment", "maxLength", `${activeField!.validations!.maxLength}`)
+						}
+						decrement={() =>
+							handleArrowChange("decrement", "maxLength", `${activeField!.validations!.maxLength}`)
+						}
+						errorMessage={errors.maxLength}
+					/>
+				</div>
+			</StandardForm>
 		</div>
 	);
 }
