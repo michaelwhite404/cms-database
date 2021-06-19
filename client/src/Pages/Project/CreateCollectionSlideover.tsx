@@ -89,16 +89,19 @@ export default function CreateCollectionSlideover({
 	 * @param fields - Array of collection fields
 	 * @returns Collection fields with removed validations
 	 */
-	const removeEmptyValidations = (fields: CollectionDataFields[]) => {
-		return fields.map((field) => {
+	const removeEmptyValidations = () => {
+		const fields = newCollectionData.fields.concat();
+		const newFields: CollectionDataFields[] = [];
+		fields.forEach((field) => {
 			const validations: CollectionValidations<any> = {};
 			for (const val in field.validations!) {
 				// @ts-ignore
 				validations[val] = field.validations[val] === "" ? undefined : field.validations[val];
 			}
-			field.validations = validations;
-			return field;
+			const createField = { ...field, validations };
+			newFields.push(createField);
 		});
+		return newFields;
 	};
 
 	const handleSubmit = async (e: React.FormEvent<HTMLFormElement> & React.KeyboardEvent) => {
@@ -108,7 +111,7 @@ export default function CreateCollectionSlideover({
 			const res = await axios.post("/api/v1/collections", {
 				database: database._id,
 				...newCollectionData,
-				fields: removeEmptyValidations(newCollectionData.fields),
+				fields: removeEmptyValidations(),
 			});
 			console.log(res.data);
 		} catch (err) {
