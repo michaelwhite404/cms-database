@@ -1,4 +1,6 @@
+import BoolIcon from "./FieldMiniIcons/BoolIcon";
 import ColorIcon from "./FieldMiniIcons/ColorIcon";
+import DateIcon from "./FieldMiniIcons/DateIcon";
 import EmailIcon from "./FieldMiniIcons/EmailIcon";
 import FileIcon from "./FieldMiniIcons/FileIcon";
 import ImageIcon from "./FieldMiniIcons/ImageIcon";
@@ -19,6 +21,8 @@ MiniIcon.Link = LinkIcon;
 MiniIcon.Email = EmailIcon;
 MiniIcon.Phone = PhoneIcon;
 MiniIcon.Number = NumberIcon;
+MiniIcon.Date = DateIcon;
+MiniIcon.Bool = BoolIcon;
 MiniIcon.Color = ColorIcon;
 MiniIcon.File = FileIcon;
 

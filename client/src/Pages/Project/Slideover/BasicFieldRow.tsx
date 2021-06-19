@@ -27,12 +27,6 @@ export default function BasicFieldRow({
 		active && myRef.current!.scrollIntoView({ behavior: "smooth" });
 	}, [active]);
 
-	// const handleSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
-	// 	e.preventDefault();
-	// 	submitField(field.tempId);
-	// 	setActiveField(null);
-	// };
-
 	return (
 		<div
 			className="border-b py-2.5 px-4 text-xs text-gray-700 relative"

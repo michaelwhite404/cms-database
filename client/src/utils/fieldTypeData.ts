@@ -3,6 +3,8 @@ import ButtonIcon from "../components/Icons/ButtonIcon";
 import MiniIcon from "../components/Icons/MiniIcon";
 import FormProps from "../interfaces/FormProps";
 import BasicForm from "../Pages/Project/Forms/BasicForm";
+import BoolForm from "../Pages/Project/Forms/BoolForm";
+import DateForm from "../Pages/Project/Forms/DateForm";
 import NumberForm from "../Pages/Project/Forms/NumberForm";
 import PlainTextForm from "../Pages/Project/Forms/PlainTextForm";
 import RichTextForm from "../Pages/Project/Forms/RichTextForm";
@@ -87,8 +89,21 @@ export const fieldData: FieldData[] = [
 			allowNegative: false,
 		},
 	},
-	// { name: "Date", type: "Date", Icon: ButtonIcon.Date },
-	// { name: "Switch", type: "Bool", Icon: ButtonIcon.Bool },
+	{
+		name: "Date",
+		type: "Date",
+		Form: DateForm,
+		Icon: ButtonIcon.Date,
+		SmallIcon: MiniIcon.Date,
+		validations: { format: "date" },
+	},
+	{
+		name: "Switch",
+		type: "Bool",
+		Form: BoolForm,
+		Icon: ButtonIcon.Bool,
+		SmallIcon: MiniIcon.Bool,
+	},
 	{
 		name: "Color",
 		type: "Color",
