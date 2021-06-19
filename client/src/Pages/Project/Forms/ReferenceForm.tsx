@@ -42,7 +42,9 @@ export default function ReferenceForm({
 			>
 				<SelectGroup.Option>Select a collection to reference...</SelectGroup.Option>
 				{collections.map((collection) => (
-					<SelectGroup.Option value={collection._id}>{collection.name}</SelectGroup.Option>
+					<SelectGroup.Option key={collection._id} value={collection._id}>
+						{collection.name}
+					</SelectGroup.Option>
 				))}
 			</SelectGroup>
 		</StandardForm>

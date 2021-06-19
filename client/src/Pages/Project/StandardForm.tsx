@@ -30,7 +30,6 @@ export default function StandardForm({
 	const [newCollectionData] = useContext(NewCollectionContext);
 	const currentFields = newCollectionData.fields;
 
-	console.log(submittable);
 	if (submittable === undefined)
 		submittable = !Object.values(errors).join("").length && Boolean(activeField!.name);
 

@@ -339,6 +339,15 @@ export const testCollectionValidations = async (
 		Color: (): Promise<ReturnedCollectionValidation> => {
 			return validations.Standard("Color");
 		},
+		File: (): Promise<ReturnedCollectionValidation> => {
+			return validations.Standard("File");
+		},
+		ImageRef: (): Promise<ReturnedCollectionValidation> => {
+			return validations.Standard("ImageRef");
+		},
+		Video: (): Promise<ReturnedCollectionValidation> => {
+			return validations.Standard("Video");
+		},
 		Bool: (): Promise<ReturnedCollectionValidation> => {
 			if (field.validations && Object.keys(field.validations).length > 0)
 				return Promise.resolve([
@@ -390,6 +399,45 @@ export const testCollectionValidations = async (
 				if (singleLineTest[1] === "undefined") field.validations.singleLine = true;
 				const passedField = field as CollectionField;
 				return Promise.resolve([true, passedField]);
+			}
+			// No validations exist
+			return Promise.resolve([true, defaultField]);
+		},
+		RichText: (): Promise<ReturnedCollectionValidation> => {
+			if (field.validations && Object.keys(field.validations).length > 0) {
+				const fieldsPassed = testAllowedFields(
+					"RichText",
+					field.validations,
+					"maxLength",
+					"minLength"
+				);
+				if (!fieldsPassed[0]) return Promise.resolve(fieldsPassed);
+				const { maxLength, minLength } = field.validations;
+				// Max Length must be a number
+				const maxLengthTest = typeCheck(maxLength, "maxLength", "number", name);
+				if (!maxLengthTest[0]) return Promise.resolve(maxLengthTest);
+				//If maxLength exists but is less than zero
+				if (maxLengthTest[1] === "passed" && maxLength! < 1)
+					return Promise.resolve([
+						false,
+						`The validation 'maxLength' cannot be less than one for the field '${name}'`,
+					]);
+				// Min Length must be a number
+				const minLengthTest = typeCheck(minLength, "minLength", "number", name);
+				if (!minLengthTest[0]) return Promise.resolve(minLengthTest);
+				// If minLength exists but is less than zero
+				if (minLengthTest[1] === "passed" && lessThanZero(minLength!))
+					return Promise.resolve([
+						false,
+						`The validation 'minLength' cannot be less than zero for the field '${name}'`,
+					]);
+				// Max Length must be greater than min length
+				if (minLength && maxLength && minLength > maxLength) {
+					return Promise.resolve([
+						false,
+						`The validation 'minLength' is greater than 'maxLength' for the field '${name}'`,
+					]);
+				}
 			}
 			// No validations exist
 			return Promise.resolve([true, defaultField]);
@@ -457,7 +505,7 @@ export const testCollectionValidations = async (
 					]);
 				if (format === "decimal" && decimalPlacesTest[1] === "undefined")
 					field.validations.decimalPlaces = 2;
-				if (decimalPlacesTest[1] === "passed" && decimalPlaces < 1)
+				if (format === "decimal" && decimalPlacesTest[1] === "passed" && decimalPlaces < 1)
 					return Promise.resolve([
 						false,
 						`The validation 'decimalPlaces' cannot be less than 1 for the field '${name}' when the 'format' is a decimal`,

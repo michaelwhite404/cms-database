@@ -6,8 +6,12 @@ export interface CollectionValidationMethods {
 	Email: () => Promise<ReturnedCollectionValidation>;
 	Phone: () => Promise<ReturnedCollectionValidation>;
 	Color: () => Promise<ReturnedCollectionValidation>;
+	File: () => Promise<ReturnedCollectionValidation>;
+	ImageRef: () => Promise<ReturnedCollectionValidation>;
+	Video: () => Promise<ReturnedCollectionValidation>;
 	Bool: () => Promise<ReturnedCollectionValidation>;
 	PlainText: () => Promise<ReturnedCollectionValidation>;
+	RichText: () => Promise<ReturnedCollectionValidation>;
 	Number: () => Promise<ReturnedCollectionValidation>;
 	Link: () => Promise<ReturnedCollectionValidation>;
 	Option: () => Promise<ReturnedCollectionValidation>;
