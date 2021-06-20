@@ -1,3 +1,4 @@
+import { TrashIcon } from "@heroicons/react/solid";
 import React, { useContext } from "react";
 import slugify from "slugify";
 import { CollectionDataFields } from "../../../../src/interfaces/collectionDataInterfaces";
@@ -27,11 +28,14 @@ export default function StandardForm({
 	submittable,
 	children,
 }: StandardFormProps) {
-	const [newCollectionData] = useContext(NewCollectionContext);
+	const [newCollectionData, setNewCollectionData] = useContext(NewCollectionContext);
 	const currentFields = newCollectionData.fields;
 
 	if (submittable === undefined)
 		submittable = !Object.values(errors).join("").length && Boolean(activeField!.name);
+
+	// const newField = !currentFields.map((f) => f.tempId).includes(activeField!.tempId);
+	const index = currentFields.findIndex((f) => f.tempId === activeField!.tempId);
 
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const { name, value } = e.target;
@@ -57,6 +61,13 @@ export default function StandardForm({
 		if (!submittable) return;
 		submitNewField();
 		setActiveField(null);
+	};
+
+	const handleDeleteField = () => {
+		setNewCollectionData({
+			...newCollectionData,
+			fields: currentFields.filter((f) => f.tempId !== activeField!.tempId),
+		});
 	};
 
 	const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -100,7 +111,16 @@ export default function StandardForm({
 				</Checkbox>
 			)}
 			{/* Save and cancel buttons */}
-			<div className="flex justify-end xs:mt-4 absolute right-3 top-3">
+			<div className="flex items-center justify-end xs:mt-4 absolute right-3 top-3">
+				{index > 1 && (
+					<button
+						type="button"
+						className="flex group items-center mr-5 h-auto p-1.5 rounded-md cursor-pointer hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+					>
+						{/* <span className="hidden group-hover:block mr-2 font-medium">Delete Field</span> */}
+						<TrashIcon onClick={handleDeleteField} width={16} />
+					</button>
+				)}
 				<button
 					type="button"
 					className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
