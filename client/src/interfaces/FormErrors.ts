@@ -6,4 +6,5 @@ export default interface FormErrors {
 	maximum?: string;
 	format?: string;
 	collection?: string;
+	options?: string;
 }

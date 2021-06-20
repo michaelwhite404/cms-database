@@ -50,37 +50,6 @@ function Home() {
 	return <h1 className="text-3xl font-bold">Home</h1>;
 }
 
-// function Login() {
-// 	const [values, setValues] = useState({ email: "", password: "" });
-// 	let history = useHistory();
-// 	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-// 		e.preventDefault();
-// 		try {
-// 			const res = await axios.post("/api/v1/users/login", values);
-// 			console.log(res.data);
-// 			history.push("/dashboard");
-// 		} catch (err) {
-// 			console.log((err as AxiosError<AppError>).response!.data);
-// 		}
-// 	};
-// 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-// 		setValues({ ...values, [e.target!.name]: e.target!.value });
-// 	};
-
-// 	return (
-// 		<>
-// 			<h2 className="text-3xl font-bold">Login</h2>
-// 			<form onSubmit={handleSubmit}>
-// 				<label htmlFor="email-address">Email</label>
-// 				<input type="text" name="email" id="email-address" onChange={handleChange} required />
-// 				<label htmlFor="password">Password</label>
-// 				<input type="password" name="password" id="password" onChange={handleChange} required />
-// 				<button type="submit">Login</button>
-// 			</form>
-// 		</>
-// 	);
-// }
-
 // function Database(/* props */) {
 // 	const [collections, setCollections] = useState<CollectionModel[]>([]);
 

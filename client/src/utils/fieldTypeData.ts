@@ -6,6 +6,7 @@ import BasicForm from "../Pages/Project/Forms/BasicForm";
 import BoolForm from "../Pages/Project/Forms/BoolForm";
 import DateForm from "../Pages/Project/Forms/DateForm";
 import NumberForm from "../Pages/Project/Forms/NumberForm";
+import OptionForm from "../Pages/Project/Forms/OptionForm";
 import PlainTextForm from "../Pages/Project/Forms/PlainTextForm";
 import ReferenceForm from "../Pages/Project/Forms/ReferenceForm";
 import RichTextForm from "../Pages/Project/Forms/RichTextForm";
@@ -113,7 +114,14 @@ export const fieldData: FieldData[] = [
 		SmallIcon: MiniIcon.Color,
 		validations: { singleLine: true },
 	},
-	// { name: "Option", type: "Option", Icon: ButtonIcon.Option },
+	{
+		name: "Option",
+		type: "Option",
+		Form: OptionForm,
+		Icon: ButtonIcon.Option,
+		SmallIcon: MiniIcon.Option,
+		validations: { options: [] },
+	},
 	{
 		name: "File",
 		type: "File",

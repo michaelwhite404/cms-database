@@ -1,6 +1,26 @@
 import { LockClosedIcon } from "@heroicons/react/solid";
+import axios, { AxiosError } from "axios";
+import { useState } from "react";
+import { useHistory } from "react-router-dom";
+import AppError from "../../../src/utils/appError";
 
 export default function Login() {
+	const [values, setValues] = useState({ email: "", password: "" });
+	let history = useHistory();
+	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+		e.preventDefault();
+		try {
+			const res = await axios.post("/api/v1/users/login", values);
+			console.log(res.data);
+			history.push("/dashboard");
+		} catch (err) {
+			console.log((err as AxiosError<AppError>).response!.data);
+		}
+	};
+	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		setValues({ ...values, [e.target!.name]: e.target!.value });
+	};
+
 	return (
 		<div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
 			<div className="max-w-md w-full space-y-8">
@@ -14,7 +34,7 @@ export default function Login() {
 						Sign in to your account
 					</h2>
 				</div>
-				<form className="mt-8 space-y-6" action="#" method="POST">
+				<form className="mt-8 space-y-6" onSubmit={handleSubmit}>
 					<input type="hidden" name="remember" defaultValue="true" />
 					<div className="rounded-md shadow-sm -space-y-px">
 						<div>
@@ -29,6 +49,7 @@ export default function Login() {
 								required
 								className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
 								placeholder="Email address"
+								onChange={handleChange}
 							/>
 						</div>
 						<div>
@@ -43,6 +64,7 @@ export default function Login() {
 								required
 								className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
 								placeholder="Password"
+								onChange={handleChange}
 							/>
 						</div>
 					</div>
