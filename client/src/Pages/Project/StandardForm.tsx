@@ -6,6 +6,7 @@ import Checkbox from "../../components/Form/Checkbox";
 import StandardInput from "../../components/Form/StandardInput";
 import NewCollectionContext from "../../context/NewCollectionContext";
 import FormErrors from "../../interfaces/FormErrors";
+import reservedFieldNames from "../../utils/reservedFieldsNames";
 
 interface StandardFormProps {
 	activeField: CollectionDataFields | null;
@@ -44,9 +45,16 @@ export default function StandardForm({
 			.filter((f) => f.tempId !== activeField!.tempId)
 			.map((f) => slugLow(f.name))
 			.includes(slugLow(value));
+		const reservedNames = reservedFieldNames.slice();
+		if (index === 0) delete reservedNames[0];
+		if (index === 1) delete reservedNames[1];
+		// @ts-ignore
+		const reserved = reservedNames.includes(slugLow(value));
+
 		if (name === "name")
 			if (value.length === 0) setErrors({ ...errors, name: "This field is required" });
 			else if (duplicate) setErrors({ ...errors, name: "Already Exists" });
+			else if (reserved) setErrors({ ...errors, name: `${value} is a reserved name` });
 			else setErrors({ ...errors, name: "" });
 		setActiveField({ ...activeField!, [name]: value });
 	};
