@@ -2,7 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import AppContainer from "../../components/AppContainer/AppContainer";
 import Heading from "../../components/AppContainer/Heading";
-import { APIDashboardResponse, APIPinnedResponse } from "../../interfaces/APIResponse";
+import { APIPinnedResponse } from "../../interfaces/APIResponse";
 import DashboardDatabase from "../../interfaces/DashboardDatabase";
 import HeadingButtons from "./HeadingButtons";
 import ProjectsList from "./ProjectsList";
@@ -13,9 +13,11 @@ import DeleteModal from "../../components/DeleteModal";
 import Slideover from "../../components/Slideover";
 import CreateProjectSlideover from "./Slideover/CreateProjectSlideover";
 import ShareModal from "../../components/ShareModal";
+import { useContext } from "react";
+import ProjectsContext from "../../context/ProjectsContext";
 
 export default function Dashboard() {
-	const [projects, setProjects] = useState<DashboardDatabase[]>([]);
+	const { projects, setProjects, pinnedProjects } = useContext(ProjectsContext);
 	const [successNotificationOpen, setSuccessNotificationOpen] = useState(false);
 	const [successMessage, setSuccessMessage] = useState<[string, string?]>([""]);
 	const [openDeleteModal, setOpenDeleteModal] = useState(false);
@@ -25,16 +27,14 @@ export default function Dashboard() {
 	const [openSlideover, setOpenSlideover] = useState(false);
 	const [sharedUsers, setSharedUsers] = useState({});
 
-	const pinnedProjects = projects.filter((project) => project.pinned);
-
-	const fetchProjects = async () => {
-		try {
-			const res = await axios.get<APIDashboardResponse>("/api/v1/ui/dashboard");
-			setProjects(res.data.databases);
-		} catch (err) {
-			console.log(err);
-		}
-	};
+	// const fetchProjects = async () => {
+	// 	try {
+	// 		const res = await axios.get<APIDashboardResponse>("/api/v1/ui/dashboard");
+	// 		setProjects(res.data.databases);
+	// 	} catch (err) {
+	// 		console.log(err);
+	// 	}
+	// };
 
 	const togglePin = async (databaseId: string) => {
 		try {
@@ -74,7 +74,7 @@ export default function Dashboard() {
 
 	useEffect(() => {
 		document.title = "Dashboard";
-		fetchProjects();
+		// fetchProjects();
 	}, []);
 
 	return (

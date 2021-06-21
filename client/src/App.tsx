@@ -9,6 +9,7 @@ import Login from "./components/Login";
 import Project from "./Pages/Project/Project";
 import Dashboard from "./Pages/Dashboard/Dashboard";
 import { ProjectCollectionsProvider } from "./context/ProjectCollectionsContext";
+import { ProjectsProvider } from "./context/ProjectsContext";
 
 function App() {
 	return (
@@ -29,17 +30,19 @@ function App() {
 				</nav> */}
 
 				<Switch>
-					<Route path="/login">
-						<Login />
-					</Route>
-					<Route path="/dashboard" component={Dashboard} />
-					<ProjectCollectionsProvider>
-						<Route path="/databases/:database" component={Project} />
-					</ProjectCollectionsProvider>
-					<Route path="/collections/:collection" component={Collection} />
-					<Route path="/">
-						<Home />
-					</Route>
+					<ProjectsProvider>
+						<Route path="/login">
+							<Login />
+						</Route>
+						<Route path="/dashboard" component={Dashboard} />
+						<ProjectCollectionsProvider>
+							<Route path="/databases/:database" component={Project} />
+						</ProjectCollectionsProvider>
+						<Route path="/collections/:collection" component={Collection} />
+						<Route path="/">
+							<Home />
+						</Route>
+					</ProjectsProvider>
 				</Switch>
 			</div>
 		</Router>
@@ -49,42 +52,6 @@ function App() {
 function Home() {
 	return <h1 className="text-3xl font-bold">Home</h1>;
 }
-
-// function Database(/* props */) {
-// 	const [collections, setCollections] = useState<CollectionModel[]>([]);
-
-// 	const params = useParams<{ database: string }>();
-// 	// console.log(props.match.params.database);
-// 	const fetchData = async () => {
-// 		try {
-// 			const res = await axios.get<APICollectionResponse>(
-// 				`/api/v1/databases/${params.database}/collections?slug=true`
-// 			);
-// 			setCollections(res.data.collections);
-// 		} catch (err) {
-// 			console.log((err as AxiosError<AppError>).response!.data);
-// 		}
-// 	};
-
-// 	useEffect(() => {
-// 		fetchData();
-// 		// eslint-disable-next-line react-hooks/exhaustive-deps
-// 	}, []);
-
-// 	return (
-// 		<>
-// 			<h2 className="text-3xl font-bold">Collections</h2>
-// 			{collections.map((collection) => (
-// 				<li key={collection._id}>
-// 					<div>{collection.name}</div>
-// 					<div>{collection.createdAt}</div>
-// 					<div>{collection.slug}</div>
-// 					<div>{collection._id}</div>
-// 				</li>
-// 			))}
-// 		</>
-// 	);
-// }
 
 function Collection() {
 	const [items, setItems] = useState<ItemModel[]>([]);
