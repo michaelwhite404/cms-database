@@ -20,6 +20,7 @@ import {
 } from "../interfaces/validationMethodInterfaces";
 import Item from "../models/itemModel";
 import Collection from "../models/collectionModel";
+import reservedFieldNames from "../enums/reservedFieldsNames";
 
 type CVFailed = [false, string];
 type CVPassed = [true, CollectionField];
@@ -34,9 +35,9 @@ type ReturnedTypeCheck = TCFailed | TCPassed;
  * @param {string} name Name of the field
  * @returns {boolean} Whether the field is a reserved name
  */
-export const notReservedField = (name: string) => {
+export const notReservedField = (name: string): boolean => {
 	/** Array of reserved slug names */
-	const reservedFieldNames = ["created-by", "updated-by", "updated-on", "created-on"];
+	// @ts-ignore
 	if (reservedFieldNames.includes(slugify(name, { lower: true }))) return false;
 	return true;
 };
@@ -301,7 +302,7 @@ export const testCollectionValidations = async (
 	if (typeof field.name !== "string") return Promise.resolve([false, "Name must be a string"]);
 	if (!notReservedField(field.name))
 		return Promise.resolve([false, `'${field.name}' is a reserved name.`]);
-	//Test Type Proerty
+	// Test Type Proerty
 	if (field.type === undefined) return Promise.resolve([false, "All fields must have a type"]);
 	if (typeof field.type !== "string") return Promise.resolve([false, "Type must be a string"]);
 	if (!fieldTypes.includes(field.type))

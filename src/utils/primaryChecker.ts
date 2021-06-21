@@ -2,6 +2,7 @@ import { CustomCollectionField } from "../customCollectionField";
 import { CollectionField } from "../interfaces/collectionInterfaces";
 import { testCollectionValidations } from "./validations";
 import { defaultPrimaryName, defaultSlugName } from "../defaults";
+import reservedFieldNames from "../enums/reservedFieldsNames";
 
 type PrimaryCheckPassed = [true, Omit<CollectionField, "_id">, any[]];
 type PrimaryCheckFailed = [false, string];
@@ -24,6 +25,12 @@ export default async (requestFields: any[], type: PrimaryType): Promise<PrimaryC
 		pObj = requestFields.splice(pTypeIndex[0], 1)[0];
 		// If the 'primaryName' is not of type 'PlainText'
 		if (pObj.type !== "PlainText") return [false, `Primary ${type} must be of type 'PlainText'`];
+		// Make sure name is not reserved // TODO: Test case for reserved names
+		const reservedNames = reservedFieldNames.slice();
+		const index = reservedFieldNames.findIndex((name) => name === type.toLowerCase());
+		delete reservedNames[index];
+		// @ts-ignore
+		if (reservedNames.includes(pObj.name)) return [false, `${pObj.name} is a reserved field name`];
 		// Validate field
 		const validationResult = await testCollectionValidations(pObj);
 		if (!validationResult[0]) return validationResult;
