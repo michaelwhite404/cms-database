@@ -47,7 +47,7 @@ export default function CollectionFieldRow({
 			{active && (
 				<div className="mt-4">
 					<Form
-						activeField={activeField}
+						activeField={activeField!}
 						setActiveField={setActiveField}
 						// @ts-ignore
 						submitNewField={() => submitField(field.tempId)}

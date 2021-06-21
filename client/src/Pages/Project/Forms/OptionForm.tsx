@@ -16,6 +16,7 @@ export default function OptionForm({
 	const [errors, setErrors] = useState<FormErrors>({ name: "", options: "" });
 
 	const options = activeField!.validations!.options as CollectionValidationOption[];
+	const validations = !options.some((o) => o.name === "");
 
 	/** Add option click handler */
 	const handleClick = () => {
@@ -35,6 +36,7 @@ export default function OptionForm({
 				errors={errors}
 				setErrors={setErrors}
 				submitNewField={submitNewField}
+				validations={validations}
 			>
 				<div className="my-6 border shadow-sm border-gray-300 rounded-md overflow-hidden">
 					{options.map((option) => (

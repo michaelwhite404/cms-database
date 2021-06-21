@@ -14,10 +14,7 @@ export default function ReferenceForm({
 	const [errors, setErrors] = useState<FormErrors>({ name: "", collection: "" });
 	const [collections] = useContext(ProjectCollectionsContext);
 
-	const submittable =
-		!Object.values(errors).join("").length &&
-		Boolean(activeField!.name) &&
-		Boolean(activeField!.validations?.collectionId);
+	const validations = Boolean(activeField!.validations?.collectionId);
 
 	const handleValidationChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
 		changeValidationField?.("collectionId", e.target.value);
@@ -30,7 +27,7 @@ export default function ReferenceForm({
 			errors={errors}
 			setErrors={setErrors}
 			submitNewField={submitNewField}
-			submittable={submittable}
+			validations={validations}
 		>
 			<SelectGroup
 				title="Collection"

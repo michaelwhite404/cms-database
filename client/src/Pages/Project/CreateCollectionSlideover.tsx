@@ -16,6 +16,7 @@ import AddFieldRow from "./Slideover/AddFieldRow";
 import BasicFieldRow from "./Slideover/BasicFieldRow";
 import {
 	CollectionModel,
+	CollectionValidationOption,
 	CollectionValidations,
 } from "../../../../src/interfaces/collectionInterfaces";
 import NewCollectionContext from "../../context/NewCollectionContext";
@@ -89,8 +90,8 @@ export default function CreateCollectionSlideover({
 	 * @param fields - Array of collection fields
 	 * @returns Collection fields with removed validations
 	 */
-	const removeEmptyValidations = () => {
-		const fields = newCollectionData.fields.concat();
+	const removeEmptyValidations = (collectionFields: CollectionDataFields[]) => {
+		const fields = collectionFields.concat();
 		const newFields: CollectionDataFields[] = [];
 		fields.forEach((field) => {
 			const validations: CollectionValidations<any> = {};
@@ -104,14 +105,36 @@ export default function CreateCollectionSlideover({
 		return newFields;
 	};
 
+	const manipulateOptions = (collectionFields: CollectionDataFields[]) => {
+		const fields = collectionFields.concat();
+		const newFields: CollectionDataFields[] = [];
+		fields.forEach((field) => {
+			if (field.type !== "Option") newFields.push(field);
+			else {
+				const options = field.validations!.options as CollectionValidationOption[];
+				field.validations!.options = options.map((o) => o.name);
+				newFields.push(field);
+			}
+		});
+		return newFields;
+	};
+
+	const finalizedFields = () => {
+		const step1 = removeEmptyValidations(newCollectionData.fields);
+		const final = manipulateOptions(step1);
+		return final;
+	};
+
 	const handleSubmit = async (e: React.FormEvent<HTMLFormElement> & React.KeyboardEvent) => {
 		e.preventDefault();
+		const fields = finalizedFields();
+		console.log(fields);
 		if (!submittable) return;
 		try {
 			const res = await axios.post("/api/v1/collections", {
 				database: database._id,
 				...newCollectionData,
-				fields: removeEmptyValidations(),
+				fields,
 			});
 			console.log(res.data);
 		} catch (err) {

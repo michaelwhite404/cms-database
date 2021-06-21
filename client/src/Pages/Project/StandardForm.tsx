@@ -14,7 +14,7 @@ interface StandardFormProps {
 	setErrors: React.Dispatch<React.SetStateAction<FormErrors>>;
 	submitNewField: () => void;
 	disableRequired?: boolean;
-	submittable?: boolean;
+	validations?: boolean;
 	children?: React.ReactNode;
 }
 
@@ -25,14 +25,14 @@ export default function StandardForm({
 	setErrors,
 	submitNewField,
 	disableRequired,
-	submittable,
+	validations,
 	children,
 }: StandardFormProps) {
 	const [newCollectionData, setNewCollectionData] = useContext(NewCollectionContext);
 	const currentFields = newCollectionData.fields;
-
-	if (submittable === undefined)
-		submittable = !Object.values(errors).join("").length && Boolean(activeField!.name);
+	if (validations === undefined) validations = true;
+	const submittable =
+		!Object.values(errors).join("").length && Boolean(activeField!.name) && validations;
 
 	// const newField = !currentFields.map((f) => f.tempId).includes(activeField!.tempId);
 	const index = currentFields.findIndex((f) => f.tempId === activeField!.tempId);

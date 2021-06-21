@@ -45,7 +45,7 @@ export default function OptionRow({ name, id, options, changeOptions }: OptionsR
 			{isEditing ? (
 				<>
 					<input
-						className="w-full h-full bg-transparent outline-none text-xs"
+						className="w-full h-full bg-transparent outline-none text-xs z-20"
 						value={name}
 						onBlur={() => setIsEditing(false)}
 						onChange={handleChange}
@@ -53,7 +53,7 @@ export default function OptionRow({ name, id, options, changeOptions }: OptionsR
 						ref={ref}
 						autoFocus
 					/>
-					<span className="absolute right-3 text-gray-500">Press Enter To Save</span>
+					<span className="absolute right-3 text-gray-500 z-10">Press Enter To Save</span>
 				</>
 			) : (
 				<>
