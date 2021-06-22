@@ -1,3 +1,4 @@
+import { XIcon } from "@heroicons/react/solid";
 import React from "react";
 import { CollectionModel } from "../../../../src/interfaces/collectionInterfaces";
 import CollectionSidebarButton from "./CollectionSidebarButton";
@@ -37,13 +38,17 @@ export default function ProjectMainArea({
 									setActiveCollection={setActiveCollection}
 									collection={collection}
 									key={collection._id}
+									items={collectionItems?.find((ci) => ci.collectionId === collection?._id)?.items}
 								/>
 						  ))
 						: Array.from({ length: 25 }).map((_, i) => (
 								<FakeCollectionSidebarButton key={`fake${i}`} />
 						  ))}
 				</div>
-				<div className="flex flex-grow overflow-auto" style={{ height: "calc(100vh - 71px" }}>
+				<div
+					className={`flex flex-grow ${!activeCollection && "items-center justify-center"}`}
+					style={{ height: "calc(100vh - 71px" }}
+				>
 					{loaded &&
 						(!activeCollection ? (
 							<div className="flex flex-col align-center border-4 border-dotted rounded-lg px-24 py-12">
@@ -59,16 +64,31 @@ export default function ProjectMainArea({
 								</button>
 							</div>
 						) : (
-							<div>
-								{collectionItems
-									?.find((ci) => ci.collectionId === activeCollection?._id)
-									?.items.map((i) => (
-										<div className="border-2">
-											{Object.entries(i).map(([k, v]) => (
-												<div>{`${k}:${v}`}</div>
-											))}
-										</div>
-									))}
+							<div className="w-full">
+								<div className="flex justify-between w-full items-center px-4 py-2 bg-gray-100 border-b border-gray-300">
+									<div className="flex items-center">
+										<h3 className="text-gray-600 font-semibold">{activeCollection.name}</h3>
+										<button className="ml-3 p-1 text-gray-500 rounded-md focus:outline-none hover:bg-gray-200">
+											<XIcon width={16} onClick={() => setActiveCollection(null)} />
+										</button>
+									</div>
+									<div className="flex items-center">
+										<button className="order-0 inline-flex items-center px-3 py-1.5 border border-transparent shadow-sm text-sm font-normal rounded text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:order-2">
+											{`+ New ${activeCollection.singularName}`}
+										</button>
+									</div>
+								</div>
+								<div className="overflow-auto" style={{ height: "calc(100% - 40px)" }}>
+									{collectionItems
+										?.find((ci) => ci.collectionId === activeCollection?._id)
+										?.items.map((i) => (
+											<div className="border-2">
+												{Object.entries(i).map(([k, v]) => (
+													<div>{`${k}:${v}`}</div>
+												))}
+											</div>
+										))}
+								</div>
 							</div>
 						))}
 				</div>

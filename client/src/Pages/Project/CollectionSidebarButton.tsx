@@ -1,17 +1,21 @@
 import { ChevronRightIcon, DatabaseIcon } from "@heroicons/react/solid";
+import pluralize from "pluralize";
 import { useEffect, useState } from "react";
 import { CollectionModel } from "../../../../src/interfaces/collectionInterfaces";
+import { ItemModel } from "../../../../src/interfaces/itemInterfaces";
 
 interface CollectionSidebarButtonProps {
 	collection: CollectionModel;
 	setActiveCollection: React.Dispatch<React.SetStateAction<CollectionModel | null>>;
 	activeCollection: CollectionModel | null;
+	items: ItemModel[] | undefined;
 }
 
 export default function CollectionSidebarButton({
 	collection,
 	setActiveCollection,
 	activeCollection,
+	items,
 }: CollectionSidebarButtonProps) {
 	// const handleClick = () => {
 	// 	setActiveCollection(collection);
@@ -32,7 +36,9 @@ export default function CollectionSidebarButton({
 		>
 			<DatabaseIcon className="w-4 mr-2" />
 			<div>{collection.name}</div>
-			<span className="text-xs text-gray-400 ml-2">3 items</span>
+			<span className="text-xs text-gray-400 ml-2">
+				{items ? pluralize("item", items.length, true) : "No items"}
+			</span>
 			<ChevronRightIcon
 				className={`${active ? "block" : "hidden"} w-4 ml-auto group-hover:block`}
 			/>
