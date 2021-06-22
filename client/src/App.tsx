@@ -31,15 +31,15 @@ function App() {
 
 				<Switch>
 					<ProjectsProvider>
-						<Route path="/login">
+						<Route exact path="/login">
 							<Login />
 						</Route>
-						<Route path="/dashboard" component={Dashboard} />
+						<Route path="/dashboard" exact component={Dashboard} />
 						<ProjectCollectionsProvider>
-							<Route path="/databases/:database" component={Project} />
+							<Route path="/databases/:database" exact component={Project} />
 						</ProjectCollectionsProvider>
-						<Route path="/collections/:collection" component={Collection} />
-						<Route path="/">
+						<Route path="/collections/:collection" exact component={Collection} />
+						<Route exact path="/">
 							<Home />
 						</Route>
 					</ProjectsProvider>

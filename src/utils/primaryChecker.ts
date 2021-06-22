@@ -30,9 +30,11 @@ export default async (requestFields: any[], type: PrimaryType): Promise<PrimaryC
 		const index = reservedFieldNames.findIndex((name) => name === type.toLowerCase());
 		delete reservedNames[index];
 		// @ts-ignore
-		if (reservedNames.includes(pObj.name)) return [false, `${pObj.name} is a reserved field name`];
+		if (reservedNames.includes(pObj.name)) {
+			return [false, `${pObj.name} is a reserved field name`];
+		}
 		// Validate field
-		const validationResult = await testCollectionValidations(pObj);
+		const validationResult = await testCollectionValidations(pObj, "", true);
 		if (!validationResult[0]) return validationResult;
 		const returnedField = validationResult[1];
 		const primaryField = new CustomCollectionField(

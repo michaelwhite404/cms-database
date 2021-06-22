@@ -18,7 +18,7 @@ export default function ProjectMainArea({
 }: ProjectMainAreaProps) {
 	return (
 		<div className="relative bg-gray-50">
-			<div className="">
+			<div className="flex">
 				<div
 					className={`${loaded ? "overflow-y-auto" : "overflow-hidden"} w-64 border-r bg-white`}
 					style={{ height: "calc(100vh - 71px" }}
@@ -36,6 +36,7 @@ export default function ProjectMainArea({
 								<FakeCollectionSidebarButton key={`fake${i}`} />
 						  ))}
 				</div>
+				<div className="flex flex-grow justify-center items-center">{"Test"}</div>
 			</div>
 		</div>
 	);

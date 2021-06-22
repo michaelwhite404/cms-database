@@ -61,6 +61,8 @@ export default function Project() {
 							setOpen={setOpenSlideover}
 							database={currentDatabase!}
 							collections={collections}
+							setCollections={setCollections}
+							setActiveCollection={setActiveCollection}
 						/>
 					</NewCollectionProvider>
 				</Slideover>

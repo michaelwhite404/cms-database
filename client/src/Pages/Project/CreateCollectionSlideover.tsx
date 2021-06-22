@@ -20,17 +20,22 @@ import {
 	CollectionValidations,
 } from "../../../../src/interfaces/collectionInterfaces";
 import NewCollectionContext from "../../context/NewCollectionContext";
+import { APICollectionResponse } from "../../interfaces/APIResponse";
 
 interface CreateCollectionSlideoverProps {
 	database: DatabaseModel;
 	collections: CollectionModel[];
 	setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+	setCollections: React.Dispatch<React.SetStateAction<CollectionModel[]>>;
+	setActiveCollection: React.Dispatch<React.SetStateAction<CollectionModel | null>>;
 }
 
 export default function CreateCollectionSlideover({
 	setOpen,
 	database,
 	collections,
+	setCollections,
+	setActiveCollection,
 }: CreateCollectionSlideoverProps) {
 	// const NewCollectionContext = createContext<>([defaultCollectionData, dispatch]);
 	const [newCollectionData, setNewCollectionData] = useContext(NewCollectionContext);
@@ -60,7 +65,8 @@ export default function CreateCollectionSlideover({
 			: "";
 		if (editted.current && !newCollectionData.slug) slug = "This field is required";
 		setErrors({ name, slug });
-	}, [collections, newCollectionData.name, newCollectionData.slug]);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [newCollectionData.name, newCollectionData.slug]);
 
 	/** Value stores if the form can be submitted */
 	const submittable =
@@ -128,15 +134,20 @@ export default function CreateCollectionSlideover({
 	const handleSubmit = async (e: React.FormEvent<HTMLFormElement> & React.KeyboardEvent) => {
 		e.preventDefault();
 		const fields = finalizedFields();
-		console.log(fields);
 		if (!submittable) return;
 		try {
-			const res = await axios.post("/api/v1/collections", {
+			const res = await axios.post<APICollectionResponse>("/api/v1/collections", {
 				database: database._id,
 				...newCollectionData,
 				fields,
 			});
+			const { collection } = res.data;
+			const newCollections = [...collections];
+			newCollections.unshift(collection);
 			console.log(res.data);
+			setCollections(newCollections);
+			setOpen(false);
+			setActiveCollection(collection);
 		} catch (err) {
 			console.log(err.response.data);
 		}

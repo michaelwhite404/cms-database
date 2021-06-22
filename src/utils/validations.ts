@@ -293,15 +293,16 @@ export const testItemValidations = async (
 
 export const testCollectionValidations = async (
 	field: any,
-	database?: string
+	database?: string,
+	primary?: boolean
 ): Promise<ReturnedCollectionValidation> => {
 	// Test Name Property
 	if (typeof field !== "object" || field === null)
 		return Promise.resolve([false, "No field was provided"]);
 	if (field.name === undefined) return Promise.resolve([false, "All fields must have a name"]);
 	if (typeof field.name !== "string") return Promise.resolve([false, "Name must be a string"]);
-	if (!notReservedField(field.name))
-		return Promise.resolve([false, `'${field.name}' is a reserved name.`]);
+	if (primary !== true && !notReservedField(field.name))
+		return Promise.resolve([false, `'${field.name}' is a reserved field name.`]);
 	// Test Type Proerty
 	if (field.type === undefined) return Promise.resolve([false, "All fields must have a type"]);
 	if (typeof field.type !== "string") return Promise.resolve([false, "Type must be a string"]);
