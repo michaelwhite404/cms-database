@@ -9,7 +9,7 @@ export default function MainSection({ children, setSidebarOpen }: MainSectionPro
 	return (
 		<div className="flex flex-col w-0 flex-1 overflow-hidden">
 			<SearchHeader setSidebarOpen={setSidebarOpen} />
-			<main className="flex flex-col flex-1 relative z-0 overflow-y-auto focus:outline-none h-screen">
+			<main className="flex flex-col flex-1 relative z-0 focus:outline-none h-screen">
 				{children}
 			</main>
 		</div>

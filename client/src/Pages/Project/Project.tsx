@@ -13,6 +13,12 @@ import Slideover from "../../components/Slideover";
 import CreateCollectionSlideover from "./CreateCollectionSlideover";
 import { NewCollectionProvider } from "../../context/NewCollectionContext";
 import ProjectCollectionsContext from "../../context/ProjectCollectionsContext";
+import { ItemModel } from "../../../../src/interfaces/itemInterfaces";
+
+export interface CollectionWithItems {
+	collectionId: string;
+	items: ItemModel[];
+}
 
 export default function Project() {
 	const [openSlideover, setOpenSlideover] = useState(false);
@@ -20,6 +26,7 @@ export default function Project() {
 	const [currentDatabase, setCurrentDatabase] = useState<DatabaseModel | null>(null);
 	const [collections, setCollections] = useContext(ProjectCollectionsContext);
 	const [activeCollection, setActiveCollection] = useState<CollectionModel | null>(null);
+	const [collectionItems, setCollectionItems] = useState<CollectionWithItems[] | null>(null);
 	const params = useParams<{ database: string }>();
 
 	const fetchData = async () => {
@@ -30,8 +37,11 @@ export default function Project() {
 				),
 				axios.get<APIDatabaseRepsonse>(`/api/v1/databases/${params.database}?slug=true`),
 			]);
+			const databaseId = res2.data.database._id;
+			const res3 = await axios.get(`/api/v1/ui/databases/${databaseId}`);
 			setCollections(res1.data.collections);
 			setCurrentDatabase(res2.data.database);
+			setCollectionItems(res3.data.collections);
 			setTimeout(() => setLoaded(true), 750);
 		} catch (err) {
 			console.log((err as AxiosError<AppError>).response!.data);
@@ -53,6 +63,9 @@ export default function Project() {
 					setActiveCollection={setActiveCollection}
 					collections={collections}
 					loaded={loaded}
+					setOpen={setOpenSlideover}
+					collectionItems={collectionItems}
+					setCollectionItems={setCollectionItems}
 				/>
 
 				<Slideover size="4xl" open={openSlideover} setOpen={setOpenSlideover}>

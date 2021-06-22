@@ -1,10 +1,12 @@
 import { /* NextFunction, */ Response } from "express";
+import { Types } from "mongoose";
 import { CustomRequest } from "../interfaces/customRequestInterface";
 import DatabaseModel from "../interfaces/databaseInterface";
 import DatabaseRole from "../models/databaseRoleModel";
+import Item from "../models/itemModel";
 import catchAsync from "../utils/catchAsync";
 
-export const dashboardData = catchAsync(
+export const getDashboardData = catchAsync(
 	async (req: CustomRequest<DatabaseModel>, res: Response) => {
 		const user = req.user!._id;
 		const databaseRoles = await DatabaseRole.find({ user });
@@ -52,6 +54,23 @@ export const dashboardData = catchAsync(
 		res.status(200).json({
 			status: "success",
 			databases,
+		});
+	}
+);
+
+// api/v1/ui/databases/:database_id
+export const getAllProjectData = catchAsync(
+	async (req: CustomRequest<DatabaseModel>, res: Response) => {
+		const collections = await Item.aggregate([
+			{ $match: { database: Types.ObjectId(req.params.database_id) } },
+			{ $group: { _id: "$_cid", items: { $push: "$$ROOT" } } },
+			{ $project: { collectionId: "$_id", items: 1, _id: 0 } },
+		]);
+		// const collections = await Item.find({ database: req.params.database_id });
+
+		res.status(200).json({
+			status: "success",
+			collections,
 		});
 	}
 );
