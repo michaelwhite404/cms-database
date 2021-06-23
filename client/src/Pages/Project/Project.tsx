@@ -31,6 +31,7 @@ export default function Project() {
 
 	const fetchData = async () => {
 		try {
+			clear();
 			const [res1, res2] = await Promise.all([
 				axios.get<APICollectionResponse>(
 					`/api/v1/databases/${params.database}/collections?slug=true`
@@ -50,36 +51,42 @@ export default function Project() {
 	useEffect(() => {
 		fetchData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [params.database]);
+
+	const clear = () => {
+		setLoaded(false);
+		setCollections([]);
+		setCurrentDatabase(null);
+		setCollectionItems(null);
+		setActiveCollection(null);
+	};
 
 	return (
 		<AppContainer>
-			<>
-				<Heading loaded={loaded} title={`${currentDatabase ? currentDatabase.name : ""}`}>
-					<HeadingButtons loaded={loaded} setOpenSlideover={setOpenSlideover} />
-				</Heading>
-				<ProjectMainArea
-					activeCollection={activeCollection}
-					setActiveCollection={setActiveCollection}
-					collections={collections}
-					loaded={loaded}
-					setOpen={setOpenSlideover}
-					collectionItems={collectionItems}
-					setCollectionItems={setCollectionItems}
-				/>
+			<Heading loaded={loaded} title={`${currentDatabase ? currentDatabase.name : ""}`}>
+				<HeadingButtons loaded={loaded} setOpenSlideover={setOpenSlideover} />
+			</Heading>
+			<ProjectMainArea
+				activeCollection={activeCollection}
+				setActiveCollection={setActiveCollection}
+				collections={collections}
+				loaded={loaded}
+				setOpen={setOpenSlideover}
+				collectionItems={collectionItems}
+				setCollectionItems={setCollectionItems}
+			/>
 
-				<Slideover size="4xl" open={openSlideover} setOpen={setOpenSlideover}>
-					<NewCollectionProvider>
-						<CreateCollectionSlideover
-							setOpen={setOpenSlideover}
-							database={currentDatabase!}
-							collections={collections}
-							setCollections={setCollections}
-							setActiveCollection={setActiveCollection}
-						/>
-					</NewCollectionProvider>
-				</Slideover>
-			</>
+			<Slideover size="4xl" open={openSlideover} setOpen={setOpenSlideover}>
+				<NewCollectionProvider>
+					<CreateCollectionSlideover
+						setOpen={setOpenSlideover}
+						database={currentDatabase!}
+						collections={collections}
+						setCollections={setCollections}
+						setActiveCollection={setActiveCollection}
+					/>
+				</NewCollectionProvider>
+			</Slideover>
 		</AppContainer>
 	);
 }

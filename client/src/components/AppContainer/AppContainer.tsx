@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import { ReactNode, useState } from "react";
 import MainSection from "./MainSection";
 import DesktopSidebar from "../Sidebar/DesktopSidebar";
 import MobileSidebar from "../Sidebar/MobileSidebar";
 
 interface AppContainerProps {
-	children: JSX.Element;
+	children: ReactNode;
 }
 
 export default function AppContainer({ children }: AppContainerProps) {

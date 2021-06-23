@@ -1,8 +1,9 @@
+import { ReactNode } from "react";
 import SearchHeader from "./SearchHeader";
 
 interface MainSectionProps {
 	setSidebarOpen: React.Dispatch<React.SetStateAction<boolean>>;
-	children: JSX.Element;
+	children: ReactNode;
 }
 
 export default function MainSection({ children, setSidebarOpen }: MainSectionProps) {
