@@ -15,7 +15,7 @@ export interface ItemModel extends Document {
 	/** The date the item was last updated */
 	"updated-on": string | Date | number;
 	/** The date the item was created (Immutable) */
-	"created-on": string;
+	"created-on": string | Date | number;
 	/** Item fields created in the request body */
 	fields: ItemFields;
 	/** Test */
