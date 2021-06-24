@@ -4,16 +4,18 @@ import UserAccountDropdown from "./UserAccountDropdown";
 import { ClockIcon, CodeIcon, HomeIcon, ViewListIcon } from "@heroicons/react/outline";
 import { useContext } from "react";
 import ProjectsContext from "../../context/ProjectsContext";
-import { Link } from "react-router-dom";
-
-const navigation = [
-	{ name: "Dashboard", href: "/dashboard", icon: HomeIcon, current: true },
-	{ name: "Documentation", href: "#", icon: CodeIcon, current: false },
-	{ name: "My tasks", href: "#", icon: ViewListIcon, current: false },
-	{ name: "Recent", href: "#", icon: ClockIcon, current: false },
-];
+import { Link, useRouteMatch } from "react-router-dom";
 
 export default function Sidebar() {
+	const match = useRouteMatch();
+	const isCurrent = (url: string) => match.url === url;
+	const navigation = [
+		{ name: "Dashboard", href: "/dashboard", icon: HomeIcon },
+		{ name: "Documentation", href: "#", icon: CodeIcon },
+		{ name: "My tasks", href: "#", icon: ViewListIcon },
+		{ name: "Recent", href: "#", icon: ClockIcon },
+	];
+
 	const { pinnedProjects } = useContext(ProjectsContext);
 
 	return (
@@ -30,16 +32,18 @@ export default function Sidebar() {
 							key={item.name}
 							to={item.href}
 							className={classNames(
-								item.current
+								isCurrent(item.href)
 									? "bg-gray-200 text-gray-900"
 									: "text-gray-700 hover:text-gray-900 hover:bg-gray-50",
 								"group flex items-center px-2 py-2 text-sm font-medium rounded-md"
 							)}
-							aria-current={item.current ? "page" : undefined}
+							aria-current={isCurrent(item.href) ? "page" : undefined}
 						>
 							<item.icon
 								className={classNames(
-									item.current ? "text-gray-500" : "text-gray-400 group-hover:text-gray-500",
+									isCurrent(item.href)
+										? "text-gray-500"
+										: "text-gray-400 group-hover:text-gray-500",
 									"mr-3 h-6 w-6"
 								)}
 								aria-hidden="true"
@@ -61,7 +65,12 @@ export default function Sidebar() {
 							<Link
 								key={project._id}
 								to={`/databases/${project.slug}`}
-								className="group flex items-center px-3 py-2 text-sm font-medium text-gray-700 rounded-md hover:text-gray-900 hover:bg-gray-50"
+								className={classNames(
+									isCurrent(`/databases/${project.slug}`)
+										? "bg-gray-200 text-gray-900"
+										: "text-gray-700 hover:text-gray-900 hover:bg-gray-50",
+									"group flex items-center px-2 py-2 text-sm font-medium rounded-md"
+								)}
 							>
 								<span
 									className={classNames("bg-pink-500", "w-2.5 h-2.5 mr-4 rounded-full")}

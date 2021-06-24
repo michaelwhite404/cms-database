@@ -83,13 +83,15 @@ export const getCollectionDatabase = catchAsync(
  */
 export const getAllCollectionsInDatabase = catchAsync(
 	async (req: CustomRequest<CollectionModel>, res: Response) => {
+		const limits = ["name", "singularName", "slug", "createdAt", "lastUpdated"];
+		req.query.fields === "true" && limits.push("fields");
 		const features = new APIFeatures<CollectionModel>(
 			Collection.find({ database: req.databaseRole!.database as string }),
 			req.query
 		)
 			.filter()
 			.sort()
-			.limitFields("name", "singularName", "slug", "createdAt", "lastUpdated")
+			.limitFields(...limits)
 			.paginate();
 		/** The collections that satisfy the query */
 		const collections = await features.query;

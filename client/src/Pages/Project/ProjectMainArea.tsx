@@ -26,7 +26,7 @@ export default function ProjectMainArea({
 	setCollectionItems,
 }: ProjectMainAreaProps) {
 	return (
-		<div className="relative bg-gray-50">
+		<div className="relative bg-white">
 			<div className="flex">
 				<div
 					className={`${loaded ? "overflow-y-auto" : "overflow-hidden"} w-64 border-r bg-white`}

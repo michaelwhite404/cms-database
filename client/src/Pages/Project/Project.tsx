@@ -33,9 +33,9 @@ export default function Project() {
 		try {
 			clear();
 			const [res1, res2] = await Promise.all([
-				axios.get<APICollectionResponse>(
-					`/api/v1/databases/${params.database}/collections?slug=true`
-				),
+				axios.get<APICollectionResponse>(`/api/v1/databases/${params.database}/collections`, {
+					params: { slug: true, fields: true },
+				}),
 				axios.get<APIDatabaseRepsonse>(`/api/v1/databases/${params.database}?slug=true`),
 			]);
 			const databaseId = res2.data.database._id;

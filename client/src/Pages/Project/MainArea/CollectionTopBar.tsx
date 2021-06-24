@@ -13,7 +13,7 @@ export default function CollectionTopBar({
 	return (
 		<div className="flex justify-between w-full items-center px-4 py-2 bg-gray-100 border-b border-gray-300">
 			<div className="flex items-center">
-				<h3 className="text-gray-600 font-bold text-md">{activeCollection.name}</h3>
+				<h3 className="text-gray-600 font-semibold text-md">{activeCollection.name}</h3>
 				<button className="ml-3 p-1 text-gray-500 rounded-md focus:outline-none hover:bg-gray-200">
 					<XIcon width={16} onClick={() => setActiveCollection(null)} />
 				</button>
