@@ -5,6 +5,7 @@ import CollectionSidebarButton from "./CollectionSidebarButton";
 import FakeCollectionSidebarButton from "./FakeCollectionSidebarButton";
 import CollectionItemsTable from "./MainArea/CollectionItemsTable";
 import CollectionTopBar from "./MainArea/CollectionTopBar";
+import NoItemsBox from "./MainArea/NoItemsBox";
 import NonActiveCollectionBox from "./MainArea/NonActiveCollectionBox";
 
 interface ProjectMainAreaProps {
@@ -31,6 +32,9 @@ export default function ProjectMainArea({
 	setCollectionItems,
 	display,
 }: ProjectMainAreaProps) {
+	const items = collectionItems?.find((ci) => ci.collectionId === activeCollection?._id)?.items;
+	const fieldDisplay = display.find((c) => c.collectionId === activeCollection?._id)?.fieldDisplay;
+
 	return (
 		<div className="relative bg-white" style={{ userSelect: "none" }}>
 			<div className="flex">
@@ -65,14 +69,11 @@ export default function ProjectMainArea({
 									activeCollection={activeCollection}
 									setActiveCollection={setActiveCollection}
 								/>
-								<CollectionItemsTable
-									items={
-										collectionItems?.find((ci) => ci.collectionId === activeCollection?._id)?.items
-									}
-									fieldDisplay={
-										display.find((c) => c.collectionId === activeCollection._id)!.fieldDisplay
-									}
-								/>
+								{items && items.length > 0 ? (
+									<CollectionItemsTable items={items} fieldDisplay={fieldDisplay!} />
+								) : (
+									<NoItemsBox activeCollection={activeCollection} setOpen={setOpen} />
+								)}
 							</div>
 						))}
 				</div>

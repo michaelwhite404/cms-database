@@ -1,26 +1,7 @@
 import { TiPin } from "react-icons/ti";
-import { CollectionFieldType } from "../../../../../src/interfaces/collectionInterfaces";
 import { ItemModel } from "../../../../../src/interfaces/itemInterfaces";
+import FieldDisplay from "../../../interfaces/FieldDisplay";
 import CollectionItemsRow from "./CollectionItemsRow";
-
-interface FieldDisplay {
-	type: CollectionFieldType;
-	slug: string;
-	name: string;
-	show: boolean;
-}
-
-// const fieldDisplay: FieldDisplay[] = [
-// 	{ name: "Business Name", type: "PlainText", slug: "business-name", show: true },
-// 	{ name: "Slug", type: "PlainText", slug: "slug", show: true },
-// 	{ name: "Color", type: "Color", slug: "color", show: true },
-// 	{ name: "Featured?", type: "Bool", slug: "featured", show: true },
-// 	{ name: "Rating", type: "Number", slug: "rating", show: true },
-// 	{ name: "Created On", type: "Date", slug: "created-on", show: true },
-// 	{ name: "Updated On", type: "Date", slug: "updated-on", show: true },
-// 	{ name: "Created By", type: "User", slug: "created-by", show: false },
-// 	{ name: "Updated By", type: "User", slug: "updated-by", show: false },
-// ];
 
 export default function CollectionItemsTable({
 	items,

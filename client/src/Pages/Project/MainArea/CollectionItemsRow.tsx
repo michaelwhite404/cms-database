@@ -33,7 +33,10 @@ export default function CollectionItemsRow({ fieldDisplay, item }: Props) {
 	return (
 		<tr className="py-8 hover:bg-blue-50 hover:text-blue-500">
 			{display.map((field, i) => (
-				<td className={`${i === 0 ? "" : "w-40"} whitespace-nowrap pl-6 py-3 border-b`}>
+				<td
+					className={`${i === 0 ? "" : "w-40"} whitespace-nowrap pl-6 py-3 border-b`}
+					key={field.slug}
+				>
 					{formatData(item[field.slug], field.type)}
 				</td>
 			))}

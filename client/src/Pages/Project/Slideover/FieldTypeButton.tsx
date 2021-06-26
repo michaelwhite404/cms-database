@@ -29,7 +29,7 @@ export default function FieldTypeButton({
 	return (
 		<button
 			type="button"
-			className="grid place-items-center p-1 bg-gray-50 rounded-lg shadow-md focus:outline-none hover:bg-gray-100"
+			className="grid place-items-center p-1 bg-gray-50 rounded-lg shadow-md focus:outline-none hover:bg-gray-100 focus:ring-2 focus:ring-offset-2 focus:ring-indigo-700"
 			style={{ gridTemplateRows: "75px 25px" }}
 			onClick={handleClick}
 		>
