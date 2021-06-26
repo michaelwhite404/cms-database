@@ -10,19 +10,25 @@ interface FieldDisplay {
 	show: boolean;
 }
 
-const fieldDisplay: FieldDisplay[] = [
-	{ name: "Business Name", type: "PlainText", slug: "business-name", show: true },
-	{ name: "Slug", type: "PlainText", slug: "slug", show: false },
-	{ name: "Color", type: "Color", slug: "color", show: false },
-	{ name: "Featured?", type: "Bool", slug: "featured", show: false },
-	{ name: "Rating", type: "Number", slug: "rating", show: false },
-	{ name: "Created On", type: "Date", slug: "created-on", show: true },
-	{ name: "Updated On", type: "Date", slug: "updated-on", show: true },
-	{ name: "Created By", type: "User", slug: "created-by", show: false },
-	{ name: "Updated By", type: "User", slug: "updated-by", show: false },
-];
+// const fieldDisplay: FieldDisplay[] = [
+// 	{ name: "Business Name", type: "PlainText", slug: "business-name", show: true },
+// 	{ name: "Slug", type: "PlainText", slug: "slug", show: true },
+// 	{ name: "Color", type: "Color", slug: "color", show: true },
+// 	{ name: "Featured?", type: "Bool", slug: "featured", show: true },
+// 	{ name: "Rating", type: "Number", slug: "rating", show: true },
+// 	{ name: "Created On", type: "Date", slug: "created-on", show: true },
+// 	{ name: "Updated On", type: "Date", slug: "updated-on", show: true },
+// 	{ name: "Created By", type: "User", slug: "created-by", show: false },
+// 	{ name: "Updated By", type: "User", slug: "updated-by", show: false },
+// ];
 
-export default function CollectionItemsTable({ items }: { items: ItemModel[] | undefined }) {
+export default function CollectionItemsTable({
+	items,
+	fieldDisplay,
+}: {
+	items?: ItemModel[];
+	fieldDisplay: FieldDisplay[];
+}) {
 	return (
 		<div className="overflow-auto" style={{ height: "calc(100% - 40px)" }}>
 			<table className="min-w-full">
@@ -31,7 +37,10 @@ export default function CollectionItemsTable({ items }: { items: ItemModel[] | u
 						{fieldDisplay
 							.filter((f) => f.show === true)
 							.map((field) => (
-								<th className="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+								<th
+									className="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+									key={field.slug}
+								>
 									{field.name}
 								</th>
 							))}

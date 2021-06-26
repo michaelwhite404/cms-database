@@ -6,19 +6,19 @@ import { CollectionModel } from "../../../../src/interfaces/collectionInterfaces
 import AppError from "../../../../src/utils/appError";
 import AppContainer from "../../components/AppContainer/AppContainer";
 import Heading from "../../components/AppContainer/Heading";
-import { APICollectionResponse, APIDatabaseRepsonse } from "../../interfaces/APIResponse";
+import {
+	APICollectionResponse,
+	APICollectionWithItemsResponse,
+	APIDatabaseRepsonse,
+} from "../../interfaces/APIResponse";
 import HeadingButtons from "./HeadingButtons";
 import DatabaseModel from "../../../../src/interfaces/databaseInterface";
 import Slideover from "../../components/Slideover";
 import CreateCollectionSlideover from "./CreateCollectionSlideover";
 import { NewCollectionProvider } from "../../context/NewCollectionContext";
 import ProjectCollectionsContext from "../../context/ProjectCollectionsContext";
-import { ItemModel } from "../../../../src/interfaces/itemInterfaces";
-
-export interface CollectionWithItems {
-	collectionId: string;
-	items: ItemModel[];
-}
+import FieldDisplay from "../../interfaces/FieldDisplay";
+import { CollectionWithItems } from "../../interfaces/CollectionWithItems";
 
 export default function Project() {
 	const [openSlideover, setOpenSlideover] = useState(false);
@@ -27,6 +27,9 @@ export default function Project() {
 	const [collections, setCollections] = useContext(ProjectCollectionsContext);
 	const [activeCollection, setActiveCollection] = useState<CollectionModel | null>(null);
 	const [collectionItems, setCollectionItems] = useState<CollectionWithItems[] | null>(null);
+	const [display, setDisplay] = useState<{ collectionId: string; fieldDisplay: FieldDisplay[] }[]>(
+		[]
+	);
 	const params = useParams<{ database: string }>();
 
 	const fetchData = async () => {
@@ -39,10 +42,25 @@ export default function Project() {
 				axios.get<APIDatabaseRepsonse>(`/api/v1/databases/${params.database}?slug=true`),
 			]);
 			const databaseId = res2.data.database._id;
-			const res3 = await axios.get(`/api/v1/ui/databases/${databaseId}`);
+			const res3 = await axios.get<APICollectionWithItemsResponse>(
+				`/api/v1/ui/databases/${databaseId}`
+			);
 			setCollections(res1.data.collections);
 			setCurrentDatabase(res2.data.database);
 			setCollectionItems(res3.data.collections);
+			const thisDisplay = res1.data.collections.map((c) => ({
+				collectionId: c._id,
+				fieldDisplay: c.fields.map(
+					(f, i) =>
+						({
+							name: f.name,
+							slug: f.slug,
+							type: f.type,
+							show: i === 0 || f.slug === "created-on" || f.slug === "updated-on",
+						} as FieldDisplay)
+				),
+			}));
+			setDisplay(thisDisplay);
 			setTimeout(() => setLoaded(true), 750);
 		} catch (err) {
 			console.log((err as AxiosError<AppError>).response!.data);
@@ -74,6 +92,7 @@ export default function Project() {
 				setOpen={setOpenSlideover}
 				collectionItems={collectionItems}
 				setCollectionItems={setCollectionItems}
+				display={display}
 			/>
 
 			<Slideover size="4xl" open={openSlideover} setOpen={setOpenSlideover}>

@@ -1,6 +1,7 @@
 import { CollectionModel } from "../../../src/interfaces/collectionInterfaces";
 import DatabaseModel from "../../../src/interfaces/databaseInterface";
 import { ItemModel } from "../../../src/interfaces/itemInterfaces";
+import { CollectionWithItems } from "./CollectionWithItems";
 import DashboardDatabase from "./DashboardDatabase";
 import ISharedUser from "./ISharedUser";
 
@@ -47,4 +48,9 @@ export interface APIUserByEmailRes {
 export interface APIPinnedResponse {
 	status: "success";
 	pinned: boolean;
+}
+
+export interface APICollectionWithItemsResponse {
+	status: "success";
+	collections: CollectionWithItems[];
 }

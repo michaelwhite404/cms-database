@@ -1,10 +1,11 @@
 import { CollectionModel } from "../../../../src/interfaces/collectionInterfaces";
+import { CollectionWithItems } from "../../interfaces/CollectionWithItems";
+import FieldDisplay from "../../interfaces/FieldDisplay";
 import CollectionSidebarButton from "./CollectionSidebarButton";
 import FakeCollectionSidebarButton from "./FakeCollectionSidebarButton";
 import CollectionItemsTable from "./MainArea/CollectionItemsTable";
 import CollectionTopBar from "./MainArea/CollectionTopBar";
 import NonActiveCollectionBox from "./MainArea/NonActiveCollectionBox";
-import { CollectionWithItems } from "./Project";
 
 interface ProjectMainAreaProps {
 	collections: CollectionModel[];
@@ -14,6 +15,10 @@ interface ProjectMainAreaProps {
 	setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 	collectionItems: CollectionWithItems[] | null;
 	setCollectionItems: React.Dispatch<React.SetStateAction<CollectionWithItems[] | null>>;
+	display: {
+		collectionId: string;
+		fieldDisplay: FieldDisplay[];
+	}[];
 }
 
 export default function ProjectMainArea({
@@ -24,9 +29,10 @@ export default function ProjectMainArea({
 	setOpen,
 	collectionItems,
 	setCollectionItems,
+	display,
 }: ProjectMainAreaProps) {
 	return (
-		<div className="relative bg-white">
+		<div className="relative bg-white" style={{ userSelect: "none" }}>
 			<div className="flex">
 				<div
 					className={`${loaded ? "overflow-y-auto" : "overflow-hidden"} w-64 border-r bg-white`}
@@ -62,6 +68,9 @@ export default function ProjectMainArea({
 								<CollectionItemsTable
 									items={
 										collectionItems?.find((ci) => ci.collectionId === activeCollection?._id)?.items
+									}
+									fieldDisplay={
+										display.find((c) => c.collectionId === activeCollection._id)!.fieldDisplay
 									}
 								/>
 							</div>

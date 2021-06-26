@@ -15,6 +15,7 @@ interface Props {
 }
 
 const formatData = (value: any, type: CollectionFieldType) => {
+	if (!value) return "-";
 	let formattedValue: any = "";
 	switch (type) {
 		case "Date":
@@ -30,13 +31,13 @@ const formatData = (value: any, type: CollectionFieldType) => {
 export default function CollectionItemsRow({ fieldDisplay, item }: Props) {
 	const display = fieldDisplay.filter((f) => f.show === true);
 	return (
-		<tr className="py-8 hover:bg-blue-50">
+		<tr className="py-8 hover:bg-blue-50 hover:text-blue-500">
 			{display.map((field, i) => (
-				<td className={`${i === 0 ? "" : "w-40"} whitespace-nowrap pl-6 py-2.5 border-b`}>
+				<td className={`${i === 0 ? "" : "w-40"} whitespace-nowrap pl-6 py-3 border-b`}>
 					{formatData(item[field.slug], field.type)}
 				</td>
 			))}
-			<td className="whitespace-nowrap py-2.5 border-b w-8" />
+			<td className="whitespace-nowrap py-3 border-b w-8" />
 		</tr>
 	);
 }
