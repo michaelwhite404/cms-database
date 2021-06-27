@@ -19,13 +19,17 @@ export default function CollectionItemsTable({
 							.filter((f) => f.show === true)
 							.map((field) => (
 								<th
-									className="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+									style={{ boxShadow: "inset 0px -1px 0px 0px #e5e5e5" }}
+									className="px-6 py-3 sticky top-0 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
 									key={field.slug}
 								>
 									{field.name}
 								</th>
 							))}
-						<th className="py-3 border-b border-gray-200 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase">
+						<th
+							className="py-3 sticky top-0 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase"
+							style={{ boxShadow: "inset 0px -1px 0px 0px #e5e5e5" }}
+						>
 							<TiPin />
 						</th>
 					</tr>

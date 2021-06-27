@@ -47,6 +47,12 @@ export default function ProjectMainArea({
 					className={`${loaded ? "overflow-y-auto" : "overflow-hidden"} w-64 border-r bg-white`}
 					style={{ height: "calc(100vh - 71px" }}
 				>
+					<div
+						className="flex items-center w-full text-md font-semibold text-gray-600 bg-gray-100 border-b border-gray-300 p-4"
+						style={{ height: "55px" }}
+					>
+						{loaded && "CMS Collections"}
+					</div>
 					{loaded
 						? collections.map((collection) => (
 								<CollectionSidebarButton

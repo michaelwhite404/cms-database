@@ -69,8 +69,8 @@ const convertToFakeValue = async (field: CollectionField) => {
 			let count = 0;
 			let { minLength, maxLength } = field.validations!;
 			if (!minLength && !maxLength) {
-				minLength = 1;
-				maxLength = 20;
+				minLength = 5;
+				maxLength = 25;
 			}
 			count = minLength ? minLength + 3 : 35;
 			const words = faker.lorem.words(count);

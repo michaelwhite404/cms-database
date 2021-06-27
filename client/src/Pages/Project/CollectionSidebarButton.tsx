@@ -30,13 +30,13 @@ export default function CollectionSidebarButton({
 		<div
 			className={`${
 				active ? "bg-blue-50 text-blue-500" : "text-gray-500"
-			} group flex border-b-2 p-4 text-sm cursor-pointer items-end  font-semibold hover:bg-blue-50 hover:text-blue-500`}
+			} group flex border-b-2 p-4 text-sm cursor-pointer items-end font-semibold hover:bg-blue-50 hover:text-blue-500`}
 			style={{ userSelect: "none" }}
 			onClick={() => setActiveCollection(collection)}
 		>
 			<DatabaseIcon className="w-4 mr-2" />
-			<div>{collection.name}</div>
-			<span className="text-xs text-gray-400 ml-2">
+			<div className="overflow-ellipsis whitespace-nowrap overflow-hidden">{collection.name}</div>
+			<span className="text-xs text-gray-400 ml-2 whitespace-nowrap">
 				{items ? pluralize("item", items.length, true) : "No items"}
 			</span>
 			<ChevronRightIcon

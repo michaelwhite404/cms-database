@@ -82,6 +82,7 @@ export default function Project() {
 		setActiveCollection(null);
 	};
 
+	// TODO: Add items if collection is shown
 	const addItemsToCollection = (collectionId: string, items: ItemModel[]) => {
 		const index = collectionItems?.findIndex((ci) => ci.collectionId === collectionId);
 		if (index === -1) {
