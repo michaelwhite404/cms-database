@@ -2,8 +2,9 @@ import { Dialog } from "@headlessui/react";
 import { XIcon, PlusCircleIcon } from "@heroicons/react/outline";
 import { MailIcon } from "@heroicons/react/solid";
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { useHistory } from "react-router";
+import SuccessNotificationContext from "../../../context/SuccessNotificationContext";
 import { APIDatabaseRepsonse, APIUserByEmailRes } from "../../../interfaces/APIResponse";
 import DashboardDatabase from "../../../interfaces/DashboardDatabase";
 import ISharedUser from "../../../interfaces/ISharedUser";
@@ -20,6 +21,7 @@ export default function CreateProjectSlidover({
 	projects,
 	setProjects,
 }: CreateProjectSlideover) {
+	const { animateSuccessNotification } = useContext(SuccessNotificationContext);
 	const [projectDetails, setProjectDetails] = useState({ name: "", description: "" });
 	const [shareEmail, setShareEmail] = useState("");
 	const [users, setUsers] = useState<ISharedUser[]>([]);
@@ -32,6 +34,7 @@ export default function CreateProjectSlidover({
 			const res = await axios.post<APIDatabaseRepsonse>("/api/v1/databases", projectDetails);
 			const { database } = res.data;
 			if (users.length > 0) await axios.post(`/api/v1/databases/${database._id}/share`, users);
+			animateSuccessNotification("Project Successfully Created");
 			history.push(`/databases/${database.slug}`);
 		} catch (err) {
 			console.log(err.response.data);

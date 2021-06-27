@@ -21,6 +21,8 @@ import {
 } from "../../../../src/interfaces/collectionInterfaces";
 import NewCollectionContext from "../../context/NewCollectionContext";
 import { APICollectionResponse } from "../../interfaces/APIResponse";
+import SuccessNotificationContext from "../../context/SuccessNotificationContext";
+import Footer from "./Slideover/Footer";
 
 interface CreateCollectionSlideoverProps {
 	database: DatabaseModel;
@@ -37,7 +39,7 @@ export default function CreateCollectionSlideover({
 	setCollections,
 	setActiveCollection,
 }: CreateCollectionSlideoverProps) {
-	// const NewCollectionContext = createContext<>([defaultCollectionData, dispatch]);
+	const { animateSuccessNotification } = useContext(SuccessNotificationContext);
 	const [newCollectionData, setNewCollectionData] = useContext(NewCollectionContext);
 	const [activeField, setActiveField] = useState<CollectionDataFields | null>(null);
 	const [addField, setAddField] = useState({
@@ -71,8 +73,8 @@ export default function CreateCollectionSlideover({
 	/** Value stores if the form can be submitted */
 	const submittable =
 		Object.values(errors).join("").length === 0 &&
-		newCollectionData.name.length &&
-		newCollectionData.slug.length &&
+		newCollectionData.name.length > 0 &&
+		newCollectionData.slug.length > 0 &&
 		activeField === null;
 
 	const submitField = (tempId: string) => {
@@ -148,6 +150,7 @@ export default function CreateCollectionSlideover({
 			setCollections(newCollections);
 			setOpen(false);
 			setActiveCollection(collection);
+			animateSuccessNotification("Collection Successfully Created");
 		} catch (err) {
 			console.log(err.response.data);
 		}
@@ -289,25 +292,7 @@ export default function CreateCollectionSlideover({
 					</Pane>
 				</div>
 			</div>
-			<div className="flex-shrink-0 px-4 py-4 flex justify-end">
-				<button
-					type="button"
-					className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-					onClick={() => setOpen(false)}
-				>
-					Cancel
-				</button>
-				<button
-					type="submit"
-					className={`${
-						submittable
-							? "bg-indigo-600 hover:bg-indigo-700 focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-							: "bg-indigo-400 cursor-not-allowed"
-					} ml-4 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white focus:outline-none `}
-				>
-					Save
-				</button>
-			</div>
+			<Footer submittable={submittable} setOpen={setOpen} />
 		</form>
 	);
 }

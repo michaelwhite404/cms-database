@@ -13,7 +13,8 @@ interface ProjectMainAreaProps {
 	setActiveCollection: React.Dispatch<React.SetStateAction<CollectionModel | null>>;
 	activeCollection: CollectionModel | null;
 	loaded: boolean;
-	setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+	setCreateOpen: React.Dispatch<React.SetStateAction<boolean>>;
+	setEditOpen: React.Dispatch<React.SetStateAction<boolean>>;
 	collectionItems: CollectionWithItems[] | null;
 	setCollectionItems: React.Dispatch<React.SetStateAction<CollectionWithItems[] | null>>;
 	display: {
@@ -27,7 +28,8 @@ export default function ProjectMainArea({
 	setActiveCollection,
 	activeCollection,
 	loaded,
-	setOpen,
+	setCreateOpen,
+	setEditOpen,
 	collectionItems,
 	setCollectionItems,
 	display,
@@ -62,12 +64,13 @@ export default function ProjectMainArea({
 				>
 					{loaded &&
 						(!activeCollection ? (
-							<NonActiveCollectionBox setOpen={setOpen} />
+							<NonActiveCollectionBox setCreateOpen={setCreateOpen} />
 						) : (
 							<div className="w-full">
 								<CollectionTopBar
 									activeCollection={activeCollection}
 									setActiveCollection={setActiveCollection}
+									setEditOpen={setEditOpen}
 								/>
 								{items && items.length > 0 ? (
 									<CollectionItemsTable items={items} fieldDisplay={fieldDisplay!} />

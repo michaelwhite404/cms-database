@@ -29,7 +29,7 @@ export default function NoItemsBox({ activeCollection }: { activeCollection: Col
 							</button>
 						</div>
 						<div className="mt-4 text-xs text-center">
-							<span>Sample items can help you design faster</span>
+							<span>Sample items can help you start designing faster.</span>
 							<br />
 							Or you can{" "}
 							<span className="underline cursor-pointer">

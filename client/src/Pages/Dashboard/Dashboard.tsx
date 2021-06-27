@@ -23,7 +23,6 @@ export default function Dashboard() {
 	const [projectToDelete, setProjectToDelete] = useState<DashboardDatabase>(
 		{} as DashboardDatabase
 	);
-	console.log(animateSuccessNotification);
 	const [openSlideover, setOpenSlideover] = useState(false);
 	const [sharedUsers, setSharedUsers] = useState({});
 

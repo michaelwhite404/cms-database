@@ -19,9 +19,11 @@ import { NewCollectionProvider } from "../../context/NewCollectionContext";
 import ProjectCollectionsContext from "../../context/ProjectCollectionsContext";
 import FieldDisplay from "../../interfaces/FieldDisplay";
 import { CollectionWithItems } from "../../interfaces/CollectionWithItems";
+import EditCollectionSlideover from "./EditCollectionSlideover";
 
 export default function Project() {
-	const [openSlideover, setOpenSlideover] = useState(false);
+	const [openCreateSlideover, setOpenCreateSlideover] = useState(false);
+	const [openEditSlideover, setOpenEditSlideover] = useState(false);
 	const [loaded, setLoaded] = useState(false);
 	const [currentDatabase, setCurrentDatabase] = useState<DatabaseModel | null>(null);
 	const [collections, setCollections] = useContext(ProjectCollectionsContext);
@@ -82,29 +84,37 @@ export default function Project() {
 	return (
 		<AppContainer>
 			<Heading loaded={loaded} title={`${currentDatabase ? currentDatabase.name : ""}`}>
-				<HeadingButtons loaded={loaded} setOpenSlideover={setOpenSlideover} />
+				<HeadingButtons loaded={loaded} setOpenSlideover={setOpenCreateSlideover} />
 			</Heading>
 			<ProjectMainArea
 				activeCollection={activeCollection}
 				setActiveCollection={setActiveCollection}
 				collections={collections}
 				loaded={loaded}
-				setOpen={setOpenSlideover}
+				setCreateOpen={setOpenCreateSlideover}
+				setEditOpen={setOpenEditSlideover}
 				collectionItems={collectionItems}
 				setCollectionItems={setCollectionItems}
 				display={display}
 			/>
 
-			<Slideover size="4xl" open={openSlideover} setOpen={setOpenSlideover}>
+			<Slideover size="4xl" open={openCreateSlideover} setOpen={setOpenCreateSlideover}>
 				<NewCollectionProvider>
 					<CreateCollectionSlideover
-						setOpen={setOpenSlideover}
+						setOpen={setOpenCreateSlideover}
 						database={currentDatabase!}
 						collections={collections}
 						setCollections={setCollections}
 						setActiveCollection={setActiveCollection}
 					/>
 				</NewCollectionProvider>
+			</Slideover>
+
+			<Slideover size="4xl" open={openEditSlideover} setOpen={setOpenEditSlideover}>
+				<EditCollectionSlideover
+					setOpen={setOpenEditSlideover}
+					activeCollection={activeCollection!}
+				/>
 			</Slideover>
 		</AppContainer>
 	);
