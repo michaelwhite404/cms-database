@@ -9,6 +9,7 @@ import { ItemModel, ItemFields, ItemField } from "../interfaces/itemInterfaces";
 import { CollectionField, CollectionModel } from "../interfaces/collectionInterfaces";
 import APIFeatures from "../utils/APIFeatures";
 import objectIsEmpty from "../utils/objectIsEmpty";
+import convertToFakeValue from "../utils/convertToFakeValue";
 
 /**
  * Connects each item field to a collection field
@@ -380,6 +381,42 @@ export const putItem = catchAsync(
 		res.status(200).json({
 			status: "success",
 			item: updatedItem,
+		});
+	}
+);
+
+// POST /api/v1/collections/:collections/items/fake
+export const createFakeItem = catchAsync(
+	async (
+		req: CustomCollectionRequest<ItemModel, CollectionModel>,
+		res: Response,
+		next: NextFunction
+	) => {
+		let { collectionFields } = instantiateFields(req);
+		let number = +req.params.number;
+		if (isNaN(number))
+			return next(new AppError(`'${req.params.number}' is not a valid number`, 400));
+		if (!number) number = 1;
+		if (+number < 1 || +number > 20)
+			return next(new AppError("Please choose a number between 1 & 20", 400));
+		const items: Omit<ItemModel, "_cid" | "database">[] = [];
+		for (let i = 0; i < number; i++) {
+			const fakeItemObj = <Omit<ItemModel, "_cid" | "database">>{
+				_cid: req.params.collection_id,
+				database: req.collection.database,
+			};
+			for (const field of collectionFields) {
+				const value = await convertToFakeValue(field);
+				fakeItemObj[field.slug] = value;
+			}
+			items.push(fakeItemObj);
+		}
+
+		const fakeItems = await Item.create(items);
+
+		res.status(200).json({
+			status: "success",
+			fakeItems,
 		});
 	}
 );

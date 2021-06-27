@@ -1,4 +1,5 @@
 import { CollectionModel } from "../../../../src/interfaces/collectionInterfaces";
+import { ItemModel } from "../../../../src/interfaces/itemInterfaces";
 import { CollectionWithItems } from "../../interfaces/CollectionWithItems";
 import FieldDisplay from "../../interfaces/FieldDisplay";
 import CollectionSidebarButton from "./CollectionSidebarButton";
@@ -21,6 +22,7 @@ interface ProjectMainAreaProps {
 		collectionId: string;
 		fieldDisplay: FieldDisplay[];
 	}[];
+	addItemsToCollection: (collectionId: string, items: ItemModel[]) => void;
 }
 
 export default function ProjectMainArea({
@@ -33,6 +35,7 @@ export default function ProjectMainArea({
 	collectionItems,
 	setCollectionItems,
 	display,
+	addItemsToCollection,
 }: ProjectMainAreaProps) {
 	const items = collectionItems?.find((ci) => ci.collectionId === activeCollection?._id)?.items;
 	const fieldDisplay = display.find((c) => c.collectionId === activeCollection?._id)?.fieldDisplay;
@@ -75,7 +78,10 @@ export default function ProjectMainArea({
 								{items && items.length > 0 ? (
 									<CollectionItemsTable items={items} fieldDisplay={fieldDisplay!} />
 								) : (
-									<NoItemsBox activeCollection={activeCollection} />
+									<NoItemsBox
+										activeCollection={activeCollection}
+										addItemsToCollection={addItemsToCollection}
+									/>
 								)}
 							</div>
 						))}

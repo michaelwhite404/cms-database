@@ -12,6 +12,8 @@ router
 	.get(itemController.getAllItemsInCollection)
 	.post(authController.restrictTo("owner", "editor"), itemController.createItem);
 
+router.post(["/fake", "/fake/:number"], itemController.createFakeItem);
+
 router.get("/:item_id", itemController.getItem);
 router.use(authController.restrictTo("owner", "editor"));
 router

@@ -20,6 +20,7 @@ import ProjectCollectionsContext from "../../context/ProjectCollectionsContext";
 import FieldDisplay from "../../interfaces/FieldDisplay";
 import { CollectionWithItems } from "../../interfaces/CollectionWithItems";
 import EditCollectionSlideover from "./EditCollectionSlideover";
+import { ItemModel } from "../../../../src/interfaces/itemInterfaces";
 
 export default function Project() {
 	const [openCreateSlideover, setOpenCreateSlideover] = useState(false);
@@ -81,6 +82,16 @@ export default function Project() {
 		setActiveCollection(null);
 	};
 
+	const addItemsToCollection = (collectionId: string, items: ItemModel[]) => {
+		const index = collectionItems?.findIndex((ci) => ci.collectionId === collectionId);
+		if (index === -1) {
+			const newCollection = { collectionId, items } as CollectionWithItems;
+			const copiedCIs = [...collectionItems!];
+			copiedCIs.push(newCollection);
+			setCollectionItems(copiedCIs);
+		}
+	};
+
 	return (
 		<AppContainer>
 			<Heading loaded={loaded} title={`${currentDatabase ? currentDatabase.name : ""}`}>
@@ -96,6 +107,7 @@ export default function Project() {
 				collectionItems={collectionItems}
 				setCollectionItems={setCollectionItems}
 				display={display}
+				addItemsToCollection={addItemsToCollection}
 			/>
 
 			<Slideover size="4xl" open={openCreateSlideover} setOpen={setOpenCreateSlideover}>

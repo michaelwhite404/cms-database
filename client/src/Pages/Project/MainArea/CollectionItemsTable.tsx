@@ -11,7 +11,7 @@ export default function CollectionItemsTable({
 	fieldDisplay: FieldDisplay[];
 }) {
 	return (
-		<div className="overflow-auto" style={{ height: "calc(100% - 40px)" }}>
+		<div className="overflow-auto" style={{ height: "calc(100% - 55px)" }}>
 			<table className="min-w-full">
 				<thead>
 					<tr className="border-t border-gray-200 bg-gray-100 ">
@@ -28,30 +28,19 @@ export default function CollectionItemsTable({
 						<th className="py-3 border-b border-gray-200 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase">
 							<TiPin />
 						</th>
-						{/* <th className="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-							Name
-						</th>
-						<th className="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-							Created
-						</th>
-						<th className="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-							Modified
-						</th> */}
 					</tr>
 				</thead>
 				<tbody className="text-xs bg-white">
 					{items &&
-						items.map((item) => <CollectionItemsRow fieldDisplay={fieldDisplay} item={item} />)}
+						items.map((item) => (
+							<CollectionItemsRow
+								fieldDisplay={fieldDisplay}
+								item={item}
+								key={item._id as string}
+							/>
+						))}
 				</tbody>
 			</table>
-			{/* {items &&
-				items.map((i) => (
-					<div className="border-2">
-						{Object.entries(i).map(([k, v]) => (
-							<div>{`${k}:${v}`}</div>
-						))}
-					</div>
-				))} */}
 		</div>
 	);
 }

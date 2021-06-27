@@ -1,6 +1,33 @@
+import axios from "axios";
+import { useContext } from "react";
 import { CollectionModel } from "../../../../../src/interfaces/collectionInterfaces";
+import { ItemModel } from "../../../../../src/interfaces/itemInterfaces";
+import SuccessNotificationContext from "../../../context/SuccessNotificationContext";
 
-export default function NoItemsBox({ activeCollection }: { activeCollection: CollectionModel }) {
+export default function NoItemsBox({
+	activeCollection,
+	addItemsToCollection,
+}: {
+	activeCollection: CollectionModel;
+	addItemsToCollection: (collectionId: string, items: ItemModel[]) => void;
+}) {
+	const { animateSuccessNotification } = useContext(SuccessNotificationContext);
+	const addItems = async (number: number) => {
+		try {
+			const res = await axios.post(
+				`/api/v1/collections/${activeCollection._id}/items/fake/${number}`
+			);
+			console.log(res.data);
+			addItemsToCollection(activeCollection._id, res.data.fakeItems);
+			animateSuccessNotification(
+				"Items successfully added",
+				`${number} items have been added to '${activeCollection.name}'`
+			);
+		} catch (err) {
+			console.log(err.response.data);
+		}
+	};
+
 	return (
 		<div
 			className="w-full h-full flex items-center justify-center"
@@ -18,13 +45,22 @@ export default function NoItemsBox({ activeCollection }: { activeCollection: Col
 							<span>Create sample items</span>
 						</div>
 						<div>
-							<button className="py-2 px-7 bg-gray-50 text-sm rounded-md mr-3 border border-gray-200">
+							<button
+								className="py-2 px-7 bg-gray-50 text-sm rounded-md mr-3 border border-gray-200"
+								onClick={() => addItems(5)}
+							>
 								Add 5 items
 							</button>
-							<button className="py-2 px-7 bg-gray-50 text-sm rounded-md mr-3 border border-gray-200">
+							<button
+								className="py-2 px-7 bg-gray-50 text-sm rounded-md mr-3 border border-gray-200"
+								onClick={() => addItems(10)}
+							>
 								Add 10 items
 							</button>
-							<button className="py-2 px-7 bg-gray-50 text-sm rounded-md border border-gray-200">
+							<button
+								className="py-2 px-7 bg-gray-50 text-sm rounded-md border border-gray-200"
+								onClick={() => addItems(20)}
+							>
 								Add 20 items
 							</button>
 						</div>
