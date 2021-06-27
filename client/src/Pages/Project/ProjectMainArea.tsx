@@ -72,7 +72,7 @@ export default function ProjectMainArea({
 								{items && items.length > 0 ? (
 									<CollectionItemsTable items={items} fieldDisplay={fieldDisplay!} />
 								) : (
-									<NoItemsBox activeCollection={activeCollection} setOpen={setOpen} />
+									<NoItemsBox activeCollection={activeCollection} />
 								)}
 							</div>
 						))}

@@ -10,6 +10,8 @@ import Project from "./Pages/Project/Project";
 import Dashboard from "./Pages/Dashboard/Dashboard";
 import { ProjectCollectionsProvider } from "./context/ProjectCollectionsContext";
 import { ProjectsProvider } from "./context/ProjectsContext";
+import SuccessNotification from "./components/SuccessNotification";
+import { SuccessNotificationProvider } from "./context/SuccessNotificationContext";
 
 function App() {
 	return (
@@ -28,22 +30,25 @@ function App() {
 						</li>
 					</ul>
 				</nav> */}
+				<SuccessNotificationProvider>
+					<Switch>
+						<ProjectsProvider>
+							<Route exact path="/login">
+								<Login />
+							</Route>
+							<Route path="/dashboard" exact component={Dashboard} />
+							<ProjectCollectionsProvider>
+								<Route path="/databases/:database" exact component={Project} />
+							</ProjectCollectionsProvider>
+							<Route path="/collections/:collection" exact component={Collection} />
+							<Route exact path="/">
+								<Home />
+							</Route>
+						</ProjectsProvider>
+					</Switch>
 
-				<Switch>
-					<ProjectsProvider>
-						<Route exact path="/login">
-							<Login />
-						</Route>
-						<Route path="/dashboard" exact component={Dashboard} />
-						<ProjectCollectionsProvider>
-							<Route path="/databases/:database" exact component={Project} />
-						</ProjectCollectionsProvider>
-						<Route path="/collections/:collection" exact component={Collection} />
-						<Route exact path="/">
-							<Home />
-						</Route>
-					</ProjectsProvider>
-				</Switch>
+					<SuccessNotification />
+				</SuccessNotificationProvider>
 			</div>
 		</Router>
 	);

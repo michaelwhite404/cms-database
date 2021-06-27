@@ -8,33 +8,24 @@ import HeadingButtons from "./HeadingButtons";
 import ProjectsList from "./ProjectsList";
 import PinnedProjects from "./PinnedProjects";
 import ProjectsTable from "./ProjectsTable";
-import SuccessNotification from "../../components/SuccessNotification";
 import DeleteModal from "../../components/DeleteModal";
 import Slideover from "../../components/Slideover";
 import CreateProjectSlideover from "./Slideover/CreateProjectSlideover";
 import ShareModal from "../../components/ShareModal";
 import { useContext } from "react";
 import ProjectsContext from "../../context/ProjectsContext";
+import SuccessNotificationContext from "../../context/SuccessNotificationContext";
 
 export default function Dashboard() {
 	const { projects, setProjects, pinnedProjects } = useContext(ProjectsContext);
-	const [successNotificationOpen, setSuccessNotificationOpen] = useState(false);
-	const [successMessage, setSuccessMessage] = useState<[string, string?]>([""]);
+	const { animateSuccessNotification } = useContext(SuccessNotificationContext);
 	const [openDeleteModal, setOpenDeleteModal] = useState(false);
 	const [projectToDelete, setProjectToDelete] = useState<DashboardDatabase>(
 		{} as DashboardDatabase
 	);
+	console.log(animateSuccessNotification);
 	const [openSlideover, setOpenSlideover] = useState(false);
 	const [sharedUsers, setSharedUsers] = useState({});
-
-	// const fetchProjects = async () => {
-	// 	try {
-	// 		const res = await axios.get<APIDashboardResponse>("/api/v1/ui/dashboard");
-	// 		setProjects(res.data.databases);
-	// 	} catch (err) {
-	// 		console.log(err);
-	// 	}
-	// };
 
 	const togglePin = async (databaseId: string) => {
 		try {
@@ -60,13 +51,9 @@ export default function Dashboard() {
 		try {
 			await axios.delete(`/api/v1/databases/${databaseId}`);
 			const newProjects = projects.filter((p) => p._id !== databaseId);
-			setSuccessMessage(["Project Deleted Successfully"]);
-			setSuccessNotificationOpen(true);
-			setTimeout(() => {
-				setSuccessNotificationOpen(false);
-				setSuccessMessage([""]);
-			}, 3500);
+			animateSuccessNotification("Project Deleted Successfully");
 			setProjects(newProjects);
+			setProjectToDelete({} as DashboardDatabase);
 		} catch (err) {
 			console.log(err.response.data);
 		}
@@ -98,11 +85,6 @@ export default function Dashboard() {
 					setProjectToDelete={setProjectToDelete}
 					togglePin={togglePin}
 				/>
-
-				{/* Success Notification */}
-				<SuccessNotification show={successNotificationOpen} setShow={setSuccessNotificationOpen}>
-					{successMessage}
-				</SuccessNotification>
 
 				{/* Delete Modal */}
 				<DeleteModal
