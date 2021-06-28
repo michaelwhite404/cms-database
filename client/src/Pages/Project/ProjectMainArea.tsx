@@ -1,5 +1,7 @@
 import { CollectionModel } from "../../../../src/interfaces/collectionInterfaces";
 import { ItemModel } from "../../../../src/interfaces/itemInterfaces";
+import AddCollectionIcon from "../../components/Icons/AddCollectionIcon";
+import RoundedArrow from "../../components/Icons/RoundedArrow";
 import { CollectionWithItems } from "../../interfaces/CollectionWithItems";
 import FieldDisplay from "../../interfaces/FieldDisplay";
 import CollectionSidebarButton from "./CollectionSidebarButton";
@@ -48,13 +50,28 @@ export default function ProjectMainArea({
 					style={{ height: "calc(100vh - 71px" }}
 				>
 					<div
-						className="flex items-center w-full text-md font-semibold text-gray-600 bg-gray-100 border-b border-gray-300 p-4"
+						className="flex justify-between items-center w-full text-md font-semibold text-gray-600 bg-gray-100 border-b border-gray-300 p-4"
 						style={{ height: "55px" }}
 					>
-						{loaded && "CMS Collections"}
+						{loaded && (
+							<>
+								<span>CMS Collections</span>
+								<button
+									className={`p-2 ${
+										collections.length > 0
+											? "bg-gray-200 hover:bg-gray-300 text-gray-600 focus:ring-purple-500"
+											: "bg-blue-500 hover:bg-blue-600 text-gray-50 focus:ring-blue-500"
+									} rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 `}
+									onClick={() => setCreateOpen(true)}
+								>
+									<AddCollectionIcon width={18} height={18} />
+								</button>
+							</>
+						)}
 					</div>
-					{loaded
-						? collections.map((collection) => (
+					{loaded ? (
+						collections.length ? (
+							collections.map((collection) => (
 								<CollectionSidebarButton
 									activeCollection={activeCollection}
 									setActiveCollection={setActiveCollection}
@@ -62,10 +79,25 @@ export default function ProjectMainArea({
 									key={collection._id}
 									items={collectionItems?.find((ci) => ci.collectionId === collection?._id)?.items}
 								/>
-						  ))
-						: Array.from({ length: 25 }).map((_, i) => (
-								<FakeCollectionSidebarButton key={`fake${i}`} />
-						  ))}
+							))
+						) : (
+							<div className="p-4 w-full">
+								<div className="relative flex justify-center w-full p-4 bg-gray-100 rounded-md text-xs text-gray-500 border-2 ">
+									Create your first collection!
+									<div
+										className="absolute right-2 -top-3 text-gray-400"
+										style={{ transform: "rotate(-70deg)" }}
+									>
+										<RoundedArrow width={30} height={30} />
+									</div>
+								</div>
+							</div>
+						)
+					) : (
+						Array.from({ length: 25 }).map((_, i) => (
+							<FakeCollectionSidebarButton key={`fake${i}`} />
+						))
+					)}
 				</div>
 				<div
 					className={`flex flex-grow ${!activeCollection && "items-center justify-center"}`}
