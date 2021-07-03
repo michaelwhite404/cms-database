@@ -33,6 +33,7 @@ export default function Project() {
 	const [display, setDisplay] = useState<{ collectionId: string; fieldDisplay: FieldDisplay[] }[]>(
 		[]
 	);
+	const [activeItem, setActiveItem] = useState<ItemModel | null>(null);
 	const params = useParams<{ database: string }>();
 
 	const fetchData = async () => {
@@ -101,6 +102,8 @@ export default function Project() {
 			<ProjectMainArea
 				activeCollection={activeCollection}
 				setActiveCollection={setActiveCollection}
+				activeItem={activeItem}
+				setActiveItem={setActiveItem}
 				collections={collections}
 				loaded={loaded}
 				setCreateOpen={setOpenCreateSlideover}

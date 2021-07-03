@@ -6,9 +6,11 @@ import CollectionItemsRow from "./CollectionItemsRow";
 export default function CollectionItemsTable({
 	items,
 	fieldDisplay,
+	setActiveItem,
 }: {
 	items?: ItemModel[];
 	fieldDisplay: FieldDisplay[];
+	setActiveItem: React.Dispatch<React.SetStateAction<ItemModel | null>>;
 }) {
 	return (
 		<div className="overflow-auto" style={{ height: "calc(100% - 55px)" }}>
@@ -41,6 +43,7 @@ export default function CollectionItemsTable({
 								fieldDisplay={fieldDisplay}
 								item={item}
 								key={item._id as string}
+								onClick={() => setActiveItem(item)}
 							/>
 						))}
 				</tbody>

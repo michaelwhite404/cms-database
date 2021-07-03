@@ -1,9 +1,10 @@
 import React, { useContext, useState } from "react";
-import { CollectionModel } from "../../../../src/interfaces/collectionInterfaces";
+import { CollectionField, CollectionModel } from "../../../../src/interfaces/collectionInterfaces";
 import StandardInput from "../../components/Form/StandardInput";
 import Pane from "../../components/Pane";
 import SuccessNotificationContext from "../../context/SuccessNotificationContext";
 import CountableBadge from "./CountableBadge";
+import BasicFieldRow from "./Slideover/BasicFieldRow";
 import Footer from "./Slideover/Footer";
 import FullCollectionURL from "./Slideover/FullCollectionURL";
 import SlideoverHeading from "./Slideover/SlideoverHeading";
@@ -19,6 +20,9 @@ export default function EditCollectionSlideover({
 }: EditCollectionSlideoverProps) {
 	const { animateSuccessNotification } = useContext(SuccessNotificationContext);
 	const [errors, setErrors] = useState({ name: "", slug: "" });
+	const [activeField, setActiveField] = useState<CollectionField | null>(null);
+
+	const basicInfoFields = activeCollection.fields.slice(0, 2);
 
 	const submittable = false;
 
@@ -29,6 +33,16 @@ export default function EditCollectionSlideover({
 
 	const handleChange = () => {};
 	const handleNameChange = () => {};
+
+	const submitField = (id: string) => {
+		/* 
+		const copiedFields = [...newCollectionData.fields];
+		const index = copiedFields.findIndex((field) => field.tempId === tempId);
+		copiedFields[index] = activeField!;
+		setNewCollectionData({ ...newCollectionData, fields: copiedFields });
+		setActiveField(null);
+	 */
+	};
 
 	return (
 		<form
@@ -78,6 +92,26 @@ export default function EditCollectionSlideover({
 					</Pane>
 					<Pane>
 						<Pane.Title>Collection Fields</Pane.Title>
+						<Pane.Item>
+							<div className="mb-3">Basic Info</div>
+							<div className="block w-full shadow-sm border rounded-md overflow-hidden">
+								{/* {basicInfoFields.map((field) => (
+									<BasicFieldRow
+										key={field._id as string}
+										//@ts-ignore
+										field={field}
+										active={field._id === activeField?._id}
+										activeField={activeField}
+										setActiveField={setActiveField}
+										submitField={submitField}
+									/>
+								))} */}
+							</div>
+						</Pane.Item>
+						<Pane.Item>
+							<div className="mb-3">Custom Fields</div>
+							<div className="block w-full shadow-sm border rounded-md overflow-hidden"></div>
+						</Pane.Item>
 					</Pane>
 				</div>
 			</div>

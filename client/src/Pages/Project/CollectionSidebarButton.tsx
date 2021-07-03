@@ -9,6 +9,7 @@ interface CollectionSidebarButtonProps {
 	setActiveCollection: React.Dispatch<React.SetStateAction<CollectionModel | null>>;
 	activeCollection: CollectionModel | null;
 	items: ItemModel[] | undefined;
+	setActiveItem: React.Dispatch<React.SetStateAction<ItemModel | null>>;
 }
 
 export default function CollectionSidebarButton({
@@ -16,6 +17,7 @@ export default function CollectionSidebarButton({
 	setActiveCollection,
 	activeCollection,
 	items,
+	setActiveItem,
 }: CollectionSidebarButtonProps) {
 	// const handleClick = () => {
 	// 	setActiveCollection(collection);
@@ -26,13 +28,18 @@ export default function CollectionSidebarButton({
 		setActive(!!activeCollection && collection._id === activeCollection._id);
 	}, [activeCollection, collection._id]);
 
+	const handleClick = () => {
+		setActiveCollection(collection);
+		setActiveItem(null);
+	};
+
 	return (
 		<div
 			className={`${
 				active ? "bg-blue-50 text-blue-500" : "text-gray-500"
 			} group flex border-b-2 p-4 text-sm cursor-pointer items-end font-semibold hover:bg-blue-50 hover:text-blue-500`}
 			style={{ userSelect: "none" }}
-			onClick={() => setActiveCollection(collection)}
+			onClick={handleClick}
 		>
 			<DatabaseIcon className="w-4 mr-2" />
 			<div className="overflow-ellipsis whitespace-nowrap overflow-hidden">{collection.name}</div>

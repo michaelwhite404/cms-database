@@ -12,6 +12,7 @@ interface FieldDisplay {
 interface Props {
 	item: ItemModel;
 	fieldDisplay: FieldDisplay[];
+	onClick: React.MouseEventHandler<HTMLTableRowElement>;
 }
 
 const formatData = (value: any, type: CollectionFieldType) => {
@@ -28,10 +29,10 @@ const formatData = (value: any, type: CollectionFieldType) => {
 	return formattedValue;
 };
 
-export default function CollectionItemsRow({ fieldDisplay, item }: Props) {
+export default function CollectionItemsRow({ fieldDisplay, item, onClick }: Props) {
 	const display = fieldDisplay.filter((f) => f.show === true);
 	return (
-		<tr className="py-8 hover:bg-blue-50 hover:text-blue-500">
+		<tr className="py-8 hover:bg-blue-50 hover:text-blue-500" onClick={onClick}>
 			{display.map((field, i) => (
 				<td
 					className={`${i === 0 ? "" : "w-40"} whitespace-nowrap pl-6 py-3 border-b`}

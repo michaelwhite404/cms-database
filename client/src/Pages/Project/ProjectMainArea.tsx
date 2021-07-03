@@ -1,11 +1,11 @@
 import { CollectionModel } from "../../../../src/interfaces/collectionInterfaces";
 import { ItemModel } from "../../../../src/interfaces/itemInterfaces";
 import AddCollectionIcon from "../../components/Icons/AddCollectionIcon";
-import RoundedArrow from "../../components/Icons/RoundedArrow";
 import { CollectionWithItems } from "../../interfaces/CollectionWithItems";
 import FieldDisplay from "../../interfaces/FieldDisplay";
 import CollectionSidebarButton from "./CollectionSidebarButton";
 import FakeCollectionSidebarButton from "./FakeCollectionSidebarButton";
+import AddCollectionBox from "./MainArea/AddCollectionBox";
 import CollectionItemsTable from "./MainArea/CollectionItemsTable";
 import CollectionTopBar from "./MainArea/CollectionTopBar";
 import NoItemsBox from "./MainArea/NoItemsBox";
@@ -15,6 +15,8 @@ interface ProjectMainAreaProps {
 	collections: CollectionModel[];
 	setActiveCollection: React.Dispatch<React.SetStateAction<CollectionModel | null>>;
 	activeCollection: CollectionModel | null;
+	activeItem: ItemModel | null;
+	setActiveItem: React.Dispatch<React.SetStateAction<ItemModel | null>>;
 	loaded: boolean;
 	setCreateOpen: React.Dispatch<React.SetStateAction<boolean>>;
 	setEditOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -31,6 +33,8 @@ export default function ProjectMainArea({
 	collections,
 	setActiveCollection,
 	activeCollection,
+	activeItem,
+	setActiveItem,
 	loaded,
 	setCreateOpen,
 	setEditOpen,
@@ -75,23 +79,14 @@ export default function ProjectMainArea({
 								<CollectionSidebarButton
 									activeCollection={activeCollection}
 									setActiveCollection={setActiveCollection}
+									setActiveItem={setActiveItem}
 									collection={collection}
 									key={collection._id}
 									items={collectionItems?.find((ci) => ci.collectionId === collection?._id)?.items}
 								/>
 							))
 						) : (
-							<div className="p-4 w-full">
-								<div className="relative flex justify-center w-full p-4 bg-gray-100 rounded-md text-xs text-gray-500 border-2 ">
-									Create your first collection!
-									<div
-										className="absolute right-2 -top-3 text-gray-400"
-										style={{ transform: "rotate(-70deg)" }}
-									>
-										<RoundedArrow width={30} height={30} />
-									</div>
-								</div>
-							</div>
+							<AddCollectionBox />
 						)
 					) : (
 						Array.from({ length: 25 }).map((_, i) => (
@@ -106,7 +101,7 @@ export default function ProjectMainArea({
 					{loaded &&
 						(!activeCollection ? (
 							<NonActiveCollectionBox setCreateOpen={setCreateOpen} />
-						) : (
+						) : !activeItem ? (
 							<div className="w-full">
 								<CollectionTopBar
 									activeCollection={activeCollection}
@@ -114,7 +109,11 @@ export default function ProjectMainArea({
 									setEditOpen={setEditOpen}
 								/>
 								{items && items.length > 0 ? (
-									<CollectionItemsTable items={items} fieldDisplay={fieldDisplay!} />
+									<CollectionItemsTable
+										items={items}
+										fieldDisplay={fieldDisplay!}
+										setActiveItem={setActiveItem}
+									/>
 								) : (
 									<NoItemsBox
 										activeCollection={activeCollection}
@@ -122,6 +121,8 @@ export default function ProjectMainArea({
 									/>
 								)}
 							</div>
+						) : (
+							<div>{Object.values(activeItem).join(", ")}</div>
 						))}
 				</div>
 			</div>
