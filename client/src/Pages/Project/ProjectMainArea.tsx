@@ -8,6 +8,7 @@ import FakeCollectionSidebarButton from "./FakeCollectionSidebarButton";
 import AddCollectionBox from "./MainArea/AddCollectionBox";
 import CollectionItemsTable from "./MainArea/CollectionItemsTable";
 import CollectionTopBar from "./MainArea/CollectionTopBar";
+import EditItem from "./MainArea/EditItem";
 import NoItemsBox from "./MainArea/NoItemsBox";
 import NonActiveCollectionBox from "./MainArea/NonActiveCollectionBox";
 
@@ -51,7 +52,7 @@ export default function ProjectMainArea({
 			<div className="flex">
 				<div
 					className={`${loaded ? "overflow-y-auto" : "overflow-hidden"} w-64 border-r bg-white`}
-					style={{ height: "calc(100vh - 71px" }}
+					style={{ height: "calc(100vh - 71px", minWidth: "16rem" }}
 				>
 					<div
 						className="flex justify-between items-center w-full text-md font-semibold text-gray-600 bg-gray-100 border-b border-gray-300 p-4"
@@ -122,7 +123,7 @@ export default function ProjectMainArea({
 								)}
 							</div>
 						) : (
-							<div>{Object.values(activeItem).join(", ")}</div>
+							<EditItem activeItem={activeItem} activeCollection={activeCollection} />
 						))}
 				</div>
 			</div>

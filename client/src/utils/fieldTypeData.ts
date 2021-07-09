@@ -1,4 +1,6 @@
 import { CollectionFieldType } from "../../../src/interfaces/collectionInterfaces";
+import SelectGroup from "../components/Form/SelectGroup";
+import StandardInput from "../components/Form/StandardInput";
 import ButtonIcon from "../components/Icons/ButtonIcon";
 import MiniIcon from "../components/Icons/MiniIcon";
 import FormProps from "../interfaces/FormProps";
@@ -18,6 +20,7 @@ interface FieldData {
 	Icon: (props: React.SVGProps<SVGSVGElement>) => JSX.Element;
 	SmallIcon: (props: React.SVGProps<SVGSVGElement>) => JSX.Element;
 	validations?: any;
+	Input?: any;
 }
 
 export const fieldData: FieldData[] = [
@@ -28,6 +31,7 @@ export const fieldData: FieldData[] = [
 		Icon: ButtonIcon.PlainText,
 		SmallIcon: MiniIcon.PlainText,
 		validations: { singleLine: true, minLength: "", maxLength: "" },
+		Input: StandardInput,
 	},
 	{
 		name: "Rich Text",
@@ -121,6 +125,7 @@ export const fieldData: FieldData[] = [
 		Icon: ButtonIcon.Option,
 		SmallIcon: MiniIcon.Option,
 		validations: { options: [] },
+		Input: SelectGroup,
 	},
 	{
 		name: "File",
