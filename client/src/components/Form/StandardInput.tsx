@@ -1,15 +1,12 @@
 import { FaAsterisk } from "react-icons/fa";
+import { InputProps } from "../../interfaces/InputProps";
 import ErrorTooltip from "../ErrorTooltip";
 
-interface StandardInputProps {
-	title: string;
-	name: string;
+interface StandardInputProps extends InputProps {
 	handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 	handleBlur?: () => void;
 	value: string;
 	errorMessage?: string;
-	id?: string;
-	required?: boolean;
 	className?: string;
 	placeholder?: string;
 	helpText?: string;

@@ -1,12 +1,9 @@
 import React from "react";
 import { FaAsterisk } from "react-icons/fa";
+import { InputProps } from "../../interfaces/InputProps";
 
-interface SelectInputProps {
-	title: string;
-	name: string;
-	id: string;
+interface SelectInputProps extends InputProps {
 	children: React.ReactNode;
-	required?: boolean;
 	refer?: React.RefObject<HTMLSelectElement>;
 	onChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void;
 	value?: string;

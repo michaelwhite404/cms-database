@@ -2,13 +2,10 @@ import React from "react";
 import { FaAsterisk } from "react-icons/fa";
 import { AiFillCaretDown, AiFillCaretUp } from "react-icons/ai";
 import ErrorTooltip from "../ErrorTooltip";
-interface NumberInputProps {
-	title: string;
-	id: string;
-	name: string;
+import { InputProps } from "../../interfaces/InputProps";
+interface NumberInputProps extends InputProps {
 	value?: string | number;
 	placeholder?: string;
-	required?: boolean;
 	errorMessage?: string;
 	handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 	arrows?: boolean;

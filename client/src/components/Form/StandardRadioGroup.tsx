@@ -1,10 +1,9 @@
 import React from "react";
+import { FaAsterisk } from "react-icons/fa";
+import { InputProps } from "../../interfaces/InputProps";
 
-interface StandardRadioGroupProps {
-	/** Title of the radio group (text goes inside the `legend` tag) */
-	title: string;
+interface StandardRadioGroupProps extends InputProps {
 	className?: string;
-	name: string;
 	children: React.ReactNode;
 }
 
@@ -13,6 +12,7 @@ export default function StandardRadioGroup({
 	className,
 	name,
 	children,
+	required,
 }: StandardRadioGroupProps): JSX.Element {
 	const newChildren = React.Children.map(children, (child) => {
 		if (React.isValidElement(child)) {
@@ -24,6 +24,7 @@ export default function StandardRadioGroup({
 	return (
 		<fieldset className={className}>
 			<legend className="text-sm mb-1 font-medium text-gray-900">{title}</legend>
+			{required && <FaAsterisk color="red" className="w-1.5 ml-1.5 inline" />}
 			<div className="mt-2 space-y-3">{newChildren}</div>
 		</fieldset>
 	);

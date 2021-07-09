@@ -2,13 +2,9 @@ import { useState } from "react";
 import { Switch } from "@headlessui/react";
 import classNames from "../../utils/classNames";
 import { FaAsterisk } from "react-icons/fa";
+import { InputProps } from "../../interfaces/InputProps";
 
-interface ToggleInputProps {
-	id: string;
-	name: string;
-	title: string;
-	required: boolean;
-}
+interface ToggleInputProps extends InputProps {}
 
 export default function ToggleInput({ id, name, title, required }: ToggleInputProps) {
 	const [enabled, setEnabled] = useState(false);
