@@ -28,7 +28,7 @@ const convertToFakeValue = async (field: CollectionField) => {
       break; */
 		case "ItemRef":
 			const items = await Item.aggregate([
-				{ $match: { _cid: field.validations!.collectionId } },
+				{ $match: { _cid: Types.ObjectId(field.validations!.collectionId) } },
 				{ $sample: { size: 1 } },
 			]);
 			console.log(items);

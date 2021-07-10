@@ -2,6 +2,7 @@ import { CollectionModel } from "../../../../../src/interfaces/collectionInterfa
 import { ItemModel } from "../../../../../src/interfaces/itemInterfaces";
 import StandardInput from "../../../components/Form/StandardInput";
 import Pane from "../../../components/Pane";
+import ItemFieldInput from "./ItemFieldInput";
 
 interface Props {
 	activeItem: ItemModel;
@@ -32,14 +33,9 @@ export default function EditItem({ activeItem, activeCollection }: Props) {
 			<Pane>
 				<Pane.MiniTitle>Custom Fields</Pane.MiniTitle>
 				{customFields.map((field) => (
-					<StandardInput
-						title={field.name}
-						name={field.slug}
-						helpText={field.helpText}
-						required={field.required}
-						handleChange={() => {}}
-						value={activeItem[field.slug]}
-					/>
+					<>
+						<ItemFieldInput field={field} value={activeItem[field.slug]} />
+					</>
 				))}
 			</Pane>
 		</div>

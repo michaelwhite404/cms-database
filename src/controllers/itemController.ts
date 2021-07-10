@@ -393,8 +393,8 @@ export const createFakeItem = catchAsync(
 		next: NextFunction
 	) => {
 		let { collectionFields } = instantiateFields(req);
-		let number = +req.params.number;
-		if (isNaN(number))
+		let number = req.params.number ? +req.params.number : undefined;
+		if (number && isNaN(number))
 			return next(new AppError(`'${req.params.number}' is not a valid number`, 400));
 		if (!number) number = 1;
 		if (+number < 1 || +number > 20)

@@ -1,6 +1,8 @@
 import { CollectionFieldType } from "../../../src/interfaces/collectionInterfaces";
+import NumberInput from "../components/Form/NumberInput";
 import SelectGroup from "../components/Form/SelectGroup";
 import StandardInput from "../components/Form/StandardInput";
+import ToggleInput from "../components/Form/ToggleInput";
 import ButtonIcon from "../components/Icons/ButtonIcon";
 import MiniIcon from "../components/Icons/MiniIcon";
 import FormProps from "../interfaces/FormProps";
@@ -20,7 +22,7 @@ interface FieldData {
 	Icon: (props: React.SVGProps<SVGSVGElement>) => JSX.Element;
 	SmallIcon: (props: React.SVGProps<SVGSVGElement>) => JSX.Element;
 	validations?: any;
-	Input?: any;
+	Input?: (props: any) => JSX.Element;
 }
 
 export const fieldData: FieldData[] = [
@@ -56,6 +58,7 @@ export const fieldData: FieldData[] = [
 		Icon: ButtonIcon.Video,
 		SmallIcon: MiniIcon.Video,
 		validations: { singleLine: true },
+		Input: StandardInput,
 	},
 	{
 		name: "Link",
@@ -64,6 +67,7 @@ export const fieldData: FieldData[] = [
 		Icon: ButtonIcon.Link,
 		SmallIcon: MiniIcon.Link,
 		validations: { singleLine: true },
+		Input: StandardInput,
 	},
 	{
 		name: "Email",
@@ -72,6 +76,7 @@ export const fieldData: FieldData[] = [
 		Icon: ButtonIcon.Email,
 		SmallIcon: MiniIcon.Email,
 		validations: { singleLine: true },
+		Input: StandardInput,
 	},
 	{
 		name: "Phone",
@@ -80,6 +85,7 @@ export const fieldData: FieldData[] = [
 		Icon: ButtonIcon.Phone,
 		SmallIcon: MiniIcon.Phone,
 		validations: { singleLine: true },
+		Input: StandardInput,
 	},
 	{
 		name: "Number",
@@ -94,6 +100,7 @@ export const fieldData: FieldData[] = [
 			decimalPlaces: 0,
 			allowNegative: false,
 		},
+		Input: NumberInput,
 	},
 	{
 		name: "Date",
@@ -109,6 +116,7 @@ export const fieldData: FieldData[] = [
 		Form: BoolForm,
 		Icon: ButtonIcon.Bool,
 		SmallIcon: MiniIcon.Bool,
+		Input: ToggleInput,
 	},
 	{
 		name: "Color",
