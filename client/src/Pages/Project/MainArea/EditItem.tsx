@@ -7,9 +7,10 @@ import ItemFieldInput from "./ItemFieldInput";
 interface Props {
 	activeItem: ItemModel;
 	activeCollection: CollectionModel;
+	getItemsByCollectionId: (collectionId?: string | undefined) => ItemModel[] | undefined;
 }
 
-export default function EditItem({ activeItem, activeCollection }: Props) {
+export default function EditItem({ activeItem, activeCollection, getItemsByCollectionId }: Props) {
 	const fields = [...activeCollection.fields];
 	const basicInfoFields = fields.slice(0, 2);
 	const customFields = fields.slice(2, fields.length - 4);
@@ -22,6 +23,7 @@ export default function EditItem({ activeItem, activeCollection }: Props) {
 				<Pane.MiniTitle>Basic Info</Pane.MiniTitle>
 				{basicInfoFields.map((field) => (
 					<StandardInput
+						key={field._id as string}
 						title={field.name}
 						name={field.slug}
 						required={field.required}
@@ -33,9 +35,12 @@ export default function EditItem({ activeItem, activeCollection }: Props) {
 			<Pane>
 				<Pane.MiniTitle>Custom Fields</Pane.MiniTitle>
 				{customFields.map((field) => (
-					<>
-						<ItemFieldInput field={field} value={activeItem[field.slug]} />
-					</>
+					<ItemFieldInput
+						key={field._id as string}
+						field={field}
+						value={activeItem[field.slug]}
+						getItemsByCollectionId={getItemsByCollectionId}
+					/>
 				))}
 			</Pane>
 		</div>

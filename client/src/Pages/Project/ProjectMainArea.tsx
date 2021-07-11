@@ -28,6 +28,7 @@ interface ProjectMainAreaProps {
 		fieldDisplay: FieldDisplay[];
 	}[];
 	addItemsToCollection: (collectionId: string, items: ItemModel[]) => void;
+	getItemsByCollectionId: (collectionId?: string) => ItemModel[] | undefined;
 }
 
 export default function ProjectMainArea({
@@ -43,8 +44,9 @@ export default function ProjectMainArea({
 	setCollectionItems,
 	display,
 	addItemsToCollection,
+	getItemsByCollectionId,
 }: ProjectMainAreaProps) {
-	const items = collectionItems?.find((ci) => ci.collectionId === activeCollection?._id)?.items;
+	const items = getItemsByCollectionId(activeCollection?._id);
 	const fieldDisplay = display.find((c) => c.collectionId === activeCollection?._id)?.fieldDisplay;
 
 	return (
@@ -123,7 +125,11 @@ export default function ProjectMainArea({
 								)}
 							</div>
 						) : (
-							<EditItem activeItem={activeItem} activeCollection={activeCollection} />
+							<EditItem
+								activeItem={activeItem}
+								activeCollection={activeCollection}
+								getItemsByCollectionId={getItemsByCollectionId}
+							/>
 						))}
 				</div>
 			</div>
