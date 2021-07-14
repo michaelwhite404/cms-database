@@ -1,7 +1,10 @@
 import React from "react";
+import { useState } from "react";
+import { HexColorPicker } from "react-colorful";
 import { FaAsterisk } from "react-icons/fa";
 import { InputProps } from "../../interfaces/InputProps";
 import ErrorTooltip from "../ErrorTooltip";
+import "./ColorInput.css";
 
 interface ColorInputProps extends InputProps {
 	className?: string;
@@ -26,8 +29,19 @@ export default function ColorInput({
 	focus,
 	handleChange,
 }: ColorInputProps) {
+	const [open, setOpen] = useState(false);
+	const [color, setColor] = useState(value);
+	const triggerColorPicker = () => {
+		setOpen(true);
+	};
+
 	return (
-		<div className="w-72">
+		<div className="w-72 relative">
+			{open && (
+				<div className="picker-wrapper">
+					<HexColorPicker color={color} onChange={setColor} />
+				</div>
+			)}
 			<label htmlFor={id || name} className="flex text-sm font-medium text-gray-900 ">
 				{title}
 				{required && <FaAsterisk color="red" className="w-1.5 ml-1.5 inline" />}
@@ -45,7 +59,7 @@ export default function ColorInput({
 					} block pl-12 w-full shadow-sm sm:text-sm error border-gray-300 rounded-md`}
 					autoComplete="off"
 					placeholder={placeholder}
-					value={value}
+					value={color}
 					onChange={handleChange}
 					autoFocus={focus}
 				/>
@@ -53,13 +67,14 @@ export default function ColorInput({
 				<div
 					className="absolute  h-full w-7"
 					style={{
-						backgroundColor: value,
+						backgroundColor: color,
 						top: "0.5px",
 						left: "0.5px",
 						height: "calc(100% - 1px)",
 						borderRadius: "5px 0px 0px 5px",
 						width: "37px",
 					}}
+					onClick={triggerColorPicker}
 				></div>
 			</div>
 		</div>

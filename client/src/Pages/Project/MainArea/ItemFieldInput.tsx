@@ -1,4 +1,3 @@
-import { RgbaColorPicker } from "react-colorful";
 import {
 	CollectionField,
 	CollectionValidationOption,
@@ -75,7 +74,9 @@ export default function ItemFieldInput({
 					<SelectGroup title={field.name} name={field.slug} id={field.slug} value={value}>
 						<SelectGroup.Option>Select an option...</SelectGroup.Option>
 						{options.map((o) => (
-							<SelectGroup.Option value={o._id as string}>{o.name}</SelectGroup.Option>
+							<SelectGroup.Option key={o._id as string} value={o._id as string}>
+								{o.name}
+							</SelectGroup.Option>
 						))}
 					</SelectGroup>
 				);
