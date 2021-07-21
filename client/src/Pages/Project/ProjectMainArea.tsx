@@ -29,6 +29,7 @@ interface ProjectMainAreaProps {
 	}[];
 	addItemsToCollection: (collectionId: string, items: ItemModel[]) => void;
 	getItemsByCollectionId: (collectionId?: string) => ItemModel[] | undefined;
+	getCollectionById: (collectionId?: string) => CollectionModel | undefined;
 }
 
 export default function ProjectMainArea({
@@ -45,6 +46,7 @@ export default function ProjectMainArea({
 	display,
 	addItemsToCollection,
 	getItemsByCollectionId,
+	getCollectionById,
 }: ProjectMainAreaProps) {
 	const items = getItemsByCollectionId(activeCollection?._id);
 	const fieldDisplay = display.find((c) => c.collectionId === activeCollection?._id)?.fieldDisplay;
@@ -129,6 +131,7 @@ export default function ProjectMainArea({
 								activeItem={activeItem}
 								activeCollection={activeCollection}
 								getItemsByCollectionId={getItemsByCollectionId}
+								getCollectionById={getCollectionById}
 							/>
 						))}
 				</div>

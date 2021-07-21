@@ -5,22 +5,21 @@ import axios from "axios";
 import React, { useContext, useState } from "react";
 import { useHistory } from "react-router";
 import SuccessNotificationContext from "../../../context/SuccessNotificationContext";
-import { APIDatabaseRepsonse, APIUserByEmailRes } from "../../../interfaces/APIResponse";
+import {
+	APIDashboardResponse,
+	APIDatabaseRepsonse,
+	APIUserByEmailRes,
+} from "../../../interfaces/APIResponse";
 import DashboardDatabase from "../../../interfaces/DashboardDatabase";
 import ISharedUser from "../../../interfaces/ISharedUser";
 import SharedUser from "./SharedUser";
 
 interface CreateProjectSlideover {
-	projects: DashboardDatabase[];
 	setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 	setProjects: React.Dispatch<React.SetStateAction<DashboardDatabase[]>>;
 }
 
-export default function CreateProjectSlidover({
-	setOpen,
-	projects,
-	setProjects,
-}: CreateProjectSlideover) {
+export default function CreateProjectSlidover({ setOpen, setProjects }: CreateProjectSlideover) {
 	const { animateSuccessNotification } = useContext(SuccessNotificationContext);
 	const [projectDetails, setProjectDetails] = useState({ name: "", description: "" });
 	const [shareEmail, setShareEmail] = useState("");
@@ -32,6 +31,8 @@ export default function CreateProjectSlidover({
 		e.preventDefault();
 		try {
 			const res = await axios.post<APIDatabaseRepsonse>("/api/v1/databases", projectDetails);
+			const projectsRes = await axios.get<APIDashboardResponse>("/api/v1/ui/dashboard");
+			setProjects(projectsRes.data.databases);
 			const { database } = res.data;
 			if (users.length > 0) await axios.post(`/api/v1/databases/${database._id}/share`, users);
 			animateSuccessNotification("Project Successfully Created");

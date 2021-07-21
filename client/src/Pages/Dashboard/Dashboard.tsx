@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import AppContainer from "../../components/AppContainer/AppContainer";
 import Heading from "../../components/AppContainer/Heading";
 import { APIPinnedResponse } from "../../interfaces/APIResponse";
@@ -12,7 +12,6 @@ import DeleteModal from "../../components/DeleteModal";
 import Slideover from "../../components/Slideover";
 import CreateProjectSlideover from "./Slideover/CreateProjectSlideover";
 import ShareModal from "../../components/ShareModal";
-import { useContext } from "react";
 import ProjectsContext from "../../context/ProjectsContext";
 import SuccessNotificationContext from "../../context/SuccessNotificationContext";
 
@@ -65,45 +64,39 @@ export default function Dashboard() {
 
 	return (
 		<AppContainer>
-			<>
-				{/* Page title & actions */}
-				<Heading title="Dashboard">
-					<HeadingButtons setOpenSlideover={setOpenSlideover} />
-				</Heading>
+			{/* Page title & actions */}
+			<Heading title="Dashboard">
+				<HeadingButtons setOpenSlideover={setOpenSlideover} />
+			</Heading>
 
-				{/* Pinned projects */}
-				<PinnedProjects projects={pinnedProjects} togglePin={togglePin} />
+			{/* Pinned projects */}
+			<PinnedProjects projects={pinnedProjects} togglePin={togglePin} />
 
-				{/* Projects list (only on smallest breakpoint) */}
-				<ProjectsList projects={projects} />
+			{/* Projects list (only on smallest breakpoint) */}
+			<ProjectsList projects={projects} />
 
-				{/* Projects table (small breakpoint and up) */}
-				<ProjectsTable
-					projects={projects}
-					setOpenDeleteModal={setOpenDeleteModal}
-					setProjectToDelete={setProjectToDelete}
-					togglePin={togglePin}
-				/>
+			{/* Projects table (small breakpoint and up) */}
+			<ProjectsTable
+				projects={projects}
+				setOpenDeleteModal={setOpenDeleteModal}
+				setProjectToDelete={setProjectToDelete}
+				togglePin={togglePin}
+			/>
 
-				{/* Delete Modal */}
-				<DeleteModal
-					open={openDeleteModal}
-					project={projectToDelete}
-					setOpenDeleteModal={setOpenDeleteModal}
-					deleteProject={deleteProject}
-				/>
+			{/* Delete Modal */}
+			<DeleteModal
+				open={openDeleteModal}
+				project={projectToDelete}
+				setOpenDeleteModal={setOpenDeleteModal}
+				deleteProject={deleteProject}
+			/>
 
-				{/* Share Modal */}
-				{/* <ShareModal /> */}
+			{/* Share Modal */}
+			{/* <ShareModal /> */}
 
-				<Slideover size="md" open={openSlideover} setOpen={setOpenSlideover}>
-					<CreateProjectSlideover
-						setOpen={setOpenSlideover}
-						setProjects={setProjects}
-						projects={projects}
-					/>
-				</Slideover>
-			</>
+			<Slideover size="md" open={openSlideover} setOpen={setOpenSlideover}>
+				<CreateProjectSlideover setOpen={setOpenSlideover} setProjects={setProjects} />
+			</Slideover>
 		</AppContainer>
 	);
 }

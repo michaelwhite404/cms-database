@@ -81,9 +81,9 @@ export default function MobileSidebar({ sidebarOpen, setSidebarOpen }: MobileSid
 								{/* Main navigation */}
 								<div className="space-y-1">
 									{navigation.map((item) => (
-										<a
+										<Link
 											key={item.name}
-											href={item.href}
+											to={item.href}
 											className={classNames(
 												item.current
 													? "bg-gray-100 text-gray-900"
@@ -102,7 +102,7 @@ export default function MobileSidebar({ sidebarOpen, setSidebarOpen }: MobileSid
 												aria-hidden="true"
 											/>
 											{item.name}
-										</a>
+										</Link>
 									))}
 								</div>
 								{/* Secondary Navigation */}

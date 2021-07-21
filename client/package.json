@@ -23,6 +23,7 @@
 		"react-loading-skeleton": "^2.2.0",
 		"react-router-dom": "^5.2.0",
 		"react-scripts": "4.0.3",
+		"react-select": "^4.3.1",
 		"slugify": "^1.5.3",
 		"typescript": "^4.2.4",
 		"uuid": "^8.3.2",
@@ -54,6 +55,7 @@
 	},
 	"devDependencies": {
 		"@types/react-router-dom": "^5.1.7",
+		"@types/react-select": "^4.0.17",
 		"@types/uuid": "^8.3.0",
 		"autoprefixer": "^9.8.6",
 		"postcss": "^7.0.35",

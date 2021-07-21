@@ -99,6 +99,9 @@ export default function Project() {
 			? collectionItems?.find((ci) => ci.collectionId === collectionId)?.items
 			: undefined;
 
+	const getCollectionById = (collectionId?: string) =>
+		collectionId ? collections.find((c) => c._id === collectionId) : undefined;
+
 	return (
 		<AppContainer>
 			<Heading loaded={loaded} title={`${currentDatabase ? currentDatabase.name : ""}`}>
@@ -118,6 +121,7 @@ export default function Project() {
 				display={display}
 				addItemsToCollection={addItemsToCollection}
 				getItemsByCollectionId={getItemsByCollectionId}
+				getCollectionById={getCollectionById}
 			/>
 
 			<Slideover size="4xl" open={openCreateSlideover} setOpen={setOpenCreateSlideover}>

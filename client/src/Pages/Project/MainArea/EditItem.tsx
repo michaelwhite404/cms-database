@@ -7,10 +7,16 @@ import ItemFieldInput from "./ItemFieldInput";
 interface Props {
 	activeItem: ItemModel;
 	activeCollection: CollectionModel;
-	getItemsByCollectionId: (collectionId?: string | undefined) => ItemModel[] | undefined;
+	getItemsByCollectionId: (collectionId?: string) => ItemModel[] | undefined;
+	getCollectionById: (collectionId?: string) => CollectionModel | undefined;
 }
 
-export default function EditItem({ activeItem, activeCollection, getItemsByCollectionId }: Props) {
+export default function EditItem({
+	activeItem,
+	activeCollection,
+	getItemsByCollectionId,
+	getCollectionById,
+}: Props) {
 	const fields = [...activeCollection.fields];
 	const basicInfoFields = fields.slice(0, 2);
 	const customFields = fields.slice(2, fields.length - 4);
@@ -40,6 +46,7 @@ export default function EditItem({ activeItem, activeCollection, getItemsByColle
 						field={field}
 						value={activeItem[field.slug]}
 						getItemsByCollectionId={getItemsByCollectionId}
+						getCollectionById={getCollectionById}
 					/>
 				))}
 			</Pane>
