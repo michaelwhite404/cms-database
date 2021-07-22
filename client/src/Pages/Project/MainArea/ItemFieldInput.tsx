@@ -7,7 +7,7 @@ import { ItemModel } from "../../../../../src/interfaces/itemInterfaces";
 import ColorInput from "../../../components/Form/ColorInput";
 import NumberInput from "../../../components/Form/NumberInput";
 import SelectGroup from "../../../components/Form/SelectGroup";
-import SelectMutliInput from "../../../components/Form/SelectMutiInput";
+import SelectMultiInput from "../../../components/Form/SelectMultiInput";
 import StandardInput from "../../../components/Form/StandardInput";
 import ToggleInput from "../../../components/Form/ToggleInput";
 
@@ -24,9 +24,9 @@ export default function ItemFieldInput({
 	getItemsByCollectionId,
 	getCollectionById,
 }: ItemFieldInputProps) {
-	// const Input = getFieldDataByType(field.type, "Input");
-	const fieldSlug = getCollectionById?.(field.validations?.collectionId)?.fields[0].slug;
+	const collection = getCollectionById?.(field.validations?.collectionId);
 	const items = getItemsByCollectionId?.(field.validations?.collectionId);
+	const mainFieldName = collection?.fields[0].slug;
 	const Input = (): JSX.Element => {
 		switch (field.type) {
 			case "Bool":
@@ -60,16 +60,26 @@ export default function ItemFieldInput({
 						{items &&
 							items.map((item) => (
 								/**BUG TODO: Change item.name */
-								<SelectGroup.Option value={item._id as string}>{item.name}</SelectGroup.Option>
+								<SelectGroup.Option value={item._id as string}>
+									{item[mainFieldName!]}
+								</SelectGroup.Option>
 							))}
 					</SelectGroup>
 				);
 			case "ItemRefMulti":
+				const itemOptions =
+					items?.map((i) => ({ label: i[mainFieldName!], value: i._id as string })) || [];
+				const defaultValue =
+					items
+						?.filter((i) => value.includes(i._id))
+						.map((i) => ({ label: i[mainFieldName!], value: i._id as string })) || [];
 				return (
-					<SelectMutliInput
-						fieldSlug={fieldSlug}
-						items={items || []}
-						defaultValue={items?.filter((i) => value.includes(i._id)) || []}
+					<SelectMultiInput
+						title={field.name}
+						name={field.slug}
+						id={field.slug}
+						options={itemOptions}
+						defaultValue={defaultValue}
 					/>
 				);
 			case "Color":
