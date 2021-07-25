@@ -15,7 +15,9 @@ import FileButtonIcon from "./Buttons/FileButtonIcon";
 import ReferenceButtonIcon from "./Buttons/ReferenceButtonIcon";
 import MultiReferenceButtonIcon from "./Buttons/MultiReferenceButtonIcon";
 
-const ButtonIcon: { [x: string]: (props: React.ComponentProps<"svg">) => JSX.Element } = {};
+const ButtonIcon: {
+	[x: string]: (props: React.ComponentProps<"svg">) => JSX.Element;
+} = {};
 
 ButtonIcon.PlainText = PlainTextButtonIcon;
 ButtonIcon.RichText = RichTextButtonIcon;

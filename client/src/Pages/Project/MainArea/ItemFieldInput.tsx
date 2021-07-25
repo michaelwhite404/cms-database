@@ -5,6 +5,7 @@ import {
 } from "../../../../../src/interfaces/collectionInterfaces";
 import { ItemModel } from "../../../../../src/interfaces/itemInterfaces";
 import ColorInput from "../../../components/Form/ColorInput";
+import FileInput from "../../../components/Form/FileInput";
 import NumberInput from "../../../components/Form/NumberInput";
 import SelectGroup from "../../../components/Form/SelectGroup";
 import SelectMultiInput from "../../../components/Form/SelectMultiInput";
@@ -47,6 +48,7 @@ export default function ItemFieldInput({
 							id={field.slug}
 							value={value}
 							handleChange={() => {}}
+							required={field.required}
 							arrows
 							increment={() => {}}
 							decrement={() => {}}
@@ -59,7 +61,6 @@ export default function ItemFieldInput({
 						<SelectGroup.Option>Select an option...</SelectGroup.Option>
 						{items &&
 							items.map((item) => (
-								/**BUG TODO: Change item.name */
 								<SelectGroup.Option value={item._id as string}>
 									{item[mainFieldName!]}
 								</SelectGroup.Option>
@@ -80,6 +81,7 @@ export default function ItemFieldInput({
 						id={field.slug}
 						options={itemOptions}
 						defaultValue={defaultValue}
+						required={field.required}
 					/>
 				);
 			case "Color":
@@ -90,6 +92,7 @@ export default function ItemFieldInput({
 						id={field.slug}
 						value={value}
 						handleChange={() => {}}
+						required={field.required}
 					/>
 				);
 			case "Option":
@@ -103,6 +106,17 @@ export default function ItemFieldInput({
 							</SelectGroup.Option>
 						))}
 					</SelectGroup>
+				);
+			case "File":
+			case "ImageRef":
+				return (
+					<FileInput
+						name={field.slug}
+						id={field.slug}
+						title={field.name}
+						required={field.required}
+						image={field.type === "ImageRef"}
+					/>
 				);
 			default:
 				return (
