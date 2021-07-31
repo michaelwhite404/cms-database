@@ -22,11 +22,15 @@ const itemSchema = new Schema(
 			select: false,
 		},
 		"created-by": {
-			type: String,
+			type: Types.ObjectId,
+			ref: "User",
+			required: true,
 			immutable: true,
 		},
 		"updated-by": {
-			type: String,
+			type: Types.ObjectId,
+			ref: "User",
+			required: true,
 		},
 		"updated-on": {
 			type: Date,

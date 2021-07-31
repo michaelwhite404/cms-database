@@ -36,6 +36,7 @@ export const getDashboardData = catchAsync(
 				$project: {
 					name: "$db.name",
 					slug: "$db.slug",
+					"users._id": 1,
 					"users.email": 1,
 					"users.firstName": 1,
 					"users.lastName": 1,

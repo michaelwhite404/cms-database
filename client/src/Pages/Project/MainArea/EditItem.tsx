@@ -1,7 +1,10 @@
+import { useContext } from "react";
+import moment from "moment";
 import { CollectionModel } from "../../../../../src/interfaces/collectionInterfaces";
 import { ItemModel } from "../../../../../src/interfaces/itemInterfaces";
 import StandardInput from "../../../components/Form/StandardInput";
 import Pane from "../../../components/Pane";
+import ProjectsContext from "../../../context/ProjectsContext";
 import ItemFieldInput from "./ItemFieldInput";
 
 interface Props {
@@ -17,6 +20,18 @@ export default function EditItem({
 	getItemsByCollectionId,
 	getCollectionById,
 }: Props) {
+	const { users } = useContext(ProjectsContext).projects.find(
+		(p) => p._id === activeItem.database
+	)!;
+	const getUser = (user_id: string) => users.find((user) => user._id === user_id);
+
+	const formatUserText = (key: "created" | "updated") => {
+		const { firstName, lastName } = getUser(activeItem[`${key}-by`])!;
+		const fullName = firstName + " " + lastName;
+		const date = moment(activeItem[`${key}-on`]).format("MMM D, YYYY, h:MM A");
+		return `${date} by ${fullName}`;
+	};
+
 	const fields = [...activeCollection.fields];
 	const basicInfoFields = fields.slice(0, 2);
 	const customFields = fields.slice(2, fields.length - 4);
@@ -49,6 +64,11 @@ export default function EditItem({
 						getCollectionById={getCollectionById}
 					/>
 				))}
+			</Pane>
+			<Pane>
+				<div>Item Id: {activeItem._id}</div>
+				<div>Created: {formatUserText("created")}</div>
+				<div>Updated: {formatUserText("updated")}</div>
 			</Pane>
 		</div>
 	);

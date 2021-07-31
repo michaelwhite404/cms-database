@@ -32,19 +32,19 @@ function App() {
 				</nav> */}
 				<SuccessNotificationProvider>
 					<Switch>
+						<Route exact path="/login">
+							<Login />
+						</Route>
 						<ProjectsProvider>
-							<Route exact path="/login">
-								<Login />
-							</Route>
 							<Route path="/dashboard" exact component={Dashboard} />
 							<ProjectCollectionsProvider>
 								<Route path="/databases/:database" exact component={Project} />
 							</ProjectCollectionsProvider>
 							<Route path="/collections/:collection" exact component={Collection} />
-							<Route exact path="/">
-								<Home />
-							</Route>
 						</ProjectsProvider>
+						<Route exact path="/">
+							<Home />
+						</Route>
 					</Switch>
 
 					<SuccessNotification />

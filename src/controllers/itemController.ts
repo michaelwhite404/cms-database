@@ -210,6 +210,8 @@ export const createItem = catchAsync(
 			_cid: req.params.collection_id,
 			database: req.collection.database,
 			...testedFields,
+			"created-by": req.user!._id,
+			"updated-by": req.user!._id,
 		});
 
 		const displayedItem = JSON.parse(JSON.stringify(item._doc));
@@ -404,11 +406,14 @@ export const createFakeItem = catchAsync(
 			const fakeItemObj = <Omit<ItemModel, "_cid" | "database">>{
 				_cid: req.params.collection_id,
 				database: req.collection.database,
+				"created-by": req.user!._id,
+				"updated-by": req.user!._id,
 			};
 			for (const field of collectionFields) {
 				const value = await convertToFakeValue(field);
 				fakeItemObj[field.slug] = value;
 			}
+
 			items.push(fakeItemObj);
 		}
 

@@ -11,6 +11,7 @@ export default interface DashboardDatabase {
 }
 
 interface DatabaseUser {
+	_id: string;
 	email: string;
 	firstName: string;
 	lastName: string;
