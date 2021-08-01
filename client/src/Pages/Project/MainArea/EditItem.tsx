@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, ReactNode } from "react";
 import moment from "moment";
 import { CollectionModel } from "../../../../../src/interfaces/collectionInterfaces";
 import { ItemModel } from "../../../../../src/interfaces/itemInterfaces";
@@ -27,9 +27,21 @@ export default function EditItem({
 
 	const formatUserText = (key: "created" | "updated") => {
 		const { firstName, lastName } = getUser(activeItem[`${key}-by`])!;
-		const fullName = firstName + " " + lastName;
+		const name = firstName + " " + lastName;
 		const date = moment(activeItem[`${key}-on`]).format("MMM D, YYYY, h:MM A");
-		return `${date} by ${fullName}`;
+		const fullText = `${date} by ${name}`;
+		return (
+			<div className="flex">
+				<img
+					src={`https://ui-avatars.com/api/?background=ffb300&name=${name[0]}&length=1&color=ffffff`}
+					alt="Profile"
+					height={22}
+					width={22}
+					className="rounded-2xl mr-2"
+				/>
+				<span>{fullText}</span>
+			</div>
+		);
 	};
 
 	const fields = [...activeCollection.fields];
@@ -66,10 +78,21 @@ export default function EditItem({
 				))}
 			</Pane>
 			<Pane>
-				<div>Item Id: {activeItem._id}</div>
-				<div>Created: {formatUserText("created")}</div>
-				<div>Updated: {formatUserText("updated")}</div>
+				<div className="pt-5">
+					<ItemInfo label="Item ID">{activeItem._id as string}</ItemInfo>
+					<ItemInfo label="Created">{formatUserText("created")}</ItemInfo>
+					<ItemInfo label="Updated">{formatUserText("updated")}</ItemInfo>
+				</div>
 			</Pane>
 		</div>
 	);
 }
+
+const ItemInfo = ({ label, children }: { label: string; children: ReactNode }) => {
+	return (
+		<div className="flex flex-col mb-2">
+			<span className="text-sm font-semibold text-gray-600 mb-1">{label}</span>
+			<span className="pl-2 text-sm tracking-normal text-gray-500">{children}</span>
+		</div>
+	);
+};
